@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRE-EDC Bogotá</title>
+<meta name="description" content="PRE-EDC — una fiesta previa al EDC Colombia en Bogotá. Evento independiente, no afiliado ni patrocinado por Insomniac / EDC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0714;
+    --bg2: #150C28;
+    --bg3: #1E1038;
+    --red: #FF2A3D;
+    --orange: #FF6A1A;
+    --yellow: #FFD400;
+    --blue: #1E6FFF;
+    --cream: #FDF2FF;
+    --dim: #C6AEDD;
+    --line: rgba(253,242,255,0.12);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--bg);
+    color: var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+  }
+  a{ color:inherit; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+
+  ::selection{ background: var(--red); color:#100019; }
+
+  /* ---------- Fondo de partículas / glow ---------- */
+  .glow-field{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .blob{
+    position:absolute; border-radius:50%; filter:blur(70px); opacity:0.55;
+    animation: drift 22s ease-in-out infinite;
+  }
+  .blob--1{ width:420px; height:420px; background:var(--red); top:-120px; left:-100px; animation-delay:0s; }
+  .blob--2{ width:380px; height:380px; background:var(--blue); top:20%; right:-140px; animation-delay:4s; }
+  .blob--3{ width:340px; height:340px; background:var(--blue); bottom:-100px; left:15%; animation-delay:8s; }
+  .blob--4{ width:300px; height:300px; background:var(--yellow); bottom:10%; right:10%; opacity:0.35; animation-delay:2s; }
+  .blob--5{ width:360px; height:360px; background:var(--orange); top:45%; left:40%; opacity:0.4; animation-delay:6s; }
+  @keyframes drift{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(30px,-40px) scale(1.12); }
+  }
+  .particle{
+    position:absolute; border-radius:50%; background:var(--cream);
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:0.15; transform:scale(0.8); }
+    50%{ opacity:0.9; transform:scale(1.3); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .blob, .particle{ animation:none !important; }
+  }
+
+  section, header, footer{ position:relative; z-index:1; }
+
+  /* ---------- Presenta ---------- */
+  .presenter-credit{
+    display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:20px;
+  }
+  .presenter-credit img{ height:18px; width:auto; }
+  .presenter-credit span{
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--cream);
+  }
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,7,20,0.72); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; }
+  .nav-logo{ font-family:'Unbounded', sans-serif; font-weight:900; font-size:16px; letter-spacing:0.04em; }
+  .nav-logo span{ color:var(--red); }
+  .nav-links{ display:none; gap:26px; font-size:13px; font-weight:600; }
+  .nav-links a{ text-decoration:none; opacity:0.8; transition:opacity 0.2s, color 0.2s; }
+  .nav-links a:hover{ opacity:1; color:var(--blue); }
+  @media (min-width:800px){ .nav-links{ display:flex; } }
+  .nav-cta{
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:10px 18px; border-radius:100px; text-decoration:none;
+    background:linear-gradient(90deg, var(--red), var(--orange)); color:#100019;
+    box-shadow:0 0 22px rgba(255,106,26,0.4);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:90px 0 70px; text-align:center; }
+  .hero-grid{ display:flex; flex-direction:column; align-items:center; gap:50px; }
+  .hero-copy{ max-width:640px; }
+  .hero-form-col{ width:100%; max-width:560px; order:-1; }
+  @media (min-width:960px){
+    .hero-grid{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; gap:56px; }
+    .hero-copy{ max-width:520px; flex:1; }
+    .hero-copy .tagline{ margin:0 0 34px; }
+    .hero-copy .hero-meta{ justify-content:flex-start; }
+    .hero-form-col{ flex:0 0 420px; max-width:420px; order:0; }
+  }
+  .badge-indep{
+    display:inline-flex; align-items:center; gap:8px; margin-bottom:28px;
+    padding:8px 16px; border-radius:100px; border:1px solid var(--line);
+    background:rgba(253,242,255,0.04); font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.04em; color:var(--dim);
+  }
+  .badge-indep .dot{ width:6px; height:6px; border-radius:50%; background:var(--yellow); box-shadow:0 0 8px var(--yellow); }
+  .hero h1{
+    font-family:'Unbounded', sans-serif; font-weight:900; font-size:clamp(48px, 11vw, 108px);
+    line-height:0.95; letter-spacing:-0.01em;
+    background:linear-gradient(90deg, var(--red), var(--yellow) 50%, var(--blue));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 60px rgba(255,42,61,0.35);
+    margin-bottom:6px;
+  }
+  .hero .sub{
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:clamp(14px,2.6vw,20px);
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--cream); opacity:0.85; margin-bottom:26px;
+  }
+  .hero .tagline{
+    max-width:560px; margin:0 auto 34px; font-size:16px; line-height:1.7; color:var(--dim);
+  }
+  .hero .tagline strong{ color:var(--cream); }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:38px;
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+  }
+  .hero-meta span{
+    padding:8px 16px; border-radius:100px; border:1px solid var(--line); background:rgba(253,242,255,0.03);
+  }
+  .wings{ position:absolute; opacity:0.5; filter:drop-shadow(0 0 18px rgba(255,42,61,0.5)); pointer-events:none; }
+  .wings--l{ top:60px; left:-40px; width:160px; transform:scaleX(-1) rotate(-8deg); }
+  .wings--r{ top:120px; right:-30px; width:130px; transform:rotate(10deg); }
+  @media (max-width:700px){ .wings{ display:none; } }
+
+  /* ---------- Section head ---------- */
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 44px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:14px;
+  }
+  .eyebrow::before, .eyebrow::after{ content:''; width:18px; height:1px; background:var(--red); }
+  .section-head h2{
+    font-family:'Unbounded', sans-serif; font-weight:800; font-size:clamp(26px,4vw,40px); margin-bottom:12px;
+  }
+  .section-head p{ color:var(--dim); font-size:14.5px; line-height:1.7; }
+
+  section{ padding:80px 0; }
+
+  /* ---------- Qué es esto ---------- */
+  .about{
+    max-width:760px; margin:0 auto; text-align:center; font-size:16px; line-height:1.85; color:var(--dim);
+  }
+  .about strong{ color:var(--cream); }
+  .about .highlight{
+    display:block; margin-top:26px; padding:18px 22px; border-radius:16px;
+    border:1px solid rgba(255,212,0,0.35); background:rgba(255,212,0,0.06);
+    color:var(--yellow); font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.02em;
+  }
+
+  /* ---------- Preregistro ---------- */
+  .prereg-head{ text-align:center; margin:0 auto 22px; }
+  .prereg-head h2{
+    font-family:'Unbounded', sans-serif; font-weight:800; font-size:22px; margin-bottom:8px;
+  }
+  .prereg-head p{ color:var(--dim); font-size:13px; line-height:1.6; }
+  .prereg{
+    width:100%; margin:0 auto; border-radius:28px; padding:34px 32px;
+    border:1px solid rgba(255,42,61,0.35);
+    background:linear-gradient(165deg, rgba(255,42,61,0.08), rgba(30,111,255,0.05));
+  }
+  @media (max-width:600px){ .prereg{ padding:28px 22px; } }
+  .prereg-field{ margin-bottom:18px; }
+  .prereg-field label{
+    display:block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+  }
+  .prereg-field input{
+    width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--line);
+    background:rgba(253,242,255,0.05); color:var(--cream); font-family:'Space Grotesk', sans-serif;
+    font-size:14.5px; outline:none; transition:border-color 0.2s, background 0.2s;
+  }
+  .prereg-field input::placeholder{ color:rgba(198,174,221,0.5); }
+  .prereg-field input:focus{ border-color:var(--red); background:rgba(253,242,255,0.08); }
+  .prereg-field .hint{ font-size:11.5px; color:var(--dim); opacity:0.7; margin-top:6px; }
+  .prereg-submit{
+    width:100%; margin-top:6px; padding:16px 20px; border-radius:100px; border:none; cursor:pointer;
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:12.5px; letter-spacing:0.05em; text-transform:uppercase;
+    background:linear-gradient(90deg, var(--red), var(--orange), var(--yellow)); background-size:300% auto; color:#100019;
+    box-shadow:0 0 30px rgba(255,106,26,0.4); transition:transform 0.25s ease, background-position 0.6s ease, opacity 0.2s;
+  }
+  .prereg-submit:hover{ transform:translateY(-2px); background-position:right center; }
+  .prereg-submit:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+  .prereg-msg{
+    margin-top:16px; padding:14px 16px; border-radius:12px; font-size:13px; line-height:1.6; display:none;
+  }
+  .prereg-msg.show{ display:block; }
+  .prereg-msg--ok{ border:1px solid rgba(255,212,0,0.4); background:rgba(255,212,0,0.08); color:var(--yellow); }
+  .prereg-msg--err{ border:1px solid rgba(255,42,61,0.4); background:rgba(255,42,61,0.08); color:var(--red); }
+  .prereg-privacy{ margin-top:16px; font-size:11px; color:var(--dim); opacity:0.65; line-height:1.6; text-align:center; }
+
+  /* ---------- Footer ---------- */
+  footer{ padding:60px 0 40px; border-top:1px solid var(--line); margin-top:40px; }
+  .footer-top{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:28px; margin-bottom:34px; }
+  .footer-brand{ font-family:'Unbounded', sans-serif; font-weight:900; font-size:18px; }
+  .footer-brand span{ color:var(--red); }
+  .footer-social{ display:flex; gap:14px; }
+  .footer-social a{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    text-decoration:none; transition:border-color 0.2s, color 0.2s; color:var(--dim);
+  }
+  .footer-social a:hover{ border-color:var(--red); color:var(--red); }
+  .footer-social svg{ width:16px; height:16px; }
+  .disclaimer{
+    padding:20px 22px; border-radius:16px; border:1px solid var(--line); background:rgba(253,242,255,0.03);
+    font-size:12px; line-height:1.8; color:var(--dim);
+  }
+  .disclaimer strong{ color:var(--cream); }
+  .footer-bottom{ margin-top:24px; font-size:11px; color:var(--dim); opacity:0.6; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="glow-field" id="glowField">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+  <div class="blob blob--3"></div>
+  <div class="blob blob--4"></div>
+  <div class="blob blob--5"></div>
+</div>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-logo">PRE-<span>EDC</span></div>
+    <div class="nav-links">
+      <a href="#about">Qué es esto</a>
+      <a href="#preregistro">Preregistro</a>
+    </div>
+    <a class="nav-cta" href="#preregistro">Preregístrate</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <svg class="wings wings--l" viewBox="0 0 200 200" fill="none"><path d="M100 100C80 60 30 30 10 50C-10 70 20 130 60 140C90 147 100 120 100 100Z" fill="url(#gL)"/><defs><linearGradient id="gL" x1="0" y1="0" x2="200" y2="200"><stop stop-color="#FF2A3D"/><stop offset="1" stop-color="#1E6FFF"/></linearGradient></defs></svg>
+  <svg class="wings wings--r" viewBox="0 0 200 200" fill="none"><path d="M100 100C120 60 170 30 190 50C210 70 180 130 140 140C110 147 100 120 100 100Z" fill="url(#gR)"/><defs><linearGradient id="gR" x1="200" y1="0" x2="0" y2="200"><stop stop-color="#1E6FFF"/><stop offset="1" stop-color="#FF2A3D"/></linearGradient></defs></svg>
+
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="badge-indep"><span class="dot"></span> Evento independiente · No afiliado ni patrocinado por Insomniac / EDC</div>
+
+      <h1>PRE-EDC</h1>
+      <div class="sub">Bogotá</div>
+
+      <p class="tagline">Una fiesta previa al <strong>EDC Colombia — 10 y 11 de octubre</strong>. La previa no oficial para calentar motores antes del festival grande: misma energía, otra escala.</p>
+
+      <div class="hero-meta">
+        <span id="metaFecha">📅 Fecha por confirmar</span>
+        <span>📍 Bogotá, Colombia</span>
+        <span id="metaEdad">🔞 +18 (sujeto a confirmación)</span>
+      </div>
+    </div>
+
+    <div class="hero-form-col" id="preregistro">
+      <div class="presenter-credit">
+        <img src="ASSETS/fan-tribute-icon.png" alt="Fan Tribute">
+        <span>Fan Tribute presenta</span>
+      </div>
+      <div class="prereg-head">
+        <div class="eyebrow">Preregistro</div>
+        <h2>Sé de los primeros en enterarte</h2>
+        <p>Te avisamos apenas se abra la preventa 1 — cupo limitado y precios especiales para quienes se registraron antes.</p>
+      </div>
+
+      <form class="prereg" id="preregForm" action="https://formspree.io/f/xjybqgrz" method="POST">
+        <div class="prereg-field">
+          <label for="preregEmail">Correo electrónico</label>
+          <input type="email" id="preregEmail" name="email" placeholder="tu@correo.com" required>
+        </div>
+        <div class="prereg-field">
+          <label for="preregIg">Usuario de Instagram</label>
+          <input type="text" id="preregIg" name="instagram" placeholder="@tuusuario" required pattern="^@?[A-Za-z0-9._]{1,30}$">
+          <div class="hint">Incluye el @, por ejemplo @alasbogota</div>
+        </div>
+        <div class="prereg-field">
+          <label for="preregCel">Celular</label>
+          <input type="tel" id="preregCel" name="celular" placeholder="+57 300 000 0000" required pattern="^[0-9+()\s-]{7,20}$">
+        </div>
+
+        <input type="hidden" name="_subject" value="Nuevo preregistro — PRE-EDC Bogotá">
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+
+        <button class="prereg-submit" type="submit">Preregistrarme</button>
+
+        <div class="prereg-msg" id="preregMsg"></div>
+      </form>
+
+      <p class="prereg-privacy">Tus datos se usan únicamente para avisarte sobre PRE-EDC. No los compartimos con terceros.</p>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">¿Qué es esto?</div>
+      <h2>La previa antes de la previa</h2>
+    </div>
+    <div class="about">
+      <p>PRE-EDC es una fiesta <strong>independiente y no oficial</strong>, organizada por promotores locales, inspirada en la energía del EDC Colombia — pero es su propio evento, con su propio line-up, sus propios escenarios y su propia identidad.</p>
+      <span class="highlight">No somos Insomniac ni EDC. No vendemos boletos del festival oficial. Somos la fiesta con la que calientas motores antes de que empiece lo grande.</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">PRE-<span>EDC</span></div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2c.4 2.6 2 4.4 4.6 4.7v3.1c-1.6 0-3-.5-4.3-1.4v6.9c0 3.7-3 6.7-6.7 6.7S3.4 19 3.4 15.3s3-6.7 6.7-6.7c.4 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.9 0-3.4 1.5-3.4 3.4s1.5 3.4 3.4 3.4 3.5-1.5 3.5-3.4V2h3Z"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg></a>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>PRE-EDC</strong> es un evento independiente organizado por promotores locales en Bogotá, Colombia. No está afiliado, patrocinado, avalado ni organizado por Insomniac Events, EDC Colombia, ni ninguna de sus marcas o entidades relacionadas. Cualquier referencia a "EDC Colombia" en esta página es únicamente para dar contexto de fecha (como fiesta previa), no implica asociación oficial de ningún tipo.
+    </div>
+    <div class="footer-bottom">© 2026 PRE-EDC · Bogotá, Colombia · Todos los DJs y precios están sujetos a confirmación.</div>
+  </div>
+</footer>
+
+<script>
+  // Particulas flotantes livianas, generadas una sola vez.
+  (function () {
+    var field = document.getElementById('glowField');
+    var colors = ['#FF2A3D', '#1E6FFF', '#FFD400', '#FF6A1A', '#FDF2FF'];
+    for (var i = 0; i < 40; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      var size = Math.random() * 3 + 1;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = Math.random() * 100 + '%';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDelay = (Math.random() * 3.5) + 's';
+      p.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+      field.appendChild(p);
+    }
+  })();
+
+  // Envío del formulario de preregistro (Formspree) sin recargar la página.
+  (function () {
+    var form = document.getElementById('preregForm');
+    var msg = document.getElementById('preregMsg');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (form.action.indexOf('TU_FORM_ID') !== -1) {
+        msg.textContent = 'Formulario aún no conectado: falta configurar el endpoint de Formspree.';
+        msg.className = 'prereg-msg show prereg-msg--err';
+        return;
+      }
+
+      var submitBtn = form.querySelector('.prereg-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      msg.className = 'prereg-msg';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function (response) {
+        if (response.ok) {
+          form.reset();
+          msg.textContent = '¡Listo! Quedaste preregistrado — te avisamos por correo cuando abra la preventa.';
+          msg.className = 'prereg-msg show prereg-msg--ok';
+        } else {
+          msg.textContent = 'Algo salió mal. Intenta de nuevo en un momento.';
+          msg.className = 'prereg-msg show prereg-msg--err';
+        }
+      })
+      .catch(function () {
+        msg.textContent = 'No se pudo enviar. Revisa tu conexión e intenta de nuevo.';
+        msg.className = 'prereg-msg show prereg-msg--err';
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Preregistrarme';
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
