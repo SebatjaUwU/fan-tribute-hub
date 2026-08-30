@@ -263,6 +263,39 @@
     background:linear-gradient(165deg, rgba(255,42,61,0.05), rgba(155,93,229,0.05));
   }
 
+  /* ---------- Info (Todo lo que necesitas saber) ---------- */
+  .info-grid{ display:grid; grid-template-columns:1fr; gap:1px; background:var(--line); border-radius:20px; overflow:hidden; border:1px solid var(--line); }
+  @media (min-width:560px){ .info-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (min-width:960px){ .info-grid{ grid-template-columns:repeat(4,1fr); } }
+  .info-cell{ background:var(--bg2); padding:28px 24px; }
+  .info-icon{ width:26px; height:26px; margin-bottom:14px; color:var(--yellow); }
+  .info-cell:nth-child(2) .info-icon{ color:var(--blue); }
+  .info-cell:nth-child(3) .info-icon{ color:var(--orange); }
+  .info-cell:nth-child(4) .info-icon{ color:var(--red); }
+  .info-label{
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+  }
+  .info-cell h3{ font-family:'Unbounded', sans-serif; font-size:15.5px; font-weight:700; margin-bottom:6px; line-height:1.35; }
+  .info-cell p{ font-size:12.5px; line-height:1.55; color:var(--dim); }
+  .map-card{
+    margin-top:24px; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--bg2);
+  }
+  .map-card iframe{ width:100%; height:280px; border:0; display:block; filter:grayscale(0.3) contrast(1.05); }
+  .map-actions{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
+    padding:18px 22px;
+  }
+  .map-addr{ font-size:13px; line-height:1.5; color:var(--dim); }
+  .map-addr strong{ display:block; color:var(--cream); font-family:'Unbounded', sans-serif; font-size:13.5px; margin-bottom:2px; }
+  .map-btn{
+    display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:100px;
+    text-decoration:none; background:linear-gradient(90deg, var(--red), var(--orange)); color:#100019;
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:11.5px; letter-spacing:0.03em; text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .map-btn svg{ width:14px; height:14px; }
+
   /* ---------- Preregistro ---------- */
   .prereg-head{ text-align:center; margin:0 auto 22px; }
   .prereg-head h2{
@@ -341,6 +374,7 @@
       <a href="#about">Qué es esto</a>
       <a href="#boleteria">Neon Experience</a>
       <a href="#kinetic">Kinetic Experience</a>
+      <a href="#info">Info</a>
       <a href="#preregistro">Preregistro</a>
     </div>
     <a class="nav-cta" href="#preregistro">Preregístrate</a>
@@ -361,9 +395,9 @@
       <p class="tagline">Una fiesta previa al <strong>EDC Colombia — 10 y 11 de octubre</strong>. La previa no oficial para calentar motores antes del festival grande: misma energía, otra escala.</p>
 
       <div class="hero-meta">
-        <span id="metaFecha">📅 Fecha por confirmar</span>
-        <span>📍 Bogotá, Colombia</span>
-        <span id="metaEdad">🔞 +18 (sujeto a confirmación)</span>
+        <span id="metaFecha">📅 Viernes 2 de octubre</span>
+        <span>📍 Teatro Republik, Bogotá</span>
+        <span id="metaEdad">🔞 +18</span>
       </div>
     </div>
 
@@ -502,6 +536,53 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
         </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="info">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Info</div>
+      <h2>Todo lo que necesitas saber</h2>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div class="info-label">Fecha</div>
+        <h3>Viernes 2 de octubre</h3>
+        <p>La previa antes del EDC Colombia.</p>
+      </div>
+      <div class="info-cell">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-7.4 8-13a8 8 0 1 0-16 0c0 5.6 8 13 8 13z"/><circle cx="12" cy="9" r="2.6"/></svg>
+        <div class="info-label">Lugar</div>
+        <h3>Teatro Republik, Bogotá</h3>
+        <p>Cra. 14A # 83-49, Bogotá</p>
+      </div>
+      <div class="info-cell">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+        <div class="info-label">Puertas</div>
+        <h3>8:00 p.m. — 3:00 a.m.</h3>
+        <p>Entrada 8:00 p.m. Inicio 9:00 p.m., hasta las 3:00 a.m.</p>
+      </div>
+      <div class="info-cell">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 8.7 9 10 5-1.3 9-5 9-10V6l-9-4z"/></svg>
+        <div class="info-label">Restricción</div>
+        <h3>Mayores de edad</h3>
+        <p>Ingreso exclusivo +18. Se solicitará documento.</p>
+      </div>
+    </div>
+
+    <div class="map-card">
+      <iframe src="https://www.google.com/maps?q=4.6688024,-74.0553551&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Teatro Republik"></iframe>
+      <div class="map-actions">
+        <div class="map-addr"><strong>Teatro Republik</strong>Cra. 14A #83-49, Bogotá, Colombia</div>
+        <a class="map-btn" href="https://www.google.com/maps/dir/?api=1&destination=4.6688024,-74.0553551" target="_blank" rel="noopener">
+          Cómo llegar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </div>
