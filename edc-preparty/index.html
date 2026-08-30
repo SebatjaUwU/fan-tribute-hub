@@ -18,6 +18,8 @@
     --yellow: #FFD400;
     --blue: #1E6FFF;
     --purple: #9B5DE5;
+    --neon-green: #39FF88;
+    --neon-cyan: #2EE6D6;
     --cream: #FDF2FF;
     --dim: #C6AEDD;
     --line: rgba(253,242,255,0.12);
@@ -167,6 +169,20 @@
     display:block; margin-top:26px; padding:18px 22px; border-radius:16px;
     border:1px solid rgba(255,212,0,0.35); background:rgba(255,212,0,0.06);
     color:var(--yellow); font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.02em;
+  }
+
+  /* ---------- Neon Experience (Preventa 1/2 + General) ---------- */
+  .neon-head{ text-align:center; max-width:640px; margin:0 auto 44px; }
+  .neon-title{
+    font-family:'Unbounded', sans-serif; font-weight:900; font-size:clamp(30px,5vw,46px);
+    background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--blue));
+    -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:12px;
+    text-shadow:0 0 40px rgba(46,230,214,0.35);
+  }
+  .neon-head p{ color:var(--dim); font-size:14.5px; line-height:1.7; }
+  .neon-section{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:linear-gradient(165deg, rgba(57,255,136,0.05), rgba(46,230,214,0.05));
   }
 
   /* ---------- Boletería ---------- */
@@ -323,7 +339,7 @@
     <div class="nav-logo">PRE-<span>EDC</span></div>
     <div class="nav-links">
       <a href="#about">Qué es esto</a>
-      <a href="#boleteria">Boletería</a>
+      <a href="#boleteria">Neon Experience</a>
       <a href="#kinetic">Kinetic Experience</a>
       <a href="#preregistro">Preregistro</a>
     </div>
@@ -403,11 +419,11 @@
   </div>
 </section>
 
-<section id="boleteria">
+<section id="boleteria" class="neon-section">
   <div class="wrap">
-    <div class="section-head">
+    <div class="neon-head">
       <div class="eyebrow">Boletería</div>
-      <h2>Asegura tu entrada</h2>
+      <h2 class="neon-title">NEON EXPERIENCE</h2>
       <p>Preventa 1 ya está disponible por WhatsApp. Las demás tarifas se desbloquean pronto.</p>
     </div>
     <div class="tickets-grid">
