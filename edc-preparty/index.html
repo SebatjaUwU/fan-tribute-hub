@@ -296,6 +296,27 @@
   }
   .map-btn svg{ width:14px; height:14px; }
 
+  /* ---------- FAQ ---------- */
+  .faq-list{ display:flex; flex-direction:column; gap:12px; max-width:760px; margin:0 auto; }
+  .faq-item{
+    border-radius:16px; border:1px solid var(--line); background:rgba(253,242,255,0.03);
+    overflow:hidden; transition:border-color 0.25s ease, background 0.25s ease;
+  }
+  .faq-item[open]{ border-color:rgba(255,42,61,0.35); background:rgba(253,242,255,0.05); }
+  .faq-item summary{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; cursor:pointer;
+    padding:18px 22px; list-style:none; font-family:'Unbounded', sans-serif; font-weight:700; font-size:14px; color:var(--cream);
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-icon{
+    flex:none; width:22px; height:22px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; border:1px solid var(--line); color:var(--dim);
+    transition:transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
+  .faq-item[open] .faq-icon{ transform:rotate(45deg); border-color:var(--red); color:var(--red); }
+  .faq-icon svg{ width:12px; height:12px; }
+  .faq-answer{ padding:0 22px 20px; font-size:13.5px; line-height:1.75; color:var(--dim); }
+
   /* ---------- Preregistro ---------- */
   .prereg-head{ text-align:center; margin:0 auto 22px; }
   .prereg-head h2{
@@ -375,6 +396,7 @@
       <a href="#boleteria">Neon Experience</a>
       <a href="#kinetic">Kinetic Experience</a>
       <a href="#info">Info</a>
+      <a href="#faq">FAQ</a>
       <a href="#preregistro">Preregistro</a>
     </div>
     <a class="nav-cta" href="#preregistro">Preregístrate</a>
@@ -584,6 +606,42 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Preguntas frecuentes</div>
+      <h2>¿Tienes dudas?</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>¿Quién va a tocar?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Es un evento tributo: un DJ nacional y un DJ internacional tocarán en vivo los himnos que van a sonar en el EDC Colombia — la previa perfecta para calentar motores antes del festival grande.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Dónde y cuándo es?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Viernes 2 de octubre en Teatro Republik, Bogotá — Cra. 14A # 83-49. Puertas abren 8:00 p.m., el evento va de 9:00 p.m. a 3:00 a.m.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cuál es la diferencia entre Preventa 1, Preventa 2 y General?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Las tres dan acceso a pista, primer y tercer piso, con $20.000 en consumibles incluidos. Preventa 1 ($35K) son los primeros 40 cupos y trae regalo sorpresa (gafas, boleta conmemorativa o pulsera) — se compra directo por WhatsApp. Preventa 2 ($40K) y General ($45K) son las siguientes etapas, sin el regalo pero mismo acceso.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué diferencia hay entre VIP y Backstage?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Ambas son mesas para 5–6 personas con botella (ron o aguardiente), agua, sofá, mesa propia y prioridad de ingreso. VIP cuesta $330K. Backstage cuesta $400K y además da acceso al espacio con los DJs y la administración, más un obsequio individual (gafas, manilla o boleta) para cada persona de la mesa.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Hay restricción de edad?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Sí, ingreso exclusivo para mayores de 18 años. Se solicitará documento de identidad en la entrada.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cómo pago mi entrada?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Preventa 2, General, VIP y Backstage se podrán pagar por Wompi (tarjeta, Nequi, PSE, Bre-B) próximamente — por ahora están bloqueadas. Preventa 1 se compra directo por WhatsApp mientras dure el cupo de los primeros 40.</div>
+      </details>
     </div>
   </div>
 </section>
