@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boletería — Fan Tribute</title>
+<meta name="description" content="Compra tu entrada para los eventos de Fan Tribute — END OF SUMMER y PRE-EDC Bogotá. Todos los precios y tarifas en un solo lugar.">
+<link rel="icon" href="../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep: #061024;
+    --deep-2: #0B1C3D;
+    --ocean: #0A2A4A;
+    --ocean-2: #072034;
+    --blue: #1E6FFF;
+    --blue-soft: #4FA6FF;
+    --orange: #FF6A2B;
+    --orange-soft: #FF9A52;
+    --gold: #FFC24B;
+    --purple: #9B5DE5;
+    --red: #FF2A3D;
+    --cream: #FDF4E8;
+    --dim: #B9C6DE;
+    --line: rgba(253,244,232,0.14);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--deep);
+    color: var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+  }
+  a{ color:inherit; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+  ::selection{ background: var(--orange); color:#1a0a00; }
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(6,16,36,0.72); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; padding:14px 24px; }
+  .nav-logo{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .nav-logo img{ height:26px; width:auto; }
+  .nav-logo span{ font-family:'Unbounded', sans-serif; font-weight:800; font-size:15px; letter-spacing:0.03em; }
+  .nav-links{ display:none; gap:26px; font-size:13px; font-weight:600; }
+  .nav-links a{ text-decoration:none; opacity:0.8; transition:opacity 0.2s, color 0.2s; }
+  .nav-links a:hover{ opacity:1; color:var(--orange-soft); }
+  @media (min-width:800px){ .nav-links{ display:flex; } }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:70px 0 40px; text-align:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--orange-soft); margin-bottom:14px;
+  }
+  .eyebrow::before, .eyebrow::after{ content:''; width:18px; height:1px; background:var(--orange-soft); }
+  .hero h1{
+    font-family:'Unbounded', sans-serif; font-weight:900; font-size:clamp(36px,7vw,64px);
+    background:linear-gradient(90deg, var(--orange), var(--gold), var(--blue-soft));
+    -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:14px;
+  }
+  .hero p{ max-width:560px; margin:0 auto; color:var(--dim); font-size:15px; line-height:1.7; }
+
+  /* ---------- Event block ---------- */
+  .event-block{ padding:56px 0; border-top:1px solid var(--line); }
+  .event-head{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:34px; }
+  .event-head-info h2{ font-family:'Unbounded', sans-serif; font-weight:800; font-size:clamp(24px,4vw,34px); margin-bottom:6px; }
+  .event-head-info p{ color:var(--dim); font-size:13.5px; }
+  .event-link{
+    display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:100px;
+    border:1px solid var(--line); text-decoration:none; font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--cream); white-space:nowrap;
+    transition:border-color 0.2s ease, background 0.2s ease;
+  }
+  .event-link:hover{ border-color:var(--orange-soft); background:rgba(255,154,82,0.08); }
+  .event-link svg{ width:13px; height:13px; }
+
+  .tier-group-label{
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--dim); margin:0 0 14px; padding-top:6px;
+  }
+  .tiers-grid{ display:grid; grid-template-columns:1fr; gap:18px; margin-bottom:36px; }
+  @media (min-width:640px){ .tiers-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (min-width:960px){ .tiers-grid{ grid-template-columns:repeat(3,1fr); } }
+
+  .tier-card{
+    position:relative; display:flex; flex-direction:column; gap:10px; text-align:center;
+    padding:26px 22px; border-radius:18px; border:1px solid var(--line); background:rgba(253,244,232,0.03);
+    transition:transform 0.3s cubic-bezier(.2,.8,.2,1), border-color 0.3s ease;
+  }
+  .tier-card:hover{ transform:translateY(-4px); }
+  .tier-card--orange{ border-color:rgba(255,106,43,0.35); }
+  .tier-card--purple{ border-color:rgba(155,93,229,0.35); }
+  .tier-card--blue{ border-color:rgba(30,111,255,0.35); }
+  .tier-card--premium{
+    border-color:rgba(255,42,61,0.4);
+    background:linear-gradient(165deg, rgba(255,42,61,0.09), rgba(155,93,229,0.09));
+  }
+  .tier-tag{ font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); }
+  .tier-card--orange .tier-tag{ color:var(--orange-soft); }
+  .tier-card--purple .tier-tag{ color:var(--purple); }
+  .tier-card--blue .tier-tag{ color:var(--blue-soft); }
+  .tier-card--premium .tier-tag{
+    background:linear-gradient(90deg, var(--red), var(--purple));
+    -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700;
+  }
+  .tier-price{ font-family:'Unbounded', sans-serif; font-weight:900; font-size:clamp(26px,4vw,32px); }
+  .tier-desc{ font-size:12.5px; line-height:1.6; color:var(--dim); min-height:36px; }
+
+  .tier-btn{
+    margin-top:4px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 18px; border-radius:100px; text-decoration:none;
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:11.5px; letter-spacing:0.03em; text-transform:uppercase;
+  }
+  .tier-btn--wa{ background:#25D366; color:#04150C; box-shadow:0 0 20px rgba(37,211,102,0.35); }
+  .tier-btn--wa:hover{ box-shadow:0 0 26px rgba(37,211,102,0.5); }
+  .tier-btn--wompi{ background:linear-gradient(90deg, var(--orange), var(--gold)); color:#1a0a00; box-shadow:0 0 20px rgba(255,106,43,0.35); }
+  .tier-btn--wompi:hover{ box-shadow:0 0 26px rgba(255,106,43,0.5); }
+  .tier-btn svg{ width:15px; height:15px; }
+  .tier-combo{ margin-top:2px; font-size:11px; color:var(--dim); }
+  .tier-combo a{ text-decoration:underline; color:var(--gold); }
+
+  .tier-locked{
+    display:inline-flex; align-items:center; gap:8px; margin-top:4px; padding:12px 18px; border-radius:100px;
+    border:1px solid var(--line); background:rgba(253,244,232,0.05); color:var(--dim); cursor:not-allowed;
+    font-family:'Unbounded', sans-serif; font-weight:700; font-size:11.5px; letter-spacing:0.03em; text-transform:uppercase;
+  }
+  .tier-locked svg{ width:14px; height:14px; }
+  .lock-badge{
+    position:absolute; top:12px; right:12px; display:flex; align-items:center; gap:4px;
+    padding:4px 9px; border-radius:100px; background:rgba(6,16,36,0.6); border:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim);
+  }
+  .lock-badge svg{ width:10px; height:10px; }
+
+  .disclaimer-note{
+    max-width:760px; margin:0 auto; padding:18px 20px; border-radius:14px; border:1px solid var(--line);
+    background:rgba(253,244,232,0.03); font-size:12px; line-height:1.75; color:var(--dim); text-align:center;
+  }
+
+  footer{ padding:50px 0 36px; border-top:1px solid var(--line); background:var(--deep-2); text-align:center; }
+  footer .foot-brand{ font-family:'Unbounded', sans-serif; font-weight:900; font-size:15px; margin-bottom:8px; }
+  footer p{ font-size:11px; color:var(--dim); opacity:0.7; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="../index.html">
+      <img src="../ASSETS/fan-tribute-icon.png" alt="Fan Tribute">
+      <span>FAN TRIBUTE</span>
+    </a>
+    <div class="nav-links">
+      <a href="#end-of-summer">End of Summer</a>
+      <a href="#pre-edc">PRE-EDC</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="eyebrow">Boletería</div>
+  <h1>Compra tu entrada</h1>
+  <p>Todos los eventos de Fan Tribute, sus tarifas y cómo comprar — en un solo lugar. Cada botón te lleva directo al medio de pago real (WhatsApp o Wompi).</p>
+</header>
+
+<section id="end-of-summer" class="event-block">
+  <div class="wrap">
+    <div class="event-head">
+      <div class="event-head-info">
+        <h2>END OF SUMMER</h2>
+        <p>Segunda fecha · Viernes 4 de septiembre · Teatro Republik, Bogotá</p>
+      </div>
+      <a class="event-link" href="../eventos-hub/eventos/end-of-summer-2.html">
+        Ver evento completo
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="tier-group-label">Pista</div>
+    <div class="tiers-grid">
+      <div class="tier-card tier-card--orange">
+        <div class="tier-tag">Preventa 1</div>
+        <div class="tier-price">$35K</div>
+        <p class="tier-desc">Los primeros 40 cupos, con regalo sorpresa incluido. Acceso a pista, 1º y 3º piso.</p>
+        <a class="tier-btn tier-btn--wa" href="https://wa.me/573161088178" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
+          Comprar por WhatsApp
+        </a>
+      </div>
+
+      <div class="tier-card tier-card--purple">
+        <div class="tier-tag">Preventa 2</div>
+        <div class="tier-price">$37K</div>
+        <p class="tier-desc">Segunda etapa, mismo acceso a pista, 1º y 3º piso, sin el regalo.</p>
+        <a class="tier-btn tier-btn--wompi" href="https://checkout.wompi.co/l/YZhBL1" target="_blank" rel="noopener">
+          Comprar por Wompi
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <div class="tier-combo">En grupo: <a href="https://checkout.wompi.co/l/J4Mtm3" target="_blank" rel="noopener">x2 $74K</a> · <a href="https://checkout.wompi.co/l/3ZjQTK" target="_blank" rel="noopener">x3 $111K</a></div>
+      </div>
+
+      <div class="tier-card tier-card--blue">
+        <div class="tier-tag">General</div>
+        <div class="tier-price">$40K</div>
+        <p class="tier-desc">Entrada general, precio final. Acceso a pista, 1º y 3º piso, toda la noche.</p>
+        <a class="tier-btn tier-btn--wompi" href="https://checkout.wompi.co/l/w69y3w" target="_blank" rel="noopener">
+          Comprar por Wompi
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <div class="tier-combo">En grupo: <a href="https://checkout.wompi.co/l/1nkW4O" target="_blank" rel="noopener">x2 $80K</a> · <a href="https://checkout.wompi.co/l/H9xF4f" target="_blank" rel="noopener">x3 $120K</a></div>
+      </div>
+    </div>
+
+    <div class="tier-group-label">Premium Spots — mesa para 5–6 personas</div>
+    <div class="tiers-grid">
+      <div class="tier-card tier-card--premium">
+        <div class="tier-tag">VIP</div>
+        <div class="tier-price">$330K</div>
+        <p class="tier-desc">Botella de ron o aguardiente, agua, sofá y mesa propia, prioridad de ingreso.</p>
+        <a class="tier-btn tier-btn--wompi" href="https://checkout.wompi.co/l/eW6ari" target="_blank" rel="noopener">
+          Reservar VIP
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tier-card tier-card--premium">
+        <div class="tier-tag">Backstage</div>
+        <div class="tier-price">$400K</div>
+        <p class="tier-desc">Todo lo de VIP + acceso al espacio con los DJs, más un obsequio individual por persona.</p>
+        <a class="tier-btn tier-btn--wompi" href="https://checkout.wompi.co/l/Oophjg" target="_blank" rel="noopener">
+          Reservar Backstage
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pre-edc" class="event-block">
+  <div class="wrap">
+    <div class="event-head">
+      <div class="event-head-info">
+        <h2>PRE-EDC Bogotá</h2>
+        <p>Viernes 2 de octubre · Teatro Republik, Bogotá — la previa antes del EDC Colombia</p>
+      </div>
+      <a class="event-link" href="../edc-preparty/index.html">
+        Ver evento completo
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="tier-group-label">Neon Experience</div>
+    <div class="tiers-grid">
+      <div class="tier-card tier-card--orange">
+        <div class="tier-tag">Preventa 1</div>
+        <div class="tier-price">$35K</div>
+        <p class="tier-desc">La tarifa más baja para calentar motores antes del EDC Colombia.</p>
+        <a class="tier-btn tier-btn--wa" href="https://wa.me/5731610881078?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20PRE-EDC%20Bogot%C3%A1%20%E2%80%94%20%2435.000" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
+          Comprar por WhatsApp
+        </a>
+      </div>
+
+      <div class="tier-card tier-card--purple">
+        <div class="lock-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Bloqueado
+        </div>
+        <div class="tier-tag">Preventa 2</div>
+        <div class="tier-price">$40K</div>
+        <p class="tier-desc">Segunda fase de preventa. Se desbloquea próximamente.</p>
+        <span class="tier-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Compra ya
+        </span>
+      </div>
+
+      <div class="tier-card tier-card--blue">
+        <div class="lock-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Bloqueado
+        </div>
+        <div class="tier-tag">General</div>
+        <div class="tier-price">$45K</div>
+        <p class="tier-desc">Entrada general, precio regular. Se desbloquea próximamente.</p>
+        <span class="tier-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Compra ya
+        </span>
+      </div>
+    </div>
+
+    <div class="tier-group-label">Kinetic Experience</div>
+    <div class="tiers-grid">
+      <div class="tier-card tier-card--premium">
+        <div class="lock-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Bloqueado
+        </div>
+        <div class="tier-tag">VIP</div>
+        <div class="tier-price">$330K</div>
+        <p class="tier-desc">Acceso preferencial, zona exclusiva. Se desbloquea próximamente.</p>
+        <span class="tier-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Compra ya
+        </span>
+      </div>
+
+      <div class="tier-card tier-card--premium">
+        <div class="lock-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Bloqueado
+        </div>
+        <div class="tier-tag">Backstage</div>
+        <div class="tier-price">$400K</div>
+        <p class="tier-desc">La experiencia más exclusiva. Se desbloquea próximamente.</p>
+        <span class="tier-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Compra ya
+        </span>
+      </div>
+    </div>
+
+    <div class="disclaimer-note">
+      <strong style="color:var(--cream)">PRE-EDC</strong> es un evento independiente organizado por promotores locales en Bogotá. No está afiliado, patrocinado ni avalado por Insomniac Events, EDC Colombia, ni ninguna de sus marcas relacionadas.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-brand">FAN TRIBUTE</div>
+  <p>© 2026 Fan Tribute · Bogotá, Colombia · Todos los precios y cupos están sujetos a disponibilidad.</p>
+</footer>
+
+</body>
+</html>
