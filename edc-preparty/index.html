@@ -241,6 +241,14 @@
     font-size:12px; letter-spacing:0.03em; text-transform:uppercase; cursor:not-allowed;
   }
   .ticket-buy-btn--locked svg{ width:15px; height:15px; }
+  .ticket-wompi-btn{
+    display:inline-flex; align-items:center; gap:8px; margin-top:6px; padding:13px 22px;
+    border-radius:100px; text-decoration:none; width:100%; justify-content:center;
+    background:linear-gradient(90deg, var(--orange), var(--yellow)); color:#1a0a00; font-family:'Unbounded', sans-serif; font-weight:700;
+    font-size:12px; letter-spacing:0.03em; text-transform:uppercase;
+    box-shadow:0 0 22px rgba(255,106,26,0.35); transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .ticket-wompi-btn:hover{ transform:translateY(-2px); box-shadow:0 0 30px rgba(255,106,26,0.5); }
 
   /* ---------- Kinetic Experience ---------- */
   .kinetic-head{ text-align:center; max-width:640px; margin:0 auto 44px; }
@@ -384,7 +392,6 @@
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">¿Qué es esto?</div>
-      <h2>La previa antes de la previa</h2>
     </div>
     <div class="about">
       <p>PRE-EDC es una fiesta <strong>independiente y no oficial</strong>, organizada por <strong>Fan Tribute</strong>, inspirada en la energía del EDC Colombia — pero es su propio evento, con su propio line-up, sus propios escenarios y su propia identidad.</p>
@@ -447,32 +454,29 @@
     <div class="kinetic-head">
       <div class="eyebrow">🦉 Village Owl — Segundo piso</div>
       <h2 class="kinetic-title">KINETIC EXPERIENCE</h2>
-      <p>VIP y Backstage — la capa más profunda del PRE-EDC. Disponibilidad próximamente.</p>
+      <p>VIP y Backstage — la capa más profunda del PRE-EDC. Pago directo por Wompi.</p>
     </div>
     <div class="tickets-grid">
-      <div class="ticket-card ticket-card--vip ticket-card--locked">
-        <div class="lock-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Bloqueado
-        </div>
+      <div class="ticket-card ticket-card--vip">
         <div class="ticket-tag">VIP</div>
         <div class="ticket-price">$350.000</div>
         <p class="ticket-desc">Mesa para 5 o 6 personas: botella de trago 🥃, agua 💧, sofá y sillas premium — espacio exclusivo en Village Owl.</p>
-        <button class="ticket-buy-btn--locked" type="button" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Compra ya
-        </button>
+        <a class="ticket-wompi-btn" href="https://checkout.wompi.co/l/lwULMQ" target="_blank" rel="noopener">
+          Comprar por Wompi
+        </a>
       </div>
 
-      <div class="ticket-card ticket-card--backstage ticket-card--locked">
-        <div class="lock-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Bloqueado
-        </div>
+      <div class="ticket-card ticket-card--backstage">
         <div class="ticket-tag">Backstage</div>
         <div class="ticket-price">$400.000</div>
         <p class="ticket-desc">Mesa para 5 o 6 personas con todos los beneficios VIP, más zona exclusiva junto a los DJs 🎧, regalos de luz ✨ y experiencia Backstage.</p>
-        <button class="ticket-buy-btn--locked" type="button" disabled>
+        <a class="ticket-wompi-btn" href="https://checkout.wompi.co/l/TgFNqq" target="_blank" rel="noopener">
+          Comprar por Wompi
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
         </button>
@@ -558,7 +562,7 @@
       </details>
       <details class="faq-item">
         <summary>¿Cómo pago mi entrada?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <div class="faq-answer">Preventa 2, General, VIP y Backstage se podrán pagar por Wompi (tarjeta, Nequi, PSE, Bre-B) próximamente — por ahora están bloqueadas. Preventa 1 se compra directo por WhatsApp mientras dure el cupo de los primeros 40.</div>
+        <div class="faq-answer">VIP y Backstage se pagan por Wompi (tarjeta, Nequi, PSE, Bre-B). Preventa 2 y General aún están bloqueadas — se habilitan pronto. Preventa 1 se compra directo por WhatsApp mientras dure el cupo de los primeros 40.</div>
       </details>
     </div>
   </div>
