@@ -103,14 +103,6 @@
   .hero{ padding:90px 0 70px; text-align:center; }
   .hero-grid{ display:flex; flex-direction:column; align-items:center; gap:50px; }
   .hero-copy{ max-width:640px; }
-  .hero-form-col{ width:100%; max-width:560px; order:-1; }
-  @media (min-width:960px){
-    .hero-grid{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; gap:56px; }
-    .hero-copy{ max-width:520px; flex:1; }
-    .hero-copy .tagline{ margin:0 0 34px; }
-    .hero-copy .hero-meta{ justify-content:flex-start; }
-    .hero-form-col{ flex:0 0 420px; max-width:420px; order:0; }
-  }
   .badge-indep{
     display:inline-flex; align-items:center; gap:8px; margin-bottom:28px;
     padding:8px 16px; border-radius:100px; border:1px solid var(--line);
@@ -317,47 +309,6 @@
   .faq-icon svg{ width:12px; height:12px; }
   .faq-answer{ padding:0 22px 20px; font-size:13.5px; line-height:1.75; color:var(--dim); }
 
-  /* ---------- Preregistro ---------- */
-  .prereg-head{ text-align:center; margin:0 auto 22px; }
-  .prereg-head h2{
-    font-family:'Unbounded', sans-serif; font-weight:800; font-size:22px; margin-bottom:8px;
-  }
-  .prereg-head p{ color:var(--dim); font-size:13px; line-height:1.6; }
-  .prereg{
-    width:100%; margin:0 auto; border-radius:28px; padding:34px 32px;
-    border:1px solid rgba(255,42,61,0.35);
-    background:linear-gradient(165deg, rgba(255,42,61,0.08), rgba(30,111,255,0.05));
-  }
-  @media (max-width:600px){ .prereg{ padding:28px 22px; } }
-  .prereg-field{ margin-bottom:18px; }
-  .prereg-field label{
-    display:block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em;
-    text-transform:uppercase; color:var(--dim); margin-bottom:8px;
-  }
-  .prereg-field input{
-    width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--line);
-    background:rgba(253,242,255,0.05); color:var(--cream); font-family:'Space Grotesk', sans-serif;
-    font-size:14.5px; outline:none; transition:border-color 0.2s, background 0.2s;
-  }
-  .prereg-field input::placeholder{ color:rgba(198,174,221,0.5); }
-  .prereg-field input:focus{ border-color:var(--red); background:rgba(253,242,255,0.08); }
-  .prereg-field .hint{ font-size:11.5px; color:var(--dim); opacity:0.7; margin-top:6px; }
-  .prereg-submit{
-    width:100%; margin-top:6px; padding:16px 20px; border-radius:100px; border:none; cursor:pointer;
-    font-family:'Unbounded', sans-serif; font-weight:700; font-size:12.5px; letter-spacing:0.05em; text-transform:uppercase;
-    background:linear-gradient(90deg, var(--red), var(--orange), var(--yellow)); background-size:300% auto; color:#100019;
-    box-shadow:0 0 30px rgba(255,106,26,0.4); transition:transform 0.25s ease, background-position 0.6s ease, opacity 0.2s;
-  }
-  .prereg-submit:hover{ transform:translateY(-2px); background-position:right center; }
-  .prereg-submit:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
-  .prereg-msg{
-    margin-top:16px; padding:14px 16px; border-radius:12px; font-size:13px; line-height:1.6; display:none;
-  }
-  .prereg-msg.show{ display:block; }
-  .prereg-msg--ok{ border:1px solid rgba(255,212,0,0.4); background:rgba(255,212,0,0.08); color:var(--yellow); }
-  .prereg-msg--err{ border:1px solid rgba(255,42,61,0.4); background:rgba(255,42,61,0.08); color:var(--red); }
-  .prereg-privacy{ margin-top:16px; font-size:11px; color:var(--dim); opacity:0.65; line-height:1.6; text-align:center; }
-
   /* ---------- Footer ---------- */
   footer{ padding:60px 0 40px; border-top:1px solid var(--line); margin-top:40px; }
   .footer-top{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:28px; margin-bottom:34px; }
@@ -397,9 +348,8 @@
       <a href="#kinetic">Kinetic Experience</a>
       <a href="#info">Info</a>
       <a href="#faq">FAQ</a>
-      <a href="#preregistro">Preregistro</a>
     </div>
-    <a class="nav-cta" href="#preregistro">Preregístrate</a>
+    <a class="nav-cta" href="#boleteria">Comprar boletas</a>
   </div>
 </nav>
 
@@ -409,6 +359,11 @@
 
   <div class="hero-grid">
     <div class="hero-copy">
+      <div class="presenter-credit">
+        <img src="ASSETS/fan-tribute-icon.png" alt="Fan Tribute">
+        <span>Fan Tribute presenta</span>
+      </div>
+
       <div class="badge-indep"><span class="dot"></span> Evento independiente · No afiliado ni patrocinado por Insomniac / EDC</div>
 
       <h1>PRE-EDC</h1>
@@ -421,43 +376,6 @@
         <span>📍 Teatro Republik, Bogotá</span>
         <span id="metaEdad">🔞 +18</span>
       </div>
-    </div>
-
-    <div class="hero-form-col" id="preregistro">
-      <div class="presenter-credit">
-        <img src="ASSETS/fan-tribute-icon.png" alt="Fan Tribute">
-        <span>Fan Tribute presenta</span>
-      </div>
-      <div class="prereg-head">
-        <div class="eyebrow">Preregistro</div>
-        <h2>Sé de los primeros en enterarte</h2>
-        <p>Te avisamos apenas se abra la preventa 1 — cupo limitado y precios especiales para quienes se registraron antes.</p>
-      </div>
-
-      <form class="prereg" id="preregForm" action="https://formspree.io/f/xjybqgrz" method="POST">
-        <div class="prereg-field">
-          <label for="preregEmail">Correo electrónico</label>
-          <input type="email" id="preregEmail" name="email" placeholder="tu@correo.com" required>
-        </div>
-        <div class="prereg-field">
-          <label for="preregIg">Usuario de Instagram</label>
-          <input type="text" id="preregIg" name="instagram" placeholder="@tuusuario" required pattern="^@?[A-Za-z0-9._]{1,30}$">
-          <div class="hint">Incluye el @, por ejemplo @alasbogota</div>
-        </div>
-        <div class="prereg-field">
-          <label for="preregCel">Celular</label>
-          <input type="tel" id="preregCel" name="celular" placeholder="+57 300 000 0000" required pattern="^[0-9+()\s-]{7,20}$">
-        </div>
-
-        <input type="hidden" name="_subject" value="Nuevo preregistro — PRE-EDC Bogotá">
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
-
-        <button class="prereg-submit" type="submit">Preregistrarme</button>
-
-        <div class="prereg-msg" id="preregMsg"></div>
-      </form>
-
-      <p class="prereg-privacy">Tus datos se usan únicamente para avisarte sobre PRE-EDC. No los compartimos con terceros.</p>
     </div>
   </div>
 </header>
@@ -486,7 +404,7 @@
       <div class="ticket-card ticket-card--preventa1">
         <div class="ticket-tag">Preventa 1</div>
         <div class="ticket-price">$35.000</div>
-        <p class="ticket-desc">La tarifa más baja para calentar motores antes del EDC Colombia. Cupo limitado.</p>
+        <p class="ticket-desc">Acceso al evento, $20.000 de consumo y 1 pulsera de luz ✨.</p>
         <a class="ticket-wa-btn" href="https://wa.me/5731610881078?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20PRE-EDC%20Bogot%C3%A1%20%E2%80%94%20%2435.000" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
           Compra ya
@@ -500,7 +418,7 @@
         </div>
         <div class="ticket-tag">Preventa 2</div>
         <div class="ticket-price">$40.000</div>
-        <p class="ticket-desc">Segunda fase de preventa — misma energía, rumbo al fin de semana del EDC Colombia.</p>
+        <p class="ticket-desc">Acceso al evento, $20.000 de consumo y 1 barra de luz 💡.</p>
         <button class="ticket-buy-btn--locked" type="button" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
@@ -514,7 +432,7 @@
         </div>
         <div class="ticket-tag">General</div>
         <div class="ticket-price">$45.000</div>
-        <p class="ticket-desc">Entrada general, precio regular / en puerta — la previa completa antes del EDC Colombia.</p>
+        <p class="ticket-desc">Acceso al evento, $20.000 de consumo, 2 regalos de luz ✨ y 1 regalo sorpresa 🎁.</p>
         <button class="ticket-buy-btn--locked" type="button" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
@@ -527,7 +445,7 @@
 <section id="kinetic" class="kinetic-section">
   <div class="wrap">
     <div class="kinetic-head">
-      <div class="eyebrow">Experiencia exclusiva</div>
+      <div class="eyebrow">🦉 Village Owl — Segundo piso</div>
       <h2 class="kinetic-title">KINETIC EXPERIENCE</h2>
       <p>VIP y Backstage — la capa más profunda del PRE-EDC. Disponibilidad próximamente.</p>
     </div>
@@ -538,8 +456,8 @@
           Bloqueado
         </div>
         <div class="ticket-tag">VIP</div>
-        <div class="ticket-price">$330.000</div>
-        <p class="ticket-desc">Acceso preferencial, zona exclusiva y menos filas — la previa VIP antes del EDC Colombia.</p>
+        <div class="ticket-price">$350.000</div>
+        <p class="ticket-desc">Mesa para 5 o 6 personas: botella de trago 🥃, agua 💧, sofá y sillas premium — espacio exclusivo en Village Owl.</p>
         <button class="ticket-buy-btn--locked" type="button" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
@@ -553,7 +471,7 @@
         </div>
         <div class="ticket-tag">Backstage</div>
         <div class="ticket-price">$400.000</div>
-        <p class="ticket-desc">La experiencia más exclusiva de PRE-EDC — acceso backstage, la fiesta definitiva antes del EDC Colombia.</p>
+        <p class="ticket-desc">Mesa para 5 o 6 personas con todos los beneficios VIP, más zona exclusiva junto a los DJs 🎧, regalos de luz ✨ y experiencia Backstage.</p>
         <button class="ticket-buy-btn--locked" type="button" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
           Compra ya
@@ -628,11 +546,11 @@
       </details>
       <details class="faq-item">
         <summary>¿Cuál es la diferencia entre Preventa 1, Preventa 2 y General?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <div class="faq-answer">Las tres dan acceso a pista, primer y tercer piso, con $20.000 en consumibles incluidos. Preventa 1 ($35K) son los primeros 40 cupos y trae regalo sorpresa (gafas, boleta conmemorativa o pulsera) — se compra directo por WhatsApp. Preventa 2 ($40K) y General ($45K) son las siguientes etapas, sin el regalo pero mismo acceso.</div>
+        <div class="faq-answer">Las tres dan acceso al evento con $20.000 en consumo incluido. Preventa 1 ($35K) trae 1 pulsera de luz ✨ y se compra directo por WhatsApp mientras dure el cupo. Preventa 2 ($40K) trae 1 barra de luz 💡. General ($45K) trae 2 regalos de luz ✨ y 1 regalo sorpresa 🎁.</div>
       </details>
       <details class="faq-item">
         <summary>¿Qué diferencia hay entre VIP y Backstage?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <div class="faq-answer">Ambas son mesas para 5–6 personas con botella (ron o aguardiente), agua, sofá, mesa propia y prioridad de ingreso. VIP cuesta $330K. Backstage cuesta $400K y además da acceso al espacio con los DJs y la administración, más un obsequio individual (gafas, manilla o boleta) para cada persona de la mesa.</div>
+        <div class="faq-answer">Ambas son mesas para 5 o 6 personas en Village Owl (segundo piso), con botella de trago, agua, sofá y sillas premium. VIP cuesta $350K. Backstage cuesta $400K e incluye todo lo de VIP, más zona exclusiva junto a los DJs, regalos de luz y la experiencia Backstage completa.</div>
       </details>
       <details class="faq-item">
         <summary>¿Hay restricción de edad?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
@@ -681,52 +599,6 @@
       p.style.animationDuration = (2.5 + Math.random() * 3) + 's';
       field.appendChild(p);
     }
-  })();
-
-  // Envío del formulario de preregistro (Formspree) sin recargar la página.
-  (function () {
-    var form = document.getElementById('preregForm');
-    var msg = document.getElementById('preregMsg');
-    if (!form) return;
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      if (form.action.indexOf('TU_FORM_ID') !== -1) {
-        msg.textContent = 'Formulario aún no conectado: falta configurar el endpoint de Formspree.';
-        msg.className = 'prereg-msg show prereg-msg--err';
-        return;
-      }
-
-      var submitBtn = form.querySelector('.prereg-submit');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando...';
-      msg.className = 'prereg-msg';
-
-      fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      })
-      .then(function (response) {
-        if (response.ok) {
-          form.reset();
-          msg.textContent = '¡Listo! Quedaste preregistrado — te avisamos por correo cuando abra la preventa.';
-          msg.className = 'prereg-msg show prereg-msg--ok';
-        } else {
-          msg.textContent = 'Algo salió mal. Intenta de nuevo en un momento.';
-          msg.className = 'prereg-msg show prereg-msg--err';
-        }
-      })
-      .catch(function () {
-        msg.textContent = 'No se pudo enviar. Revisa tu conexión e intenta de nuevo.';
-        msg.className = 'prereg-msg show prereg-msg--err';
-      })
-      .finally(function () {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Preregistrarme';
-      });
-    });
   })();
 </script>
 
