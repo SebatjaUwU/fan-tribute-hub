@@ -1496,7 +1496,7 @@ function enviarPromoPreEdc() {
 function enviarPromoPreEdc_(destinatarios) {
   const flyerBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_FLYER_B64), 'image/jpeg', 'flyer-pre-edc.jpg');
   const preciosBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_PRECIOS_B64), 'image/jpeg', 'precios-pre-edc.jpg');
-  const subject = 'PRE-EDC Bogota \u2014 la previa antes del EDC Colombia \ud83d\udc9b\ud83e\udde1';
+  const subject = 'PRE-EDC Bogota — la previa antes del EDC Colombia 💛🧡';
 
   destinatarios.forEach(function (email) {
     try {
