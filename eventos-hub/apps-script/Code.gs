@@ -1496,7 +1496,7 @@ function enviarPromoPreEdc() {
 function enviarPromoPreEdc_(destinatarios) {
   const flyerBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_FLYER_B64), 'image/jpeg', 'flyer-pre-edc.jpg');
   const preciosBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_PRECIOS_B64), 'image/jpeg', 'precios-pre-edc.jpg');
-  const subject = 'PRE-EDC Bogota — la previa antes del EDC Colombia 💛🧡';
+  const subject = 'PRE-EDC Bogota — la previa antes del EDC Colombia ❤️';
 
   destinatarios.forEach(function (email) {
     try {
@@ -1524,7 +1524,7 @@ function buildPromoPreEdcHtml_() {
     '<div style="height:6px; background:linear-gradient(90deg,#FF2A3D,#FF6A1A,#FFD400);"></div>' +
     '<div style="max-width:480px; margin:0 auto; padding:40px 24px 8px; text-align:center; font-family:Arial,Helvetica,sans-serif;">' +
 
-      '<p style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:' + neon + '; font-weight:700; margin:0 0 6px;">Fan Tribute presenta</p>' +
+      '<p style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:' + neon + '; font-weight:700; margin:0 0 6px;">Fan Tribute presenta 💛🧡</p>' +
       '<h1 style="font-size:30px; font-weight:800; color:' + cream + '; margin:0 0 6px; font-family:Georgia,\'Times New Roman\',serif;">PRE-EDC Bogot&aacute;</h1>' +
       '<p style="font-size:13px; color:' + dim + '; margin:0 0 26px;">Viernes 2 de octubre &middot; Teatro Republik, Bogot&aacute;</p>' +
 
