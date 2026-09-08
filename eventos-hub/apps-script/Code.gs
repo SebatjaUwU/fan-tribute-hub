@@ -1493,12 +1493,55 @@ function enviarPromoPreEdc() {
   enviarPromoPreEdc_(destinatarios);
 }
 
+// Key en Script Properties donde se guarda (separado por comas) los
+// correos a los que YA se les mando la promo. Sirve para poder correr
+// enviarPromoPreEdc() varios dias seguidos sin repetir a nadie, cuando
+// la cuota diaria de Gmail (MailApp.getRemainingDailyQuota) corta el
+// envio a la mitad (100/dia en cuentas gratis, ~1500/dia en Workspace).
+const PROMO_ENVIADOS_PROP = 'PROMO_PRE_EDC_ENVIADOS';
+
+function getPromoEnviados_() {
+  const raw = PropertiesService.getScriptProperties().getProperty(PROMO_ENVIADOS_PROP);
+  return raw ? raw.split(',') : [];
+}
+
+function marcarPromoEnviado_(email) {
+  const enviados = getPromoEnviados_();
+  enviados.push(email.toLowerCase());
+  PropertiesService.getScriptProperties().setProperty(PROMO_ENVIADOS_PROP, enviados.join(','));
+}
+
+/**
+ * Util manual: borra el registro de "ya enviados" (Script Properties >
+ * Ejecutar > resetPromoEnviados) si algun dia quieres volver a mandarle
+ * la promo a todo el mundo desde cero.
+ */
+function resetPromoEnviados() {
+  PropertiesService.getScriptProperties().deleteProperty(PROMO_ENVIADOS_PROP);
+  Logger.log('Registro de enviados de PROMO PRE-EDC borrado.');
+}
+
 function enviarPromoPreEdc_(destinatarios) {
   const flyerBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_FLYER_B64), 'image/jpeg', 'flyer-pre-edc.jpg');
   const preciosBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_PRECIOS_B64), 'image/jpeg', 'precios-pre-edc.jpg');
   const subject = 'PRE-EDC Bogota — la previa antes del EDC Colombia ❤️';
 
-  destinatarios.forEach(function (email) {
+  const yaEnviados = getPromoEnviados_();
+  let enviadosAhora = 0, saltados = 0;
+
+  for (let i = 0; i < destinatarios.length; i++) {
+    const email = destinatarios[i];
+
+    if (yaEnviados.indexOf(email.toLowerCase()) !== -1) {
+      saltados++;
+      continue;
+    }
+
+    if (MailApp.getRemainingDailyQuota() <= 0) {
+      Logger.log('Cuota diaria de correo agotada — se corto el envio en "' + email + '". Vuelve a correr esta funcion mañana, retoma donde quedo (no repite a los ya enviados).');
+      break;
+    }
+
     try {
       GmailApp.sendEmail(email, subject, '', {
         htmlBody: buildPromoPreEdcHtml_(),
@@ -1506,13 +1549,15 @@ function enviarPromoPreEdc_(destinatarios) {
         attachments: [flyerBlob, preciosBlob],
         name: 'Fan Tribute'
       });
+      marcarPromoEnviado_(email);
+      enviadosAhora++;
       Logger.log('Enviado a ' + email);
     } catch (err) {
       Logger.log('Error enviando promo PRE-EDC a ' + email + ': ' + err);
     }
-  });
+  }
 
-  Logger.log('--- Envio de promo PRE-EDC terminado (' + destinatarios.length + ' destinatarios) ---');
+  Logger.log('--- Envio de promo PRE-EDC terminado: ' + enviadosAhora + ' enviados ahora, ' + saltados + ' ya estaban enviados de antes, de ' + destinatarios.length + ' destinatarios totales ---');
 }
 
 function buildPromoPreEdcHtml_() {
