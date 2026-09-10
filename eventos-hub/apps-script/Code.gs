@@ -1461,6 +1461,13 @@ function resumenTicketsPorEvento() {
 const PROMO_EVENTOS = ['End of Summer', 'Summer 2016'];
 const PROMO_PRUEBA_EMAILS = ['juan.s.parra.l.25@gmail.com', 'everandreymonroyruiz@gmail.com'];
 
+// Segunda lista: spreadsheet aparte "negocio_fantribute", hoja "boletas",
+// columna con encabezado "Correo electronico". Se abre por ID (no es la
+// Sheet a la que esta pegado este proyecto), asi que la primera vez que
+// corras enviarPromoPreEdcNegocio() te va a pedir permiso para verla.
+const PROMO_NEGOCIO_SHEET_ID = '1f_3j-nwWql0V4xuMMcv1FopiyqgJKG77CCn0CJ1aBic';
+const PROMO_NEGOCIO_TAB = 'boletas';
+
 // JPEG en base64, generados desde edc-preparty/ASSETS/flyer.jpg y
 // precios.jpg. Si cambias esas imagenes, vuelve a correr el script que
 // genero este bloque (no edites estas dos constantes a mano).
@@ -1490,6 +1497,68 @@ function enviarPromoPreEdc() {
   }
 
   Logger.log('Destinatarios encontrados: ' + destinatarios.length);
+  enviarPromoPreEdc_(destinatarios);
+}
+
+/**
+ * Igual que enviarPromoPreEdc() pero leyendo la lista del spreadsheet
+ * "negocio_fantribute" (hoja "boletas", columna "Correo electronico").
+ * Comparte el mismo registro de "ya enviados", asi que si un correo ya
+ * recibio la promo desde la otra lista, aca se salta.
+ */
+function enviarPromoPreEdcNegocio() {
+  let ss;
+  try {
+    ss = SpreadsheetApp.openById(PROMO_NEGOCIO_SHEET_ID);
+  } catch (err) {
+    Logger.log('No se pudo abrir el spreadsheet negocio_fantribute (' + PROMO_NEGOCIO_SHEET_ID + '): ' + err);
+    return;
+  }
+
+  const sheet = ss.getSheetByName(PROMO_NEGOCIO_TAB);
+  if (!sheet) {
+    Logger.log('No existe la hoja "' + PROMO_NEGOCIO_TAB + '" en negocio_fantribute.');
+    return;
+  }
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) {
+    Logger.log('La hoja "' + PROMO_NEGOCIO_TAB + '" no tiene filas de datos.');
+    return;
+  }
+
+  // Busca la columna de correo por encabezado (sin tildes, sin importar
+  // mayusculas), aceptando "Correo electronico", "correo", etc.
+  const headers = data[0];
+  let colEmail = -1;
+  for (let c = 0; c < headers.length; c++) {
+    const h = String(headers[c] || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .trim();
+    if (h.indexOf('correo') !== -1 || h.indexOf('email') !== -1 || h.indexOf('e-mail') !== -1) {
+      colEmail = c;
+      break;
+    }
+  }
+
+  if (colEmail === -1) {
+    Logger.log('No se encontro una columna de correo en los encabezados: ' + headers.join(' | '));
+    return;
+  }
+
+  const vistos = {};
+  const destinatarios = [];
+  for (let i = 1; i < data.length; i++) {
+    const email = String(data[i][colEmail] || '').trim();
+    if (!email || email.indexOf('@') === -1) continue;
+    const key = email.toLowerCase();
+    if (vistos[key]) continue;
+    vistos[key] = true;
+    destinatarios.push(email);
+  }
+
+  Logger.log('Destinatarios encontrados en negocio_fantribute (columna "' + headers[colEmail] + '"): ' + destinatarios.length);
   enviarPromoPreEdc_(destinatarios);
 }
 
