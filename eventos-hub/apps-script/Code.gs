@@ -1527,29 +1527,42 @@ function enviarPromoPreEdcNegocio() {
     return;
   }
 
-  // Busca la columna de correo por encabezado (sin tildes, sin importar
-  // mayusculas), aceptando "Correo electronico", "correo", etc.
-  const headers = data[0];
-  let colEmail = -1;
-  for (let c = 0; c < headers.length; c++) {
-    const h = String(headers[c] || '')
+  // Busca la fila de encabezados y la columna de correo. La hoja
+  // "boletas" tiene un titulo grande en la fila 1 ("BOLETAS \u2014 PREVENTA
+  // ..."), asi que los encabezados reales estan mas abajo. Se revisan
+  // las primeras 15 filas buscando una celda tipo "Correo electronico"
+  // (sin tildes, sin importar mayusculas).
+  const normaliza = function (v) {
+    return String(v || '')
       .toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .trim();
-    if (h.indexOf('correo') !== -1 || h.indexOf('email') !== -1 || h.indexOf('e-mail') !== -1) {
-      colEmail = c;
-      break;
+  };
+  const esCabeceraCorreo = function (v) {
+    const h = normaliza(v);
+    return h.indexOf('correo') !== -1 || h.indexOf('email') !== -1 || h.indexOf('e-mail') !== -1;
+  };
+
+  let filaHeader = -1, colEmail = -1;
+  const maxScan = Math.min(15, data.length);
+  for (let r = 0; r < maxScan && filaHeader === -1; r++) {
+    for (let c = 0; c < data[r].length; c++) {
+      if (esCabeceraCorreo(data[r][c])) {
+        filaHeader = r;
+        colEmail = c;
+        break;
+      }
     }
   }
 
   if (colEmail === -1) {
-    Logger.log('No se encontro una columna de correo en los encabezados: ' + headers.join(' | '));
+    Logger.log('No se encontro una columna de correo en las primeras ' + maxScan + ' filas de la hoja "' + PROMO_NEGOCIO_TAB + '".');
     return;
   }
 
   const vistos = {};
   const destinatarios = [];
-  for (let i = 1; i < data.length; i++) {
+  for (let i = filaHeader + 1; i < data.length; i++) {
     const email = String(data[i][colEmail] || '').trim();
     if (!email || email.indexOf('@') === -1) continue;
     const key = email.toLowerCase();
@@ -1558,7 +1571,7 @@ function enviarPromoPreEdcNegocio() {
     destinatarios.push(email);
   }
 
-  Logger.log('Destinatarios encontrados en negocio_fantribute (columna "' + headers[colEmail] + '"): ' + destinatarios.length);
+  Logger.log('negocio_fantribute: encabezados en fila ' + (filaHeader + 1) + ', columna de correo "' + data[filaHeader][colEmail] + '" \u2014 ' + destinatarios.length + ' destinatarios unicos.');
   enviarPromoPreEdc_(destinatarios);
 }
 
