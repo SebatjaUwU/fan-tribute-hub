@@ -1781,3 +1781,113 @@ function buildWhatsAppPromoMensaje_(nombre) {
   const saludo = nombre ? '¡Hola ' + nombre + '!' : '¡Hola!';
   return saludo + ' 👋 Soy de Fan Tribute. ¿Listo para el PRE-EDC? 🎉 Abrimos las últimas entradas de Preventa 1 a $35.000, incluye $20.000 de consumo + accesorios de luz. Si quieres reservar la tuya, escríbeme "Quiero" y te paso los datos.';
 }
+
+// ==== ASISTENTE DE ENVIO WHATSAPP (sidebar, clic humano obligatorio) ====
+// Abre un sidebar en la Sheet que va abriendo, cada X segundos, el
+// siguiente chat de WhatsApp (mismo link wa.me que genera
+// generarLinksWhatsAppPromoPreEdc). Vos seguis dandole "Enviar" en cada
+// chat que se abre -- el asistente NO manda nada solo, solo te ahorra ir
+// a buscar cada contacto a mano en la hoja. El clic de enviar sigue
+// siendo tuyo en todo momento.
+//
+// Se agrega un menu "📱 WhatsApp PRE-EDC" arriba en la Sheet, con la
+// opcion "Abrir asistente de envío" (aparece la primera vez que abras o
+// recargues la Sheet despues de pegar este codigo).
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('📱 WhatsApp PRE-EDC')
+    .addItem('Abrir asistente de envío', 'abrirAsistenteWhatsApp')
+    .addToUi();
+}
+
+function abrirAsistenteWhatsApp() {
+  const html = HtmlService.createHtmlOutput(buildAsistenteWhatsAppHtml_())
+    .setTitle('Asistente WhatsApp · PRE-EDC')
+    .setWidth(320);
+  SpreadsheetApp.getUi().showSidebar(html);
+}
+
+function getContactosPendientesWA_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(WA_PROMO_SHEET_NAME);
+  if (!sheet) return [];
+  const data = sheet.getDataRange().getValues();
+  const pendientes = [];
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][2] === true) continue; // ya marcado como Enviado
+    if (!data[i][3]) continue; // sin link
+    pendientes.push({ row: i + 1, nombre: data[i][0], telefono: data[i][1], link: data[i][3] });
+  }
+  return pendientes;
+}
+
+function marcarWAEnviado_(row) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(WA_PROMO_SHEET_NAME);
+  if (!sheet) return;
+  sheet.getRange(row, 3).setValue(true);
+}
+
+function buildAsistenteWhatsAppHtml_() {
+  return '' +
+'<style>' +
+  'body{ font-family:Arial,Helvetica,sans-serif; font-size:13px; color:#222; padding:6px 4px; }' +
+  'h3{ font-size:14px; margin:0 0 10px; }' +
+  'p.hint{ color:#666; font-size:11.5px; line-height:1.5; margin:0 0 16px; }' +
+  'label{ display:block; font-size:11.5px; color:#555; margin-bottom:4px; }' +
+  'input[type=number]{ width:100%; padding:6px 8px; box-sizing:border-box; margin-bottom:14px; border:1px solid #ccc; border-radius:6px; }' +
+  'button{ width:100%; padding:10px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:8px; }' +
+  '#btnIniciar{ background:#25D366; color:#04150C; }' +
+  '#btnDetener{ background:#e0e0e0; color:#333; }' +
+  '#btnDetener:disabled, #btnIniciar:disabled{ opacity:0.5; cursor:not-allowed; }' +
+  '#estado{ margin-top:14px; padding:10px; background:#f4f4f4; border-radius:6px; font-size:12px; line-height:1.5; white-space:pre-wrap; }' +
+'</style>' +
+'<h3>📱 Asistente WhatsApp — PRE-EDC</h3>' +
+'<p class="hint">Va abriendo, uno por uno, el chat de WhatsApp de cada contacto pendiente (columna "Enviado" en blanco) con el mensaje ya escrito. Vos le das clic a <strong>Enviar</strong> en cada chat que se abre — el asistente solo te ahorra ir a buscar cada contacto a mano.</p>' +
+'<label for="intervalo">Segundos entre cada contacto</label>' +
+'<input type="number" id="intervalo" value="25" min="10">' +
+'<button id="btnIniciar">Iniciar</button>' +
+'<button id="btnDetener" disabled>Detener</button>' +
+'<div id="estado">Listo para empezar.</div>' +
+'<script>' +
+  'let ventana = null, contactos = [], idx = 0, timer = null;' +
+  'const elEstado = document.getElementById("estado");' +
+  'const btnIniciar = document.getElementById("btnIniciar");' +
+  'const btnDetener = document.getElementById("btnDetener");' +
+  'function fijarEstado(t){ elEstado.textContent = t; }' +
+  'function detener(mensajeFinal){' +
+    'if (timer) clearTimeout(timer);' +
+    'timer = null;' +
+    'btnIniciar.disabled = false;' +
+    'btnDetener.disabled = true;' +
+    'if (mensajeFinal) fijarEstado(mensajeFinal);' +
+  '}' +
+  'function abrirSiguiente(){' +
+    'if (idx >= contactos.length){ detener("Listo — se recorrieron los " + contactos.length + " contactos pendientes."); return; }' +
+    'const c = contactos[idx];' +
+    'fijarEstado((idx + 1) + " de " + contactos.length + " — Enviando a: " + c.nombre + " (" + c.telefono + ")");' +
+    'if (ventana && !ventana.closed) { ventana.location.href = c.link; }' +
+    'google.script.run.marcarWAEnviado_(c.row);' +
+    'idx++;' +
+    'const segundos = Math.max(10, parseInt(document.getElementById("intervalo").value, 10) || 25);' +
+    'timer = setTimeout(abrirSiguiente, segundos * 1000);' +
+  '}' +
+  'btnIniciar.addEventListener("click", function(){' +
+    'btnIniciar.disabled = true;' +
+    'btnDetener.disabled = false;' +
+    'fijarEstado("Cargando contactos pendientes...");' +
+    'google.script.run' +
+      '.withSuccessHandler(function(lista){' +
+        'contactos = lista; idx = 0;' +
+        'if (!contactos.length){ detener("No hay contactos pendientes — todos ya estan marcados como Enviado."); return; }' +
+        'ventana = window.open("about:blank", "_blank");' +
+        'if (!ventana){ detener("El navegador bloqueo la ventana emergente. Permite pop-ups para este sitio e intenta de nuevo."); return; }' +
+        'abrirSiguiente();' +
+      '})' +
+      '.withFailureHandler(function(err){ detener("Error: " + err.message); })' +
+      '.getContactosPendientesWA_();' +
+  '});' +
+  'btnDetener.addEventListener("click", function(){ detener("Detenido. El contacto actual ya quedo marcado como Enviado — si no alcanzaste a mandarle, descheckealo en la hoja."); });' +
+'</script>';
+}
