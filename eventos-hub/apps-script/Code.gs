@@ -1808,7 +1808,7 @@ function abrirAsistenteWhatsApp() {
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
-function getContactosPendientesWA_() {
+function getContactosPendientesWA() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(WA_PROMO_SHEET_NAME);
   if (!sheet) return [];
@@ -1822,7 +1822,7 @@ function getContactosPendientesWA_() {
   return pendientes;
 }
 
-function marcarWAEnviado_(row) {
+function marcarWAEnviado(row) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(WA_PROMO_SHEET_NAME);
   if (!sheet) return;
@@ -1868,7 +1868,7 @@ function buildAsistenteWhatsAppHtml_() {
     'const c = contactos[idx];' +
     'fijarEstado((idx + 1) + " de " + contactos.length + " — Enviando a: " + c.nombre + " (" + c.telefono + ")");' +
     'if (ventana && !ventana.closed) { ventana.location.href = c.link; }' +
-    'google.script.run.marcarWAEnviado_(c.row);' +
+    'google.script.run.marcarWAEnviado(c.row);' +
     'idx++;' +
     'const segundos = Math.max(10, parseInt(document.getElementById("intervalo").value, 10) || 25);' +
     'timer = setTimeout(abrirSiguiente, segundos * 1000);' +
@@ -1886,7 +1886,7 @@ function buildAsistenteWhatsAppHtml_() {
         'abrirSiguiente();' +
       '})' +
       '.withFailureHandler(function(err){ detener("Error: " + err.message); })' +
-      '.getContactosPendientesWA_();' +
+      '.getContactosPendientesWA();' +
   '});' +
   'btnDetener.addEventListener("click", function(){ detener("Detenido. El contacto actual ya quedo marcado como Enviado — si no alcanzaste a mandarle, descheckealo en la hoja."); });' +
 '</script>';
