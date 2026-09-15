@@ -1670,3 +1670,114 @@ function buildPromoPreEdcHtml_() {
     '</div>' +
   '</div>';
 }
+
+// ==== PROMO WHATSAPP PRE-EDC (links wa.me para envio manual) ====
+// A diferencia del correo, WhatsApp no tiene una forma segura de enviar en
+// automatico sin arriesgar que Meta bloquee el numero. En vez de eso, esto
+// arma una hoja nueva con un link wa.me ya redactado por cada contacto
+// (Nombre + Telefono, sacados de "Repositorio QR" y de negocio_fantribute,
+// sin duplicar), para que abras cada link y solo le des "Enviar" desde tu
+// WhatsApp real. Cero riesgo de bloqueo, porque el envio real lo haces tu
+// a mano desde tu cuenta.
+//
+// Ejecuta generarLinksWhatsAppPromoPreEdc() a mano desde el editor de Apps
+// Script. Crea/reemplaza la hoja "WhatsApp Promo PRE-EDC" en este mismo
+// spreadsheet (el de Repositorio QR) con las columnas Nombre | Telefono |
+// Enviado (casilla para marcar a mano mientras vas mandando) | Link.
+
+const WA_PROMO_SHEET_NAME = 'WhatsApp Promo PRE-EDC';
+
+function generarLinksWhatsAppPromoPreEdc() {
+  const contactos = [];
+  const vistos = {};
+
+  function agregar(nombre, telefonoCrudo) {
+    const tel = normalizarTelefonoCO_(telefonoCrudo);
+    if (!tel) return;
+    if (vistos[tel]) return;
+    vistos[tel] = true;
+    contactos.push({ nombre: String(nombre || '').trim(), telefono: tel });
+  }
+
+  // Fuente 1: Repositorio QR (mismos eventos que la promo por correo)
+  const sheet = getSheet_();
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    const evento = data[i][1];
+    const estado = data[i][11];
+    if (estado !== 'APPROVED') continue;
+    if (PROMO_EVENTOS.indexOf(evento) === -1) continue;
+    agregar(data[i][7], data[i][9]);
+  }
+
+  // Fuente 2: negocio_fantribute (hoja "boletas"), buscando columnas de
+  // nombre y telefono por encabezado (la fila 1 ahi es un titulo, no
+  // encabezados reales — mismo criterio que ya usa la version de correo).
+  try {
+    const ssNegocio = SpreadsheetApp.openById(PROMO_NEGOCIO_SHEET_ID);
+    const hojaNegocio = ssNegocio.getSheetByName(PROMO_NEGOCIO_TAB);
+    if (hojaNegocio) {
+      const dataNegocio = hojaNegocio.getDataRange().getValues();
+      const normaliza = function (v) {
+        return String(v || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      };
+      let filaHeader = -1, colNombre = -1, colTelefono = -1;
+      const maxScan = Math.min(15, dataNegocio.length);
+      for (let r = 0; r < maxScan; r++) {
+        for (let c = 0; c < dataNegocio[r].length; c++) {
+          const h = normaliza(dataNegocio[r][c]);
+          if (colTelefono === -1 && (h.indexOf('telefono') !== -1 || h.indexOf('celular') !== -1 || h.indexOf('whatsapp') !== -1)) {
+            colTelefono = c; filaHeader = Math.max(filaHeader, r);
+          }
+          if (colNombre === -1 && (h.indexOf('nombre') !== -1 || h.indexOf('cliente') !== -1)) {
+            colNombre = c; filaHeader = Math.max(filaHeader, r);
+          }
+        }
+        if (colTelefono !== -1 && colNombre !== -1) break;
+      }
+      if (colTelefono !== -1) {
+        for (let i = filaHeader + 1; i < dataNegocio.length; i++) {
+          agregar(colNombre !== -1 ? dataNegocio[i][colNombre] : '', dataNegocio[i][colTelefono]);
+        }
+      } else {
+        Logger.log('negocio_fantribute: no se encontro columna de telefono en las primeras ' + maxScan + ' filas.');
+      }
+    }
+  } catch (err) {
+    Logger.log('No se pudo leer negocio_fantribute para WhatsApp: ' + err);
+  }
+
+  // Escribe la hoja de salida con un link wa.me por contacto.
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let hojaSalida = ss.getSheetByName(WA_PROMO_SHEET_NAME);
+  if (hojaSalida) { hojaSalida.clear(); } else { hojaSalida = ss.insertSheet(WA_PROMO_SHEET_NAME); }
+
+  hojaSalida.appendRow(['Nombre', 'Telefono', 'Enviado', 'Link de WhatsApp']);
+  hojaSalida.setFrozenRows(1);
+
+  contactos.forEach(function (c) {
+    const mensaje = buildWhatsAppPromoMensaje_(c.nombre);
+    const link = 'https://wa.me/' + c.telefono + '?text=' + encodeURIComponent(mensaje);
+    hojaSalida.appendRow([c.nombre, c.telefono, false, link]);
+  });
+
+  Logger.log('Links de WhatsApp generados: ' + contactos.length + ' contactos, en la hoja "' + WA_PROMO_SHEET_NAME + '".');
+}
+
+/**
+ * Deja el telefono en formato para wa.me: 57 + 10 digitos, sin "+" ni
+ * espacios. Acepta numeros ya con el 57 adelante, con "+", con guiones,
+ * etc. Devuelve '' si no alcanza a verse como un celular colombiano.
+ */
+function normalizarTelefonoCO_(crudo) {
+  let digitos = String(crudo || '').replace(/\D/g, '');
+  if (!digitos) return '';
+  if (digitos.length === 10 && digitos.charAt(0) === '3') digitos = '57' + digitos;
+  if (digitos.length !== 12 || digitos.indexOf('57') !== 0) return '';
+  return digitos;
+}
+
+function buildWhatsAppPromoMensaje_(nombre) {
+  const saludo = nombre ? '¡Hola ' + nombre + '!' : '¡Hola!';
+  return saludo + ' 👋 Soy de Fan Tribute. Viene PRE-EDC Bogotá 🎉 la previa antes del EDC Colombia — viernes 2 de octubre en Teatro Republik. Preventa 1 a $35.000 (incluye $20.000 de consumo + regalo de luz), cupos limitados. ¿Te separo tu entrada?';
+}
