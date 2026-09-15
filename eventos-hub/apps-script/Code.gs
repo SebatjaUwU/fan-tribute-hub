@@ -1779,5 +1779,5 @@ function normalizarTelefonoCO_(crudo) {
 
 function buildWhatsAppPromoMensaje_(nombre) {
   const saludo = nombre ? '¡Hola ' + nombre + '!' : '¡Hola!';
-  return saludo + ' 👋 Soy de Fan Tribute. Viene PRE-EDC Bogotá 🎉 la previa antes del EDC Colombia — viernes 2 de octubre en Teatro Republik. Preventa 1 a $35.000 (incluye $20.000 de consumo + regalo de luz), cupos limitados. ¿Te separo tu entrada?';
+  return saludo + ' 👋 Soy de Fan Tribute. ¿Listo para el PRE-EDC? 🎉 Abrimos las últimas entradas de Preventa 1 a $35.000, incluye $20.000 de consumo + accesorios de luz. Si quieres reservar la tuya, escríbeme "Quiero" y te paso los datos.';
 }
