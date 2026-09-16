@@ -1,0 +1,898 @@
+<title>Back to Halloween 2016</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #050406;
+    --charcoal: #17151C;
+    --charcoal-2: #211D29;
+    --white: #EDEAE6;
+    --white-dim: #A79FB0;
+    --orange: #FF6B1A;
+    --orange-soft: #FFA361;
+    --purple: #6A2FD9;
+    --purple-glow: #9B5CFF;
+    --moon: #F2E9C9;
+    --dark-red: #7A1220;
+    --red-soft: #E0596B;
+    --line: rgba(237,234,230,0.14);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  html.no-motion *{ animation:none !important; transition:none !important; }
+  body{
+    background: var(--black); color: var(--white); font-family:'Space Grotesk', sans-serif; overflow-x:hidden;
+    cursor: default;
+  }
+  body.intro-active{ overflow:hidden; height:100vh; }
+  a{ color:inherit; }
+  img,svg{ display:block; max-width:100%; }
+  button{ font-family:inherit; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+  ::selection{ background: var(--orange); color:#1A0B00; }
+  section{ position:relative; background:var(--black); overflow:hidden; }
+  .display{ font-family:'Michroma', 'Space Grotesk', sans-serif; }
+
+  /* ---------- Cursor glow (desktop solamente) ---------- */
+  #cursorGlow{
+    position:fixed; width:260px; height:260px; border-radius:50%; pointer-events:none; z-index:999;
+    background:radial-gradient(circle, rgba(155,92,255,0.14), rgba(255,107,26,0.06) 45%, transparent 70%);
+    transform:translate(-50%,-50%); mix-blend-mode:screen; display:none;
+  }
+  @media (pointer:fine){ #cursorGlow.on{ display:block; } }
+
+  /* ---------- Controles flotantes ---------- */
+  .floating-controls{ position:fixed; right:18px; bottom:18px; z-index:150; display:flex; flex-direction:column; gap:10px; }
+  .fc-btn{
+    width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(23,21,28,0.85);
+    backdrop-filter:blur(8px); color:var(--white-dim); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px; transition:border-color 0.2s, color 0.2s;
+  }
+  .fc-btn:hover{ border-color:var(--orange); color:var(--orange-soft); }
+  .fc-btn[aria-pressed="true"]{ color:var(--orange-soft); border-color:var(--orange); }
+
+  /* ---------- Ojos en la oscuridad ---------- */
+  .dark-eyes{ position:absolute; display:flex; gap:8px; opacity:0; animation: eyesBlink 9s ease-in-out infinite; }
+  .dark-eyes span{ width:6px; height:6px; border-radius:50%; background:var(--orange-soft); box-shadow:0 0 8px var(--orange-soft); }
+  @keyframes eyesBlink{ 0%,88%,100%{ opacity:0; } 90%,96%{ opacity:0.9; } }
+
+  /* ================= Logo tipografico ================= */
+  .event-logo{ text-align:center; }
+  .event-logo .l1{
+    display:block; font-family:'JetBrains Mono',monospace; font-weight:500; font-size:clamp(11px,1.6vw,13px);
+    letter-spacing:0.5em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px;
+  }
+  .event-logo .l2{
+    display:block; font-family:'Michroma',sans-serif; font-weight:400; font-size:clamp(30px,7vw,68px);
+    line-height:1.15; letter-spacing:0.01em; text-transform:uppercase;
+    background:linear-gradient(180deg, var(--orange-soft) 0%, var(--orange) 45%, var(--purple) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter: drop-shadow(0 0 26px rgba(255,107,26,0.4)) drop-shadow(0 0 60px rgba(106,47,217,0.3));
+  }
+  .event-logo .l3{
+    display:block; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(14px,2.6vw,20px);
+    letter-spacing:0.6em; color:var(--moon); margin-top:14px; filter: drop-shadow(0 0 14px rgba(242,233,201,0.5));
+  }
+
+  /* ================= Intro cinematica ================= */
+  #intro{
+    position:fixed; inset:0; z-index:1000; background:var(--black);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;
+    transition: opacity 1.1s ease, filter 1.1s ease, transform 1.1s ease;
+  }
+  #intro.leaving{ opacity:0; filter:blur(10px) brightness(1.6); transform:scale(1.18); pointer-events:none; }
+  .intro-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .intro-video-overlay{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(5,4,6,0.35) 0%, rgba(5,4,6,0.55) 55%, rgba(5,4,6,0.85) 100%); }
+  .intro-content{ position:relative; z-index:3; text-align:center; opacity:0; animation: fadeIn 1s ease forwards 1.7s; }
+  @keyframes fadeIn{ to{ opacity:1; } }
+  .intro-ghosts, .intro-extras{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+  #enterBtn{
+    position:relative; z-index:3; margin-top:38px; display:inline-flex; align-items:center; gap:10px; padding:15px 34px;
+    border-radius:2px; background:transparent; border:1px solid var(--orange); color:var(--orange-soft);
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:11.5px; letter-spacing:0.35em; text-transform:uppercase;
+    cursor:pointer; opacity:0; animation: fadeIn 1s ease forwards 3.2s; transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+  #enterBtn:hover{ background:var(--orange); color:#1A0B00; box-shadow:0 0 30px rgba(255,107,26,0.5); }
+
+  .ghost{ position:absolute; opacity:0; filter: drop-shadow(0 0 18px rgba(155,92,255,0.35)); }
+  .ghost path{ fill:rgba(237,234,230,0.72); }
+  .ghost.g-in{ animation: ghostIn 1.3s ease forwards, ghostDrift 9s ease-in-out infinite; }
+  @keyframes ghostIn{ from{ opacity:0; transform:translateY(30px) scale(0.7);} to{ opacity:0.68; transform:translateY(0) scale(1);} }
+  @keyframes ghostDrift{ 0%,100%{ margin-left:0; margin-top:0;} 50%{ margin-left:24px; margin-top:-18px;} }
+  .bat-shape{ fill:var(--black); }
+  .spider-thread{ position:absolute; top:0; width:1px; background:linear-gradient(180deg, rgba(237,234,230,0.5), rgba(237,234,230,0.15)); opacity:0; animation: fadeIn 0.8s ease forwards 2.4s; }
+  .spider{ position:absolute; opacity:0; animation: fadeIn 0.8s ease forwards 2.8s, spiderBob 4s ease-in-out infinite 2.8s; }
+  @keyframes spiderBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(14px);} }
+  .spider-body{ fill:var(--black); } .spider-leg{ stroke:var(--black); stroke-width:1.4; fill:none; }
+  .particle{ position:absolute; border-radius:50%; background:var(--moon); opacity:0; animation: particleTwinkle ease-in-out infinite; }
+  @keyframes particleTwinkle{ 0%,100%{ opacity:0.1; transform:translateY(0);} 50%{ opacity:0.72; transform:translateY(-22px);} }
+
+  /* ================= Nav ================= */
+  .nav{ position:fixed; top:0; left:0; right:0; z-index:200; padding:18px 0; background:transparent; border-bottom:1px solid transparent; transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease, border-color 0.4s ease; }
+  .nav.scrolled{ background:rgba(5,4,6,0.82); backdrop-filter:blur(14px); padding:12px 0; border-color:var(--line); }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+  .nav-logo{ font-family:'Michroma',sans-serif; font-size:12px; letter-spacing:0.02em; display:flex; align-items:center; gap:8px; }
+  .nav-logo .accent{ color:var(--orange); }
+  .nav-links{ display:none; gap:30px; font-size:11.5px; letter-spacing:0.12em; font-family:'JetBrains Mono',monospace; text-transform:uppercase; }
+  .nav-links a{ text-decoration:none; opacity:0.75; transition:opacity 0.2s, color 0.2s; }
+  .nav-links a:hover{ opacity:1; color:var(--orange-soft); }
+  @media (min-width:900px){ .nav-links{ display:flex; } }
+  .nav-cta{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; padding:11px 20px; border-radius:2px; text-decoration:none; border:1px solid var(--orange); color:var(--orange-soft); transition: background 0.3s ease, color 0.3s ease; }
+  .nav-cta:hover{ background:var(--orange); color:#1A0B00; }
+  .nav-burger{ display:flex; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; }
+  .nav-burger span{ width:22px; height:2px; background:var(--white); display:block; }
+  @media (min-width:900px){ .nav-burger{ display:none; } }
+  .nav-mobile{ display:none; position:fixed; inset:0; z-index:190; background:rgba(5,4,6,0.97); flex-direction:column; align-items:center; justify-content:center; gap:26px; }
+  .nav-mobile.open{ display:flex; }
+  .nav-mobile a{ font-family:'Michroma',sans-serif; font-size:16px; text-decoration:none; text-transform:uppercase; }
+
+  /* ================= Hero ================= */
+  .hero{ position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:120px 24px 80px; background: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(106,47,217,0.16), transparent 60%), var(--black); }
+  .hero-moon{ position:absolute; top:8%; left:50%; width:min(400px,68vw); height:min(400px,68vw); border-radius:50%; transform:translateX(-50%); background: radial-gradient(circle at 38% 34%, #FFFDF3, var(--moon) 55%, #C9BE93 100%); box-shadow: 0 0 110px 24px rgba(242,233,201,0.26); transition: transform 0.6s ease-out; }
+  .hero-bats{ position:absolute; top:0; left:0; right:0; height:50%; pointer-events:none; overflow:hidden; }
+  .hero-bats svg{ position:absolute; top:0; left:0; fill:#0B0712; filter: drop-shadow(0 0 4px rgba(255,163,97,0.6)) drop-shadow(0 0 8px rgba(155,92,255,0.5)); animation-fill-mode: backwards; }
+  .hero-fog{ position:absolute; left:0; right:0; bottom:0; height:46%; pointer-events:none; }
+  .fog-layer{ position:absolute; bottom:0; width:60%; height:100%; border-radius:50%; background:radial-gradient(ellipse at center, rgba(237,234,230,0.13), transparent 70%); filter:blur(30px); animation: fogDrift linear infinite; }
+  @keyframes fogDrift{ from{ transform:translateX(-15%);} to{ transform:translateX(15%);} }
+  .hero-cobweb{ position:absolute; width:110px; opacity:0.3; }
+  .hero-cobweb path{ fill:none; stroke:var(--white-dim); stroke-width:1; }
+  .hero-cobweb.tl{ top:0; left:0; } .hero-cobweb.tr{ top:0; right:0; transform:scaleX(-1); }
+  .hero-ghosts{ position:absolute; inset:0; pointer-events:none; }
+  .hero-content{ position:relative; z-index:3; opacity:0; animation: fadeUp 1.1s cubic-bezier(.2,.8,.2,1) forwards 0.2s; transition: transform 0.6s ease-out; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(30px);} to{ opacity:1; transform:translateY(0);} }
+  .hero-sub{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.24em; text-transform:uppercase; color:var(--white-dim); }
+  .hero-meta{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px; }
+  .chip{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px; }
+  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:linear-gradient(90deg, var(--orange), var(--dark-red)); color:#1A0B00; font-family:'Michroma',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
+  .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Michroma',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
+  .btn-outline:hover{ transform:translateY(-3px); border-color:var(--purple-glow); }
+  .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; }
+  .scroll-cue .stick{ width:1px; height:26px; background:linear-gradient(180deg, var(--white-dim), transparent); }
+  @keyframes bob{ 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,6px);} }
+
+  /* ================= Reveal on scroll ================= */
+  .reveal{ opacity:0; transform:translateY(34px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.22,1,.36,1); }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  /* ================= Section head ================= */
+  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.28em; text-transform:uppercase; color:var(--orange-soft); display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .eyebrow::before{ content:''; width:22px; height:1px; background:var(--orange-soft); }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 52px; position:relative; z-index:1; }
+  .section-head .eyebrow{ justify-content:center; } .section-head .eyebrow::before{ display:none; }
+  .section-head h2{ font-family:'Michroma',sans-serif; font-size:clamp(22px,3.6vw,36px); color:var(--white); line-height:1.3; }
+  .section-head p{ margin-top:14px; font-size:15px; line-height:1.6; color:var(--white-dim); }
+
+  /* ================= Countdown ================= */
+  .countdown-section{ padding:100px 0; background:linear-gradient(180deg, var(--black), var(--charcoal-2), var(--black)); }
+  .countdown-row{ display:flex; align-items:center; justify-content:center; gap:10px; max-width:700px; margin:0 auto; flex-wrap:wrap; }
+  .countdown-tile{ text-align:center; padding:20px 8px; border:1px solid var(--line); border-radius:4px; background:rgba(237,234,230,0.02); min-width:82px; }
+  .countdown-num{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(30px,6vw,50px); color:var(--orange-soft); font-variant-numeric: tabular-nums; text-shadow:0 0 22px rgba(255,163,97,0.4); display:inline-block; }
+  .countdown-num.pulse{ animation: numPulse 0.4s ease; }
+  @keyframes numPulse{ 0%{ transform:scale(1.35); color:var(--white);} 100%{ transform:scale(1); color:var(--orange-soft);} }
+  .countdown-label{ margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
+  .countdown-colon{ font-family:'JetBrains Mono',monospace; font-size:clamp(24px,5vw,40px); color:var(--white-dim); opacity:0.4; }
+  .countdown-done{ display:none; text-align:center; font-family:'Michroma',sans-serif; font-size:clamp(20px,4vw,32px); color:var(--orange-soft); }
+  @media (max-width:560px){ .countdown-tile{ min-width:62px; padding:14px 4px; } }
+
+  /* ================= Concept ================= */
+  .concept-section{ padding:100px 0; }
+  .concept-text{ max-width:640px; margin:0 auto; text-align:center; font-size:16px; line-height:1.85; color:var(--white-dim); }
+  .concept-text strong{ color:var(--white); }
+
+  /* ================= Lineup (nube de artistas) ================= */
+  .lineup-section{ padding:100px 0; }
+  .lineup-cloud{
+    max-width:760px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; gap:16px 24px; text-align:center;
+  }
+  .lineup-cloud .t1{
+    font-family:'Michroma',sans-serif; font-size:clamp(22px,4.4vw,38px); line-height:1.25;
+    background:linear-gradient(90deg, var(--orange-soft) 0%, var(--orange) 55%, var(--purple) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .lineup-cloud .t2{
+    font-family:'Michroma',sans-serif; font-size:clamp(17px,3vw,24px); line-height:1.3;
+    background:linear-gradient(90deg, var(--purple-glow), var(--red-soft));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .lineup-cloud .t3{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:clamp(14.5px,2.1vw,17px); }
+  .lineup-cloud .t3:nth-child(4n+1){ color:var(--orange-soft); }
+  .lineup-cloud .t3:nth-child(4n+2){ color:var(--red-soft); }
+  .lineup-cloud .t3:nth-child(4n+3){ color:var(--purple-glow); }
+  .lineup-cloud .t3:nth-child(4n){ color:var(--white-dim); }
+  .lineup-cloud .t5{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(167,159,176,0.6); }
+  .a-avicii{ letter-spacing:0.03em; }
+  .a-garrix{ font-style:italic; letter-spacing:-0.01em; }
+  .a-guetta{ letter-spacing:0.01em; }
+  .a-walker{ display:inline-block; transform:skewX(-8deg); letter-spacing:0.02em; }
+  .a-skrillex{ display:inline-block; transform:skewX(-6deg); letter-spacing:-0.02em; }
+  .a-marshmello{ letter-spacing:0.01em; text-transform:lowercase; }
+  .a-tiesto{ letter-spacing:0.12em; }
+  .a-harris{ text-decoration:underline; text-underline-offset:7px; text-decoration-thickness:2px; }
+  .a-hardwell{ letter-spacing:0.05em; }
+  .timeline{ display:flex; justify-content:space-between; max-width:760px; margin:64px auto 0; position:relative; }
+  .timeline::before{ content:''; position:absolute; top:22px; left:0; right:0; height:1px; background:var(--line); }
+  .timeline-year{ position:relative; text-align:center; flex:1; }
+  .timeline-dot{ width:12px; height:12px; border-radius:50%; margin:0 auto 14px; background:var(--charcoal); border:2px solid var(--orange-soft); position:relative; z-index:1; box-shadow:0 0 12px rgba(255,163,97,0.5); }
+  .timeline-year:nth-child(odd) .timeline-dot{ border-color:var(--purple-glow); box-shadow:0 0 12px rgba(155,92,255,0.5); }
+  .timeline-eq{ display:flex; align-items:flex-end; justify-content:center; gap:2px; height:20px; margin-bottom:10px; }
+  .timeline-eq span{ width:3px; background:var(--white-dim); opacity:0.5; animation: eqBounce 1.6s ease-in-out infinite; }
+  .timeline-year span.y{ font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.05em; color:var(--white-dim); }
+  @keyframes eqBounce{ 0%,100%{ height:20%; } 50%{ height:100%; } }
+  @media (max-width:700px){ .timeline{ flex-wrap:wrap; gap:20px 0; } .timeline::before{ display:none; } .timeline-year{ flex:1 1 33%; } }
+
+  /* ================= Experiencia (4 bloques) ================= */
+  .experience-section{ padding:100px 0; }
+  .experience-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  @media (max-width:900px){ .experience-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .experience-grid{ grid-template-columns:1fr; } }
+  .experience-cell{ background:var(--black); padding:34px 26px; }
+  .experience-cell .ic{ font-size:26px; margin-bottom:16px; }
+  .experience-cell h3{ font-family:'Michroma',sans-serif; font-size:13px; letter-spacing:0.06em; margin-bottom:10px; }
+  .experience-cell p{ font-size:13.5px; line-height:1.6; color:var(--white-dim); }
+
+  /* ================= Tickets (estilo boleta underground) ================= */
+  .tickets-section{ padding:100px 0 90px; }
+  .tickets-section .section-head h2{ background:linear-gradient(90deg, var(--orange), var(--dark-red), var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .ticket-grid{ display:grid; grid-template-columns:1fr 1fr; gap:26px; position:relative; z-index:1; }
+  .ticket-grid--3{ grid-template-columns:repeat(3,1fr); }
+  @media (max-width:900px){ .ticket-grid--3{ grid-template-columns:1fr; } }
+  @media (max-width:820px){ .ticket-grid{ grid-template-columns:1fr; } }
+
+  .preventa{ position:relative; max-width:640px; margin:0 auto 40px; border-radius:6px; padding:34px 34px 30px; border:1px solid rgba(255,107,26,0.35); background:linear-gradient(165deg, rgba(255,107,26,0.1), rgba(106,47,217,0.06)); overflow:hidden; box-shadow:0 0 0 1px rgba(255,107,26,0.08); transition: transform 0.35s ease, box-shadow 0.35s ease; }
+  .preventa::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--orange), var(--purple)); }
+  .preventa::after{ content:''; position:absolute; top:-10px; left:50%; width:20px; height:20px; background:var(--black); border-radius:50%; transform:translateX(-50%); }
+  .preventa:hover{ transform:translateY(-6px); box-shadow:0 20px 50px rgba(255,107,26,0.2), 0 0 0 1px rgba(255,107,26,0.25); }
+  .preventa-badge{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:6px 12px; border-radius:100px; background:rgba(255,107,26,0.14); border:1px solid rgba(255,107,26,0.35); color:var(--orange-soft); margin-bottom:18px; }
+  .preventa-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+  .preventa-kind{ font-family:'Michroma',sans-serif; font-size:16px; color:var(--orange-soft); }
+  .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
+  .preventa:hover .preventa-price{ transform:scale(1.06); text-shadow:0 0 20px rgba(255,163,97,0.6); }
+  .preventa-price sup{ font-size:14px; font-weight:600; color:var(--white-dim); margin-right:2px; }
+  .preventa-desc{ font-size:14px; line-height:1.6; color:var(--white-dim); margin-bottom:22px; }
+  .preventa-desc strong{ color:var(--white); }
+
+  .ticket{ position:relative; border-radius:6px; padding:32px 28px 26px; border:1px solid var(--line); background:rgba(237,234,230,0.02); box-shadow:0 0 0 1px transparent; transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; overflow:hidden; }
+  .ticket::after{ content:''; position:absolute; top:-10px; left:50%; width:18px; height:18px; background:var(--black); border-radius:50%; transform:translateX(-50%); }
+  .ticket:hover{ transform:translateY(-6px); box-shadow:0 20px 46px rgba(155,92,255,0.14); border-color:rgba(155,92,255,0.35); }
+  .ticket:hover .ticket-price{ transform:scale(1.05); }
+  .ticket-price{ transition: transform 0.25s ease; }
+  .ticket--locked{ filter:grayscale(0.5); opacity:0.75; }
+  .ticket--locked:hover{ transform:none; box-shadow:none; }
+  .ticket--premium{ background:linear-gradient(165deg, rgba(106,47,217,0.08), rgba(122,18,32,0.05)); border-color:rgba(106,47,217,0.25); }
+  .ticket--backstage{ border-color:rgba(224,89,107,0.4); background:linear-gradient(165deg, rgba(224,89,107,0.1), rgba(106,47,217,0.08)); box-shadow:0 0 24px rgba(224,89,107,0.12); }
+  .ticket--backstage:hover{ box-shadow:0 24px 54px rgba(224,89,107,0.25); border-color:rgba(224,89,107,0.6); }
+  .ticket-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; gap:12px; }
+  .ticket-kind{ font-family:'Michroma',sans-serif; font-size:14px; }
+  .ticket--premium .ticket-kind{ color:var(--purple-glow); }
+  .ticket--backstage .ticket-kind{ color:var(--red-soft); }
+  .ticket-tag{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; padding:5px 10px; border-radius:100px; border:1px solid var(--line); color:var(--white-dim); white-space:nowrap; }
+  .ticket--locked .ticket-tag{ border-color:rgba(122,18,32,0.4); color:var(--red-soft); }
+  .ticket-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:32px; color:var(--white); margin-bottom:4px; }
+  .ticket-price-note{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--white-dim); margin-bottom:16px; }
+  .perforation{ border:none; border-top:1px dashed var(--line); margin:18px 0; }
+  .ticket-feats{ list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:6px; }
+  .ticket-feats li{ display:flex; align-items:flex-start; gap:9px; font-size:13.5px; line-height:1.5; color:var(--white-dim); }
+  .ticket-feats li svg{ flex:none; width:13px; height:13px; margin-top:3px; }
+  .ticket--premium .ticket-feats li svg{ color:var(--purple-glow); }
+  .ticket--backstage .ticket-feats li svg{ color:var(--red-soft); }
+  .ticket-feats strong{ color:var(--white); }
+  .ticket-spark{ position:absolute; width:4px; height:4px; border-radius:50%; background:var(--orange-soft); pointer-events:none; opacity:0; animation: sparkPop 0.7s ease forwards; }
+  @keyframes sparkPop{ 0%{ opacity:0.9; transform:translate(0,0) scale(1); } 100%{ opacity:0; transform:translate(var(--dx),var(--dy)) scale(0.3); } }
+
+  .buy-btn{ margin-top:20px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 18px; border-radius:2px; font-family:'Michroma',sans-serif; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition: transform 0.25s ease; }
+  .buy-btn svg{ width:13px; height:13px; }
+  .buy-btn--whatsapp{ background:linear-gradient(90deg, #25D366, #1EBE57); color:#04150C; }
+  .buy-btn--whatsapp:hover{ transform:translateY(-2px); }
+  .buy-btn--premium{ background:linear-gradient(90deg, var(--purple), var(--dark-red)); color:#fff; }
+  .buy-btn--premium:hover{ transform:translateY(-2px); }
+  .buy-btn--backstage{ background:linear-gradient(90deg, var(--red-soft), var(--purple)); color:#1A0B00; }
+  .buy-btn--backstage:hover{ transform:translateY(-2px); }
+  .buy-btn--locked{ background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
+
+  /* ================= Info ================= */
+  .info-section{ padding:20px 0 100px; }
+  .info-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  @media (max-width:760px){ .info-grid{ grid-template-columns:1fr; } }
+  .info-cell{ background:var(--black); padding:30px 26px; }
+  .info-icon{ width:28px; height:28px; margin-bottom:14px; color:var(--orange-soft); }
+  .info-cell:nth-child(2) .info-icon{ color:var(--purple-glow); }
+  .info-cell:nth-child(3) .info-icon{ color:var(--red-soft); }
+  .info-label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; }
+  .info-cell h3{ font-family:'Michroma',sans-serif; font-size:13.5px; margin-bottom:8px; }
+  .info-cell p{ font-size:13px; line-height:1.6; color:var(--white-dim); }
+
+  /* ================= Galeria ================= */
+  .gallery-section{ padding:20px 0 100px; }
+  .gallery-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  @media (max-width:760px){ .gallery-grid{ grid-template-columns:repeat(2,1fr); } }
+  .gallery-tile{ position:relative; aspect-ratio:1; border-radius:4px; overflow:hidden; cursor:pointer; border:1px solid var(--line); background:linear-gradient(160deg, var(--charcoal), var(--charcoal-2)); }
+  .gallery-tile::before{ content:'👻'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; opacity:0.25; }
+  .gallery-tile .gallery-overlay{ position:absolute; inset:0; background:linear-gradient(0deg, rgba(5,4,6,0.85), transparent 60%); display:flex; align-items:flex-end; padding:12px; opacity:0; transition:opacity 0.3s ease; }
+  .gallery-tile:hover .gallery-overlay{ opacity:1; }
+  .gallery-tile:hover{ transform:scale(1.03); box-shadow:0 0 24px rgba(155,92,255,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .gallery-overlay span{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-dim); }
+  .lightbox{ position:fixed; inset:0; z-index:500; background:rgba(5,4,6,0.94); display:none; align-items:center; justify-content:center; }
+  .lightbox.open{ display:flex; }
+  .lightbox-box{ width:min(560px,86vw); aspect-ratio:4/3; border-radius:8px; background:linear-gradient(160deg, var(--charcoal), var(--charcoal-2)); display:flex; align-items:center; justify-content:center; font-size:48px; border:1px solid var(--line); }
+  .lightbox-close{ position:absolute; top:24px; right:28px; width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--white); font-size:18px; cursor:pointer; }
+
+  /* ================= Mapa ================= */
+  .map-section{ padding:20px 0 100px; }
+  .map-placeholder{ position:relative; height:280px; border-radius:6px; border:1px solid var(--line); background:radial-gradient(circle at 30% 30%, rgba(106,47,217,0.18), var(--charcoal) 60%); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .map-placeholder .pin{ font-size:34px; filter:drop-shadow(0 0 14px rgba(255,107,26,0.6)); animation: bob 2.4s ease-in-out infinite; }
+  .map-note{ margin-top:16px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--white-dim); }
+
+  /* ================= FAQ ================= */
+  .faq-section{ padding:20px 0 110px; }
+  .faq-list{ max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+  .faq-item{ border:1px solid var(--line); border-radius:4px; background:rgba(237,234,230,0.02); overflow:hidden; transition:border-color 0.25s ease; }
+  .faq-item:hover{ border-color:rgba(255,107,26,0.3); }
+  .faq-item summary{ list-style:none; cursor:pointer; padding:19px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px; color:var(--white); }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-icon{ flex:none; width:18px; height:18px; display:flex; align-items:center; justify-content:center; color:var(--orange-soft); transition: transform 0.3s ease; }
+  .faq-item[open] .faq-icon{ transform:rotate(45deg); }
+  .faq-answer{ padding:0 22px 20px; font-size:13.5px; line-height:1.65; color:var(--white-dim); }
+
+  /* ================= CTA final cinematico ================= */
+  .final-cta{ min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px; }
+  .final-moon{ position:absolute; top:6%; left:50%; width:min(360px,64vw); height:min(360px,64vw); border-radius:50%; transform:translateX(-50%); background:radial-gradient(circle at 38% 34%, #FFFDF3, var(--moon) 55%, #C9BE93 100%); box-shadow:0 0 100px 22px rgba(242,233,201,0.22); opacity:0.5; }
+  .final-cta h2{ position:relative; z-index:2; font-family:'Michroma',sans-serif; font-size:clamp(30px,7vw,64px); line-height:1.2; color:var(--white); }
+  .final-cta h2 span{ display:block; background:linear-gradient(90deg, var(--orange), var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .final-meta{ position:relative; z-index:2; margin-top:26px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.12em; color:var(--white-dim); display:flex; flex-direction:column; gap:6px; }
+  .final-cta .btn-solid{ position:relative; z-index:2; margin-top:32px; }
+  .final-ghost{ position:absolute; opacity:0.14; filter: drop-shadow(0 0 18px rgba(155,92,255,0.3)); animation: ghostDrift 12s ease-in-out infinite; }
+  .final-ghost path{ fill:var(--white); }
+
+  /* ================= Footer ================= */
+  footer{ padding:56px 0 40px; border-top:1px solid var(--line); text-align:center; }
+  .footer-title{ font-family:'Michroma',sans-serif; font-size:15px; }
+  .footer-title .accent{ color:var(--orange); }
+  .footer-sub{ margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
+  .footer-tagline{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--white-dim); opacity:0.6; }
+  .footer-social{ display:flex; gap:12px; justify-content:center; margin-top:22px; }
+  .footer-social a{ width:36px; height:36px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--white-dim); transition:border-color 0.2s, color 0.2s; }
+  .footer-social a:hover{ border-color:var(--orange); color:var(--orange-soft); }
+  .footer-social svg{ width:15px; height:15px; }
+  .footer-bottom{ margin-top:24px; font-size:10.5px; color:var(--white-dim); opacity:0.55; }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="ghostShape" viewBox="0 0 60 70"><path d="M30 2C14 2 4 16 4 34v28l7-7 7 7 7-7 5 5 5-5 7 7 7-7 7 7V34C56 16 46 2 30 2Z"/></symbol>
+  <symbol id="batShape" viewBox="0 0 100 40"><path class="bat-shape" d="M50 20 C40 8,22 10,10 20 C20 16,32 18,40 26 C30 22,16 26,10 34 C24 30,36 32,44 40 C46 30,50 28,50 20 C50 28,54 30,56 40 C64 32,76 30,90 34 C84 26,70 22,60 26 C68 18,80 16,90 20 C78 10,60 8,50 20Z"/></symbol>
+</svg>
+
+<div id="cursorGlow"></div>
+
+<!-- ================= INTRO ================= -->
+<div id="intro">
+  <video class="intro-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="/_blob/5083ca166168021c491ded0e4ac2bfcd" type="video/mp4">
+  </video>
+  <div class="intro-video-overlay"></div>
+
+  <div class="intro-content">
+    <div class="event-logo">
+      <span class="l1">Fan Tribute presenta</span>
+      <span class="l2">Back to Halloween</span>
+      <span class="l3">2016</span>
+    </div>
+    <button id="enterBtn" type="button">Enter the night →</button>
+  </div>
+
+  <div class="intro-ghosts">
+    <svg class="ghost g-in" style="width:70px; top:60%; left:18%; animation-delay:2.4s, 3.2s;"><use href="#ghostShape"/></svg>
+    <svg class="ghost g-in" style="width:50px; top:20%; left:72%; animation-delay:2.7s, 3.5s;"><use href="#ghostShape"/></svg>
+    <svg class="ghost g-in" style="width:40px; top:70%; left:65%; animation-delay:3s, 3.8s;"><use href="#ghostShape"/></svg>
+  </div>
+  <div class="intro-extras">
+    <div class="spider-thread" style="right:14%; height:120px;"></div>
+    <svg class="spider" style="right:calc(14% - 9px); top:112px; width:18px;" viewBox="0 0 24 24">
+      <ellipse class="spider-body" cx="12" cy="14" rx="5" ry="6"/>
+      <g class="spider-leg"><path d="M7 10 L1 6M7 13 L0 13M7 16 L1 20M17 10 L23 6M17 13 L24 13M17 16 L23 20"/></g>
+    </svg>
+    <div class="particles-holder"></div>
+  </div>
+</div>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="mainNav">
+  <div class="wrap">
+    <div class="nav-logo">🎃 BACK TO <span class="accent">HALLOWEEN</span> 2016</div>
+    <div class="nav-links">
+      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
+    </div>
+    <a class="nav-cta" href="#localidades">🎟️ Comprar boleta</a>
+    <button class="nav-burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="inicio">
+  <div class="hero-moon" id="heroMoon" title="Luna llena de Back to Halloween"></div>
+  <div class="hero-bats" id="heroBats"></div>
+  <svg class="hero-cobweb tl" viewBox="0 0 100 100" aria-hidden="true"><path d="M0 0 L100 100 M0 30 Q30 30 30 0 M0 60 Q60 60 60 0 M30 0 L0 30 M60 0 L0 60"/></svg>
+  <svg class="hero-cobweb tr" viewBox="0 0 100 100" aria-hidden="true"><path d="M0 0 L100 100 M0 30 Q30 30 30 0 M0 60 Q60 60 60 0 M30 0 L0 30 M60 0 L0 60"/></svg>
+  <div class="hero-ghosts">
+    <svg class="ghost g-in" style="width:44px; top:22%; left:8%; opacity:0.16; animation-delay:0s, 0s;"><use href="#ghostShape"/></svg>
+    <svg class="ghost g-in" style="width:36px; top:62%; left:88%; opacity:0.14; animation-delay:0.4s, 0.4s;"><use href="#ghostShape"/></svg>
+    <div class="dark-eyes" style="top:30%; left:6%; animation-delay:1s;"><span></span><span></span></div>
+    <div class="dark-eyes" style="top:70%; right:8%; animation-delay:4.5s;"><span></span><span></span></div>
+  </div>
+  <div class="hero-fog" id="heroFog">
+    <div class="fog-layer" style="left:-10%; animation-duration:24s;"></div>
+    <div class="fog-layer" style="left:30%; animation-duration:30s; animation-direction:reverse;"></div>
+    <div class="fog-layer" style="left:55%; animation-duration:20s;"></div>
+  </div>
+
+  <div class="hero-content" id="heroContent">
+    <div class="event-logo">
+      <span class="l1">Fan Tribute presenta</span>
+      <span class="l2" style="font-size:clamp(30px,7vw,68px);">Back to Halloween</span>
+      <span class="l3">2016</span>
+    </div>
+    <p class="hero-sub">Una noche para volver al 2016.</p>
+    <div class="hero-meta">
+      <span class="chip">📍 Bogotá 🇨🇴</span>
+      <span class="chip">📅 31 de octubre</span>
+      <span class="chip">🔞 +18</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-solid" href="#localidades">🎟️ Comprar boleta</a>
+      <a class="btn-outline" href="#localidades">Ver localidades</a>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll to enter the night<div class="stick"></div></div>
+</section>
+
+<!-- ================= COUNTDOWN ================= -->
+<section class="countdown-section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Cuenta regresiva</div><h2>The night begins in</h2></div>
+    <div class="countdown-row reveal" id="countdown">
+      <div class="countdown-tile"><div class="countdown-num" id="cdDays">31</div><div class="countdown-label">Días</div></div>
+      <span class="countdown-colon">:</span>
+      <div class="countdown-tile"><div class="countdown-num" id="cdHours">14</div><div class="countdown-label">Horas</div></div>
+      <span class="countdown-colon">:</span>
+      <div class="countdown-tile"><div class="countdown-num" id="cdMins">27</div><div class="countdown-label">Minutos</div></div>
+      <span class="countdown-colon">:</span>
+      <div class="countdown-tile"><div class="countdown-num" id="cdSecs">52</div><div class="countdown-label">Segundos</div></div>
+    </div>
+    <div class="countdown-done display" id="countdownDone">The night has begun 👻</div>
+  </div>
+</section>
+
+<!-- ================= CONCEPTO ================= -->
+<section class="concept-section" id="evento">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">El concepto</div><h2>Una noche para volver al 2016</h2></div>
+    <div class="concept-text reveal">
+      <p>Volvemos a una época donde la música electrónica se sentía diferente. Una noche para recordar los sonidos, las canciones y la energía que marcaron una generación. <strong>Halloween, EDM y nostalgia en una sola noche.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LINEUP ================= -->
+<section class="lineup-section" id="lineup">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">La música</div><h2>Los himnos que marcaron una generación</h2></div>
+    <div class="lineup-cloud reveal">
+      <span class="t1 a-avicii">Avicii</span>
+      <span class="t1 a-garrix">Martin Garrix</span>
+      <span class="t2 a-guetta">David Guetta</span>
+      <span class="t2 a-walker">Alan Walker</span>
+      <span class="t1 a-skrillex">Skrillex</span>
+      <span class="t2 a-marshmello">Marshmello</span>
+      <span class="t1 a-tiesto">Tiësto</span>
+      <span class="t2 a-harris">Calvin Harris</span>
+      <span class="t3 a-hardwell">Hardwell</span>
+      <span class="t3">The Chainsmokers</span>
+      <span class="t3">Alesso</span>
+      <span class="t3">Galantis</span>
+      <span class="t3">Major Lazer</span>
+      <span class="t3">Dimitri Vegas &amp; Like Mike</span>
+      <span class="t3">DJ Snake</span>
+      <span class="t3">Afrojack</span>
+      <span class="t3">Armin van Buuren</span>
+      <span class="t3">Swedish House Mafia</span>
+      <span class="t3">Deorro</span>
+      <span class="t3">Oliver Heldens</span>
+      <span class="t3">LMFAO</span>
+      <span class="t3">Zedd</span>
+      <span class="t3">Steve Aoki</span>
+      <span class="t3">Showtek</span>
+      <span class="t3">Jack Ü</span>
+      <span class="t5">y más...</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPERIENCIA ================= -->
+<section class="experience-section" id="experiencia">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">La experiencia</div><h2>More than a party</h2></div>
+    <div class="experience-grid">
+      <div class="experience-cell reveal"><div class="ic">🎧</div><h3>EDM</h3><p>Los sonidos que marcaron una época.</p></div>
+      <div class="experience-cell reveal"><div class="ic">👻</div><h3>Halloween</h3><p>Una noche completamente transformada.</p></div>
+      <div class="experience-cell reveal"><div class="ic">🔥</div><h3>Rave</h3><p>Luces, humo, energía y música.</p></div>
+      <div class="experience-cell reveal"><div class="ic">🧡</div><h3>Community</h3><p>Personas conectadas por la misma música.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOCALIDADES ================= -->
+<section class="tickets-section" id="localidades">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Preventa 1 ya está disponible por WhatsApp. Preventa 2 y General se habilitan pronto.</p></div>
+
+    <div class="preventa reveal">
+      <div class="preventa-badge">Cupo limitado</div>
+      <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price"><sup>$</sup>32K</div></div>
+      <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso.</p>
+      <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20BACK%20TO%20HALLOWEEN%202016%20%E2%80%94%20%2432.000" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
+        Comprar
+      </a>
+    </div>
+
+    <div class="ticket-grid">
+      <div class="ticket ticket--locked reveal">
+        <div class="ticket-top"><div class="ticket-kind">Preventa 2</div><div class="ticket-tag">Bloqueado</div></div>
+        <div class="ticket-price">$37K</div>
+        <hr class="perforation">
+        <ul class="ticket-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>2 bebidas personales (cerveza o hidratación)</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso a Pista · Primer piso</span></li>
+        </ul>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Comprar</button>
+      </div>
+      <div class="ticket ticket--locked reveal">
+        <div class="ticket-top"><div class="ticket-kind">General</div><div class="ticket-tag">Bloqueado</div></div>
+        <div class="ticket-price">$42K</div>
+        <hr class="perforation">
+        <ul class="ticket-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>2 bebidas personales (cerveza o hidratación)</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso a Pista · Primer piso</span></li>
+        </ul>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Comprar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tickets-section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Segundo piso</div><h2>Balcón &amp; Backstage</h2><p>Hall Stage, Trío VIP y Backstage — próximamente por Wompi.</p></div>
+    <div class="ticket-grid ticket-grid--3">
+      <div class="ticket ticket--locked reveal">
+        <div class="ticket-top"><div class="ticket-kind">🟣 Hall Stage</div><div class="ticket-tag">Bloqueado</div></div>
+        <div class="ticket-price">$70K</div>
+        <div class="ticket-price-note">Acceso exclusivo al balcón · Segundo piso</div>
+        <hr class="perforation">
+        <ul class="ticket-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso exclusivo al balcón, segundo piso</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>4 bebidas personales a elección</span></li>
+        </ul>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Comprar</button>
+      </div>
+      <div class="ticket ticket--premium ticket--locked reveal">
+        <div class="ticket-top"><div class="ticket-kind">🟡 Trío VIP</div><div class="ticket-tag">Bloqueado</div></div>
+        <div class="ticket-price">$250K</div>
+        <div class="ticket-price-note">Mesa para 3 personas</div>
+        <hr class="perforation">
+        <ul class="ticket-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Mesa exclusiva para 3 personas</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🍾 1 botella a elección + 3 cervezas</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso exclusivo al balcón, segundo piso</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
+        </ul>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Reservar</button>
+      </div>
+      <div class="ticket ticket--backstage ticket--locked reveal">
+        <div class="ticket-top"><div class="ticket-kind">🔴 Backstage</div><div class="ticket-tag">Bloqueado</div></div>
+        <div class="ticket-price">$400K</div>
+        <div class="ticket-price-note">Mesa para 4–5 personas</div>
+        <hr class="perforation">
+        <ul class="ticket-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Mesa y sillas para 4–5 personas</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🎧 Espacio exclusivo detrás del escenario, junto a DJs y administración</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🍾 1 botella a elección + 1 six de cerveza + 1 agua</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
+        </ul>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Reservar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INFO ================= -->
+<section class="info-section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Info</div><h2>Todo lo que necesitas saber</h2></div>
+    <div class="info-grid">
+      <div class="info-cell reveal">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div class="info-label">Fecha</div><h3>31 de octubre</h3><p>Bogotá, Colombia.</p>
+      </div>
+      <div class="info-cell reveal">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-7.4 8-13a8 8 0 1 0-16 0c0 5.6 8 13 8 13z"/><circle cx="12" cy="9" r="2.6"/></svg>
+        <div class="info-label">Lugar</div><h3>Por confirmar</h3><p>El venue exacto se anuncia pronto.</p>
+      </div>
+      <div class="info-cell reveal">
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 8.7 9 10 5-1.3 9-5 9-10V6l-9-4z"/></svg>
+        <div class="info-label">Restricción</div><h3>Mayores de edad</h3><p>Ingreso exclusivo +18. Se solicitará documento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAPA ================= -->
+<section class="map-section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Ubicación</div><h2>Find the night</h2></div>
+    <!-- Cuando tengas la direccion real, reemplaza este placeholder por un <iframe> de Google Maps -->
+    <div class="map-placeholder reveal"><span class="pin">📍</span></div>
+    <p class="map-note">📍 Bogotá 🇨🇴 — dirección exacta próximamente.</p>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq-section" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Preguntas frecuentes</div><h2>¿Tienes dudas?</h2></div>
+    <div class="faq-list">
+      <details class="faq-item reveal">
+        <summary>¿Dónde será el evento?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Bogotá, Colombia. El venue exacto se anuncia próximamente junto con la dirección.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Cuál es la edad mínima?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Ingreso exclusivo para mayores de 18 años. Se solicitará documento de identidad en la entrada.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Puedo ir disfrazado?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">¡Claro! Los disfraces son bienvenidos y hacen parte de la experiencia.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Qué incluye cada localidad?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Pista a pie (Preventa 1/2/General) incluye 2 bebidas personales y acceso a primer piso. Hall Stage incluye balcón y 4 bebidas. Trío VIP y Backstage son mesas con botella — revisa el detalle completo en cada tarjeta de la sección Localidades.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Puedo transferir mi boleta?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Sí, mientras nos avises antes del evento con el nombre de la nueva persona, escribiéndonos por WhatsApp.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Qué pasa si pierdo mi QR?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Escríbenos por WhatsApp con tus datos de compra y te lo reenviamos.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿Hay guardarropa?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Sí, el venue cuenta con guardarropa.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>¿A qué hora comienza?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="faq-answer">Puertas y horario exacto se confirman junto con el venue — se anuncian antes del evento.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="final-cta">
+  <div class="final-moon"></div>
+  <svg class="final-ghost" style="width:60px; top:20%; left:12%;" viewBox="0 0 60 70"><use href="#ghostShape"/></svg>
+  <svg class="final-ghost" style="width:44px; top:60%; right:14%; animation-delay:2s;" viewBox="0 0 60 70"><use href="#ghostShape"/></svg>
+  <h2><span>THE NIGHT</span>IS WAITING.</h2>
+  <div class="final-meta">
+    <span>BACK TO HALLOWEEN 2016</span>
+    <span>BOGOTÁ 🇨🇴 · 31 OCTUBRE</span>
+  </div>
+  <a class="btn-solid" href="#localidades">🎟️ Get your ticket</a>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-title">BACK TO <span class="accent">HALLOWEEN</span> 2016</div>
+    <div class="footer-sub">Fan Tribute</div>
+    <div class="footer-tagline">Music · Memories · Community</div>
+    <div class="footer-social">
+      <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+      <a href="https://www.tiktok.com/@fantribute_col" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2c.4 2.6 2 4.4 4.6 4.7v3.1c-1.6 0-3-.5-4.3-1.4v6.9c0 3.7-3 6.7-6.7 6.7S3.4 19 3.4 15.3s3-6.7 6.7-6.7c.4 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.9 0-3.4 1.5-3.4 3.4s1.5 3.4 3.4 3.4 3.5-1.5 3.5-3.4V2h3Z"/></svg></a>
+    </div>
+    <div class="footer-bottom">© 2026 Fan Tribute</div>
+  </div>
+</footer>
+
+<div class="floating-controls">
+  <button class="fc-btn" id="motionToggle" type="button" aria-pressed="false" aria-label="Reducir animaciones" title="Reducir animaciones">✋</button>
+  <button class="fc-btn" id="audioToggle" type="button" aria-pressed="false" aria-label="Reproducir ambiente" title="Play the night (agrega tu propio audio en /assets/halloween/audio/)">▶</button>
+</div>
+
+<script>
+  // ---------- Intro ----------
+  document.body.classList.add('intro-active');
+  var intro = document.getElementById('intro');
+  var enterBtn = document.getElementById('enterBtn');
+  function enterNight(){
+    if (intro.classList.contains('leaving')) return;
+    intro.classList.add('leaving');
+    document.body.classList.remove('intro-active');
+    setTimeout(function(){ if (intro.parentNode) intro.remove(); }, 1150);
+  }
+  enterBtn.addEventListener('click', enterNight);
+
+  // ---------- Particulas intro ----------
+  (function () {
+    var holder = document.querySelector('.particles-holder');
+    var count = window.innerWidth < 640 ? 10 : 20;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      var size = Math.random() * 2.5 + 1;
+      p.style.width = size + 'px'; p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
+      p.style.animationDuration = (3 + Math.random() * 3) + 's';
+      p.style.animationDelay = (2.2 + Math.random() * 2) + 's';
+      holder.appendChild(p);
+    }
+  })();
+
+  // ---------- Nav ----------
+  var nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 40); });
+  var burger = document.getElementById('burgerBtn');
+  var mobileNav = document.getElementById('mobileNav');
+  burger.addEventListener('click', function () {
+    var open = mobileNav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileNav.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () { mobileNav.classList.remove('open'); });
+  });
+
+  // ---------- Cursor glow + parallax (solo desktop) ----------
+  var finePointer = window.matchMedia('(pointer:fine)').matches;
+  if (finePointer) {
+    var glow = document.getElementById('cursorGlow');
+    glow.classList.add('on');
+    var heroMoon = document.getElementById('heroMoon');
+    var heroContent = document.getElementById('heroContent');
+    var heroFog = document.getElementById('heroFog');
+    var heroEl = document.querySelector('.hero');
+    document.addEventListener('mousemove', function (e) {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+    heroEl.addEventListener('mousemove', function (e) {
+      var rect = this.getBoundingClientRect();
+      var mx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      var my = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      heroMoon.style.transform = 'translateX(calc(-50% + ' + (mx * 14) + 'px)) translateY(' + (my * 10) + 'px)';
+      heroContent.style.transform = 'translate(' + (mx * -6) + 'px, ' + (my * -4) + 'px)';
+      heroFog.style.transform = 'translateX(' + (mx * 20) + 'px)';
+    });
+  }
+
+  // ---------- Murcielagos sobre la luna del hero ----------
+  (function () {
+    function rand(a, b) { return Math.random() * (b - a) + a; }
+    var layer = document.getElementById('heroBats');
+    if (!layer) return;
+    var styleEl = document.createElement('style');
+    document.head.appendChild(styleEl);
+    var count = window.innerWidth < 700 ? 5 : 10;
+
+    for (var i = 0; i < count; i++) {
+      var name = 'heroBatPath' + i;
+      var bandTop = rand(4, 55); // % vertical, alrededor de la luna
+      var wob = rand(20, 60);
+      var dir = Math.random() < 0.5 ? 1 : -1;
+      var sxVW = dir === 1 ? rand(-25, -8) : rand(108, 125);
+      var exVW = dir === 1 ? rand(108, 125) : rand(-25, -8);
+      var midVW = (sxVW + exVW) / 2 + rand(-15, 15);
+      var syPx = 0, eyPx = rand(-wob, wob), midYPx = eyPx / 2 + rand(-wob, wob);
+      var baseRot = dir === 1 ? 0 : 180;
+      var size = rand(0.5, 1.15);
+      var dur = rand(9, 18);
+      var delay = rand(0, 5);
+      var flapDur = rand(0.28, 0.46);
+
+      styleEl.appendChild(document.createTextNode(
+        '@keyframes ' + name + '{' +
+        '0%{ transform:translate(' + sxVW + 'vw,' + syPx + 'px) scale(' + size + ') rotate(' + baseRot + 'deg); }' +
+        '50%{ transform:translate(' + midVW + 'vw,' + midYPx + 'px) scale(' + size + ') rotate(' + (baseRot + dir * 8) + 'deg); }' +
+        '100%{ transform:translate(' + exVW + 'vw,' + eyPx + 'px) scale(' + size + ') rotate(' + baseRot + 'deg); }' +
+        '}'
+      ));
+
+      var svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svgEl.setAttribute('viewBox', '0 0 100 40');
+      svgEl.setAttribute('width', '38');
+      svgEl.setAttribute('height', '15');
+      svgEl.style.top = bandTop + '%';
+      svgEl.style.opacity = rand(0.5, 0.9).toFixed(2);
+      svgEl.style.animation = name + ' ' + dur.toFixed(1) + 's linear infinite, heroBatFlap ' + flapDur.toFixed(2) + 's ease-in-out infinite';
+      svgEl.style.animationDelay = delay.toFixed(1) + 's, 0s';
+      var useEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+      useEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#batShape');
+      useEl.setAttribute('href', '#batShape');
+      svgEl.appendChild(useEl);
+      layer.appendChild(svgEl);
+    }
+    styleEl.appendChild(document.createTextNode('@keyframes heroBatFlap{ 0%,100%{ transform:scaleY(1);} 50%{ transform:scaleY(0.6);} }'));
+  })();
+
+  // ---------- Countdown ----------
+  (function () {
+    var target = new Date('2026-10-31T20:00:00-05:00').getTime();
+    var elDays = document.getElementById('cdDays'), elHours = document.getElementById('cdHours');
+    var elMins = document.getElementById('cdMins'), elSecs = document.getElementById('cdSecs');
+    var row = document.getElementById('countdown'), done = document.getElementById('countdownDone');
+    var prev = {};
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function setNum(el, key, val) {
+      var text = pad(val);
+      if (prev[key] !== undefined && prev[key] !== text) {
+        el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+      }
+      prev[key] = text; el.textContent = text;
+    }
+    function tick() {
+      var diff = target - Date.now();
+      if (diff <= 0) { row.style.display = 'none'; done.style.display = 'block'; return; }
+      setNum(elDays, 'd', Math.floor(diff / 86400000));
+      setNum(elHours, 'h', Math.floor((diff % 86400000) / 3600000));
+      setNum(elMins, 'm', Math.floor((diff % 3600000) / 60000));
+      setNum(elSecs, 's', Math.floor((diff % 60000) / 1000));
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  // ---------- Reveal on scroll ----------
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+  // ---------- Chispas al hover en tickets ----------
+  document.querySelectorAll('.preventa, .ticket').forEach(function (card) {
+    card.addEventListener('mouseenter', function () {
+      for (var i = 0; i < 6; i++) {
+        var s = document.createElement('span');
+        s.className = 'ticket-spark';
+        s.style.left = (30 + Math.random() * 40) + '%';
+        s.style.top = (20 + Math.random() * 30) + '%';
+        s.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+        s.style.setProperty('--dy', (Math.random() * -50 - 10) + 'px');
+        card.appendChild(s);
+        (function (spark) { setTimeout(function () { spark.remove(); }, 700); })(s);
+      }
+    });
+  });
+
+
+  // ---------- Reducir animaciones (toggle manual) ----------
+  var motionToggle = document.getElementById('motionToggle');
+  motionToggle.addEventListener('click', function () {
+    var on = document.documentElement.classList.toggle('no-motion');
+    motionToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
+  // ---------- Audio (placeholder -- agrega tu archivo real) ----------
+  // Coloca tu archivo en /assets/halloween/audio/ambiente.mp3 y descomenta:
+  // var nightAudio = new Audio('/assets/halloween/audio/ambiente.mp3'); nightAudio.loop = true;
+  var audioToggle = document.getElementById('audioToggle');
+  var playing = false;
+  audioToggle.addEventListener('click', function () {
+    playing = !playing;
+    audioToggle.textContent = playing ? '❚❚' : '▶';
+    audioToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    // if (nightAudio) { playing ? nightAudio.play() : nightAudio.pause(); }
+  });
+</script>
