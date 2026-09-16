@@ -247,14 +247,17 @@
   .chip:hover{ border-color:var(--orange); color:var(--orange-soft); background:rgba(255,107,26,0.09); transform:translateY(-3px); box-shadow:0 10px 24px rgba(255,107,26,0.2); }
   .chip:hover::after{ content:'👻'; margin-left:7px; display:inline-block; animation: chipGhostPop 0.4s ease; }
   @keyframes chipGhostPop{ from{ opacity:0; transform:translateY(5px) scale(0.5); } to{ opacity:1; transform:translateY(0) scale(1); } }
-  .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px; }
-  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:var(--orange-soft); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .hero-actions{ display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:34px; }
+  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:18px 38px; border-radius:2px; background:var(--orange-soft); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
-  .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
-  .btn-outline:hover{ transform:translateY(-3px); border-color:var(--purple-glow); }
-  .merch-cta-wrap{ position:relative; }
-  .merch-cta-btn{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--purple-glow); color:var(--purple-glow); font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }
-  .merch-cta-btn:hover{ transform:translateY(-3px); background:var(--purple-glow); color:#1A0B00; box-shadow:0 14px 32px rgba(155,92,255,0.3); }
+  .hero-link-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 22px; }
+  .hero-link{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-dim); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:3px; transition: color 0.25s ease, border-color 0.25s ease; }
+  .hero-link:hover{ color:var(--white); border-color:var(--white); }
+  .hero-link svg{ width:13px; height:13px; transition: transform 0.25s ease; }
+  .hero-link:hover svg{ transform:translateX(3px); }
+  .hero-link-sep{ color:var(--line); font-size:11px; }
+  .merch-sticker{ display:inline-flex; align-items:center; gap:6px; padding:7px 14px 7px 11px; border:1.5px dashed var(--purple-glow); border-radius:100px; transform:rotate(-3deg); font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--purple-glow); text-decoration:none; background:rgba(155,92,255,0.08); transition: transform 0.25s ease, background 0.25s ease; }
+  .merch-sticker:hover{ transform:rotate(0deg) scale(1.06); background:rgba(155,92,255,0.16); }
   .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; width:100%; padding:0 24px; }
   .scroll-cue span{ display:block; max-width:230px; text-align:center; white-space:normal; }
   .scroll-cue .stick{ width:1px; height:26px; background:linear-gradient(180deg, var(--white-dim), transparent); }
@@ -398,15 +401,19 @@
   .ticket-spark{ position:absolute; width:4px; height:4px; border-radius:50%; background:var(--orange-soft); pointer-events:none; opacity:0; animation: sparkPop 0.7s ease forwards; }
   @keyframes sparkPop{ 0%{ opacity:0.9; transform:translate(0,0) scale(1); } 100%{ opacity:0; transform:translate(var(--dx),var(--dy)) scale(0.3); } }
 
-  .buy-btn{ margin-top:20px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 18px; border-radius:2px; font-family:'Bebas Neue',sans-serif; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition: transform 0.25s ease; }
-  .buy-btn svg{ width:13px; height:13px; }
-  .buy-btn--whatsapp{ background:linear-gradient(90deg, #25D366, #1EBE57); color:#04150C; }
-  .buy-btn--whatsapp:hover{ transform:translateY(-2px); }
-  .buy-btn--premium{ background:linear-gradient(90deg, var(--purple), var(--dark-red)); color:#fff; }
-  .buy-btn--premium:hover{ transform:translateY(-2px); }
-  .buy-btn--backstage{ background:linear-gradient(90deg, var(--red-soft), var(--purple)); color:#1A0B00; }
-  .buy-btn--backstage:hover{ transform:translateY(-2px); }
-  .buy-btn--locked{ background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
+  .buy-btn{ margin-top:20px; width:100%; display:flex; align-items:center; padding:4px 4px 4px 22px; border-radius:100px; border:2px solid transparent; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .buy-btn-orb{ margin-left:auto; width:42px; height:42px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; }
+  .buy-btn-orb svg{ width:16px; height:16px; }
+  .buy-btn--whatsapp{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, #25D366, #1EBE57) border-box; }
+  .buy-btn--whatsapp .buy-btn-orb{ background:linear-gradient(135deg, #25D366, #1EBE57); color:#04150C; }
+  .buy-btn--whatsapp:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(37,211,102,0.25); }
+  .buy-btn--premium{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--purple-glow), var(--dark-red)) border-box; }
+  .buy-btn--premium .buy-btn-orb{ background:linear-gradient(135deg, var(--purple-glow), var(--dark-red)); color:#fff; }
+  .buy-btn--premium:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(155,92,255,0.28); }
+  .buy-btn--backstage{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--red-soft), var(--purple-glow)) border-box; }
+  .buy-btn--backstage .buy-btn-orb{ background:linear-gradient(135deg, var(--red-soft), var(--purple-glow)); color:#1A0B00; }
+  .buy-btn--backstage:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(224,89,107,0.28); }
+  .buy-btn--locked{ padding:14px 20px; justify-content:center; background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
 
   /* ================= Info ================= */
   .info-section{ padding:20px 0 100px; }
@@ -586,9 +593,13 @@
     </div>
     <div class="hero-actions">
       <a class="btn-solid" href="#localidades">🎟️ Comprar boleta</a>
-      <a class="btn-outline" href="#localidades">Ver localidades</a>
-      <div class="merch-cta-wrap">
-        <a class="merch-cta-btn" href="../back-to-halloween-2016-merch.html">🛍️ Ver merch</a>
+      <div class="hero-link-row">
+        <a class="hero-link" href="#localidades">
+          Ver localidades
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <span class="hero-link-sep">·</span>
+        <a class="merch-sticker" href="../back-to-halloween-2016-merch.html">🛍️ Merch</a>
       </div>
     </div>
   </div>
@@ -681,8 +692,10 @@
       <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso.</p>
       <div class="stock-indicator" id="stockPreventa1"></div>
       <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20BACK%20TO%20HALLOWEEN%202016%20%E2%80%94%20%2432.000" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
         Comprar
+        <span class="buy-btn-orb">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
+        </span>
       </a>
     </div>
 
@@ -729,7 +742,9 @@
         </ul>
         <a class="buy-btn buy-btn--premium" href="https://checkout.wompi.co/l/jCazhj" target="_blank" rel="noopener">
           Comprar
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          <span class="buy-btn-orb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
         </a>
       </div>
       <div class="ticket ticket--premium reveal">
@@ -745,7 +760,9 @@
         </ul>
         <a class="buy-btn buy-btn--premium" href="https://checkout.wompi.co/l/vVVSym" target="_blank" rel="noopener">
           Reservar
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          <span class="buy-btn-orb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
         </a>
       </div>
       <div class="ticket ticket--backstage reveal">
@@ -761,7 +778,9 @@
         </ul>
         <a class="buy-btn buy-btn--backstage" href="https://checkout.wompi.co/l/bqsf6u" target="_blank" rel="noopener">
           Reservar
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          <span class="buy-btn-orb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
         </a>
       </div>
     </div>
