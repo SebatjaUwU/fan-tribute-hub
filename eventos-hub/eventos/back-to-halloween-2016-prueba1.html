@@ -146,7 +146,10 @@
   .hero-sub{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.24em; text-transform:uppercase; color:var(--white-dim); }
   .hero-sub.brush{ margin-top:8px; font-family:'Caveat Brush', cursive; font-size:clamp(17px,2.4vw,22px); letter-spacing:0.02em; text-transform:none; color:var(--orange-soft); }
   .hero-meta{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px; }
-  .chip{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); }
+  .chip{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .chip:hover{ border-color:var(--orange); color:var(--orange-soft); background:rgba(255,107,26,0.09); transform:translateY(-3px); box-shadow:0 10px 24px rgba(255,107,26,0.2); }
+  .chip:hover::after{ content:'👻'; margin-left:7px; display:inline-block; animation: chipGhostPop 0.4s ease; }
+  @keyframes chipGhostPop{ from{ opacity:0; transform:translateY(5px) scale(0.5); } to{ opacity:1; transform:translateY(0) scale(1); } }
   .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px; }
   .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:linear-gradient(90deg, var(--orange), var(--dark-red)); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
