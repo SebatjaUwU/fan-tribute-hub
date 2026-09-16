@@ -93,7 +93,7 @@
   /* ================= Crawl tipo Star Wars ================= */
   .intro-crawl{ position:relative; z-index:3; max-width:620px; margin:0 auto 30px; padding:0 26px; text-align:center; }
   .crawl-line{
-    font-family:'Bebas Neue',sans-serif; font-size:clamp(15px,2.7vw,21px); letter-spacing:0.05em; line-height:1.7;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(17px,4.2vw,22px); letter-spacing:0.05em; line-height:1.7;
     color:#F2D98A; text-shadow:0 0 16px rgba(242,217,138,0.5), 0 0 40px rgba(255,163,97,0.25);
     margin:0 0 8px;
   }
@@ -139,7 +139,7 @@
   @media (min-width:900px){ .nav-burger{ display:none; } }
   .nav-mobile{ display:none; position:fixed; inset:0; z-index:190; background:rgba(5,4,6,0.97); flex-direction:column; align-items:center; justify-content:center; gap:26px; }
   .nav-mobile.open{ display:flex; }
-  .nav-mobile a{ font-family:'Bebas Neue',sans-serif; font-size:16px; text-decoration:none; text-transform:uppercase; }
+  .nav-mobile a{ font-family:'Bebas Neue',sans-serif; font-size:19px; text-decoration:none; text-transform:uppercase; }
 
   /* ================= Hero ================= */
   .hero{ position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:120px 24px 80px; background: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(106,47,217,0.16), transparent 60%), var(--black); }
@@ -154,10 +154,10 @@
   .hero-ghosts{ position:absolute; inset:0; pointer-events:none; }
   .hero-content{ position:relative; z-index:3; opacity:0; animation: fadeUp 1.1s cubic-bezier(.2,.8,.2,1) forwards 0.2s; transition: transform 0.6s ease-out; }
   @keyframes fadeUp{ from{ opacity:0; transform:translateY(30px);} to{ opacity:1; transform:translateY(0);} }
-  .hero-sub{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.24em; text-transform:uppercase; color:var(--white-dim); }
+  .hero-sub{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:14.5px; letter-spacing:0.24em; text-transform:uppercase; color:var(--white-dim); }
   .hero-sub.brush{ margin-top:8px; font-family:'Caveat Brush', cursive; font-size:clamp(17px,2.4vw,22px); letter-spacing:0.02em; text-transform:none; color:var(--orange-soft); }
   .hero-meta{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px; }
-  .chip{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .chip{ font-family:'JetBrains Mono',monospace; font-size:13.5px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
   .chip:hover{ border-color:var(--orange); color:var(--orange-soft); background:rgba(255,107,26,0.09); transform:translateY(-3px); box-shadow:0 10px 24px rgba(255,107,26,0.2); }
   .chip:hover::after{ content:'👻'; margin-left:7px; display:inline-block; animation: chipGhostPop 0.4s ease; }
   @keyframes chipGhostPop{ from{ opacity:0; transform:translateY(5px) scale(0.5); } to{ opacity:1; transform:translateY(0) scale(1); } }
@@ -166,7 +166,7 @@
   .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
   .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
   .btn-outline:hover{ transform:translateY(-3px); border-color:var(--purple-glow); }
-  .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; }
+  .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; }
   .scroll-cue .stick{ width:1px; height:26px; background:linear-gradient(180deg, var(--white-dim), transparent); }
   @keyframes bob{ 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,6px);} }
 
@@ -175,12 +175,12 @@
   .reveal.in-view{ opacity:1; transform:translateY(0); }
 
   /* ================= Section head ================= */
-  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.28em; text-transform:uppercase; color:var(--orange-soft); display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12.5px; letter-spacing:0.28em; text-transform:uppercase; color:var(--orange-soft); display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .eyebrow::before{ content:''; width:22px; height:1px; background:var(--orange-soft); }
   .section-head{ text-align:center; max-width:640px; margin:0 auto 52px; position:relative; z-index:1; }
   .section-head .eyebrow{ justify-content:center; } .section-head .eyebrow::before{ display:none; }
   .section-head h2{ font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,3.6vw,36px); color:var(--white); line-height:1.3; }
-  .section-head p{ margin-top:14px; font-size:15px; line-height:1.6; color:var(--white-dim); }
+  .section-head p{ margin-top:14px; font-size:16px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Countdown ================= */
   .countdown-section{ padding:100px 0; background:linear-gradient(180deg, var(--black), var(--charcoal-2), var(--black)); }
@@ -189,14 +189,14 @@
   .countdown-num{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(30px,6vw,50px); color:var(--orange-soft); font-variant-numeric: tabular-nums; text-shadow:0 0 22px rgba(255,163,97,0.4); display:inline-block; }
   .countdown-num.pulse{ animation: numPulse 0.4s ease; }
   @keyframes numPulse{ 0%{ transform:scale(1.35); color:var(--white);} 100%{ transform:scale(1); color:var(--orange-soft);} }
-  .countdown-label{ margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
+  .countdown-label{ margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
   .countdown-colon{ font-family:'JetBrains Mono',monospace; font-size:clamp(24px,5vw,40px); color:var(--white-dim); opacity:0.4; }
   .countdown-done{ display:none; text-align:center; font-family:'Bebas Neue',sans-serif; font-size:clamp(20px,4vw,32px); color:var(--orange-soft); }
   @media (max-width:560px){ .countdown-tile{ min-width:62px; padding:14px 4px; } }
 
   /* ================= Concept ================= */
   .concept-section{ padding:100px 0; }
-  .concept-text{ max-width:640px; margin:0 auto; text-align:center; font-size:16px; line-height:1.85; color:var(--white-dim); }
+  .concept-text{ max-width:640px; margin:0 auto; text-align:center; font-size:17px; line-height:1.85; color:var(--white-dim); }
   .concept-text strong{ color:var(--white); }
 
   /* ================= Lineup (nube de artistas) ================= */
@@ -268,10 +268,10 @@
   .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
   .preventa:hover .preventa-price{ transform:scale(1.06); text-shadow:0 0 20px rgba(255,163,97,0.6); }
   .preventa-price sup{ font-size:14px; font-weight:600; color:var(--white-dim); margin-right:2px; }
-  .preventa-desc{ font-size:14px; line-height:1.6; color:var(--white-dim); margin-bottom:22px; }
+  .preventa-desc{ font-size:15px; line-height:1.6; color:var(--white-dim); margin-bottom:22px; }
   .preventa-desc strong{ color:var(--white); }
 
-  .stock-indicator{ display:flex; align-items:center; gap:8px; margin:2px 0 18px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.04em; color:var(--white-dim); }
+  .stock-indicator{ display:flex; align-items:center; gap:8px; margin:2px 0 18px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; color:var(--white-dim); }
   .stock-dot{ flex:none; width:7px; height:7px; border-radius:50%; background:var(--orange-soft); box-shadow:0 0 8px rgba(255,163,97,0.6); }
   .stock-indicator.is-low{ color:var(--red-soft); }
   .stock-indicator.is-low .stock-dot{ background:var(--red-soft); box-shadow:0 0 8px rgba(224,89,107,0.6); animation:dotPulse 1.1s ease-in-out infinite; }
@@ -296,10 +296,10 @@
   .ticket-tag{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; padding:5px 10px; border-radius:100px; border:1px solid var(--line); color:var(--white-dim); white-space:nowrap; }
   .ticket--locked .ticket-tag{ border-color:rgba(122,18,32,0.4); color:var(--red-soft); }
   .ticket-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:32px; color:var(--white); margin-bottom:4px; }
-  .ticket-price-note{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--white-dim); margin-bottom:16px; }
+  .ticket-price-note{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--white-dim); margin-bottom:16px; }
   .perforation{ border:none; border-top:1px dashed var(--line); margin:18px 0; }
   .ticket-feats{ list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:6px; }
-  .ticket-feats li{ display:flex; align-items:flex-start; gap:9px; font-size:13.5px; line-height:1.5; color:var(--white-dim); }
+  .ticket-feats li{ display:flex; align-items:flex-start; gap:9px; font-size:14.5px; line-height:1.5; color:var(--white-dim); }
   .ticket-feats li svg{ flex:none; width:13px; height:13px; margin-top:3px; }
   .ticket--premium .ticket-feats li svg{ color:var(--purple-glow); }
   .ticket--backstage .ticket-feats li svg{ color:var(--red-soft); }
@@ -325,9 +325,9 @@
   .info-icon{ width:28px; height:28px; margin-bottom:14px; color:var(--orange-soft); }
   .info-cell:nth-child(2) .info-icon{ color:var(--purple-glow); }
   .info-cell:nth-child(3) .info-icon{ color:var(--red-soft); }
-  .info-label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; }
+  .info-label{ font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; }
   .info-cell h3{ font-family:'Bebas Neue',sans-serif; font-size:13.5px; margin-bottom:8px; }
-  .info-cell p{ font-size:13px; line-height:1.6; color:var(--white-dim); }
+  .info-cell p{ font-size:14px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Galeria ================= */
   .gallery-section{ padding:20px 0 100px; }
@@ -349,7 +349,7 @@
   .map-card{ border-radius:6px; overflow:hidden; border:1px solid var(--line); background:var(--charcoal); }
   .map-card iframe{ width:100%; height:280px; border:0; display:block; filter:grayscale(0.35) contrast(1.05) brightness(0.9); }
   .map-actions{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; }
-  .map-addr{ font-size:13px; line-height:1.55; color:var(--white-dim); }
+  .map-addr{ font-size:14px; line-height:1.55; color:var(--white-dim); }
   .map-addr strong{ display:block; color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:0.02em; margin-bottom:3px; }
   .map-btn{ display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:100px; text-decoration:none; white-space:nowrap; background:linear-gradient(90deg, var(--orange), var(--purple)); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; transition: transform 0.25s ease; }
   .map-btn:hover{ transform:translateY(-2px); }
@@ -364,7 +364,7 @@
   .faq-item summary::-webkit-details-marker{ display:none; }
   .faq-icon{ flex:none; width:18px; height:18px; display:flex; align-items:center; justify-content:center; color:var(--orange-soft); transition: transform 0.3s ease; }
   .faq-item[open] .faq-icon{ transform:rotate(45deg); }
-  .faq-answer{ padding:0 22px 20px; font-size:13.5px; line-height:1.65; color:var(--white-dim); }
+  .faq-answer{ padding:0 22px 20px; font-size:14.5px; line-height:1.65; color:var(--white-dim); }
 
   /* ================= CTA final cinematico ================= */
   .final-cta{ min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px; }
@@ -380,13 +380,13 @@
   footer{ padding:56px 0 40px; border-top:1px solid var(--line); text-align:center; }
   .footer-title{ font-family:'Bebas Neue',sans-serif; font-size:15px; }
   .footer-title .accent{ color:var(--orange); }
-  .footer-sub{ margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
-  .footer-tagline{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--white-dim); opacity:0.6; }
+  .footer-sub{ margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
+  .footer-tagline{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.3em; text-transform:uppercase; color:var(--white-dim); opacity:0.6; }
   .footer-social{ display:flex; gap:12px; justify-content:center; margin-top:22px; }
   .footer-social a{ width:36px; height:36px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--white-dim); transition:border-color 0.2s, color 0.2s; }
   .footer-social a:hover{ border-color:var(--orange); color:var(--orange-soft); }
   .footer-social svg{ width:15px; height:15px; }
-  .footer-bottom{ margin-top:24px; font-size:10.5px; color:var(--white-dim); opacity:0.55; }
+  .footer-bottom{ margin-top:24px; font-size:12px; color:var(--white-dim); opacity:0.55; }
 </style>
 
 <svg width="0" height="0" style="position:absolute">
@@ -414,7 +414,7 @@
       <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">
       <span class="l3">2016</span>
     </div>
-    <button id="enterBtn" type="button">Enter the night →</button>
+    <button id="enterBtn" type="button">Entrar a la noche →</button>
   </div>
 
   <div class="intro-ghosts">
@@ -486,13 +486,13 @@
       <a class="btn-outline" href="#localidades">Ver localidades</a>
     </div>
   </div>
-  <div class="scroll-cue">Scroll to enter the night<div class="stick"></div></div>
+  <div class="scroll-cue">Desliza para entrar a la noche<div class="stick"></div></div>
 </section>
 
 <!-- ================= COUNTDOWN ================= -->
 <section class="countdown-section">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Cuenta regresiva</div><h2>The night begins in</h2></div>
+    <div class="section-head reveal"><div class="eyebrow">Cuenta regresiva</div><h2>La noche comienza en</h2></div>
     <div class="countdown-row reveal" id="countdown">
       <div class="countdown-tile"><div class="countdown-num" id="cdDays">31</div><div class="countdown-label">Días</div></div>
       <span class="countdown-colon">:</span>
@@ -502,7 +502,7 @@
       <span class="countdown-colon">:</span>
       <div class="countdown-tile"><div class="countdown-num" id="cdSecs">52</div><div class="countdown-label">Segundos</div></div>
     </div>
-    <div class="countdown-done display" id="countdownDone">The night has begun 👻</div>
+    <div class="countdown-done display" id="countdownDone">La noche ha comenzado 👻</div>
   </div>
 </section>
 
@@ -554,12 +554,12 @@
 <!-- ================= EXPERIENCIA ================= -->
 <section class="experience-section" id="experiencia">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">La experiencia</div><h2>More than a party</h2></div>
+    <div class="section-head reveal"><div class="eyebrow">La experiencia</div><h2>Más que una fiesta</h2></div>
     <div class="experience-grid">
       <div class="experience-cell reveal"><div class="ic">🎧</div><h3>EDM</h3><p>Los sonidos que marcaron una época.</p></div>
       <div class="experience-cell reveal"><div class="ic">👻</div><h3>Halloween</h3><p>Una noche completamente transformada.</p></div>
       <div class="experience-cell reveal"><div class="ic">🔥</div><h3>Rave</h3><p>Luces, humo, energía y música.</p></div>
-      <div class="experience-cell reveal"><div class="ic">🧡</div><h3>Community</h3><p>Personas conectadas por la misma música.</p></div>
+      <div class="experience-cell reveal"><div class="ic">🧡</div><h3>Comunidad</h3><p>Personas conectadas por la misma música.</p></div>
     </div>
   </div>
 </section>
@@ -746,19 +746,19 @@
   <div class="final-moon"></div>
   <svg class="final-ghost" style="width:60px; top:20%; left:12%;" viewBox="0 0 60 70"><use href="#ghostShape"/></svg>
   <svg class="final-ghost" style="width:44px; top:60%; right:14%; animation-delay:2s;" viewBox="0 0 60 70"><use href="#ghostShape"/></svg>
-  <h2><span>THE NIGHT</span>IS WAITING.</h2>
+  <h2><span>LA NOCHE</span>TE ESPERA.</h2>
   <div class="final-meta">
     <span>BACK TO HALLOWEEN 2016</span>
     <span>BOGOTÁ 🇨🇴 · 31 OCTUBRE</span>
   </div>
-  <a class="btn-solid" href="#localidades">🎟️ Get your ticket</a>
+  <a class="btn-solid" href="#localidades">🎟️ Consigue tu boleta</a>
 </section>
 
 <footer>
   <div class="wrap">
     <div class="footer-title">BACK TO <span class="accent">HALLOWEEN</span> 2016</div>
     <div class="footer-sub">Fan Tribute</div>
-    <div class="footer-tagline">Music · Memories · Community</div>
+    <div class="footer-tagline">Música · Recuerdos · Comunidad</div>
     <div class="footer-social">
       <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
       <a href="https://www.tiktok.com/@fantribute_col" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2c.4 2.6 2 4.4 4.6 4.7v3.1c-1.6 0-3-.5-4.3-1.4v6.9c0 3.7-3 6.7-6.7 6.7S3.4 19 3.4 15.3s3-6.7 6.7-6.7c.4 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.9 0-3.4 1.5-3.4 3.4s1.5 3.4 3.4 3.4 3.5-1.5 3.5-3.4V2h3Z"/></svg></a>
