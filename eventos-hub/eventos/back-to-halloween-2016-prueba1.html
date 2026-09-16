@@ -173,9 +173,11 @@
   .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
   .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
   .btn-outline:hover{ transform:translateY(-3px); border-color:var(--purple-glow); }
-  .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; }
+  .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; width:100%; padding:0 24px; }
+  .scroll-cue span{ display:block; max-width:230px; text-align:center; white-space:normal; }
   .scroll-cue .stick{ width:1px; height:26px; background:linear-gradient(180deg, var(--white-dim), transparent); }
   @keyframes bob{ 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,6px);} }
+  @keyframes bobStatic{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(6px);} }
 
   /* ================= Reveal on scroll ================= */
   .reveal{ opacity:0; transform:translateY(34px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.22,1,.36,1); }
@@ -398,7 +400,7 @@
   /* ================= Ajustes mobile (evita desbordes y solapes) ================= */
   @media (max-width:900px){
     .nav .wrap > .nav-cta{ display:none; }
-    .scroll-cue{ position:static; left:auto; bottom:auto; transform:none; margin:26px auto 0; }
+    .scroll-cue{ position:static; left:auto; bottom:auto; transform:none; margin:26px auto 0; animation:bobStatic 2.4s ease-in-out infinite; }
   }
   @media (max-width:680px){
     .chip{ white-space:normal; word-break:break-word; overflow-wrap:break-word; min-width:0; max-width:100%; }
@@ -508,7 +510,7 @@
       <a class="btn-outline" href="#localidades">Ver localidades</a>
     </div>
   </div>
-  <div class="scroll-cue">Desliza para entrar a la fiesta<div class="stick"></div></div>
+  <div class="scroll-cue"><span>Desliza para entrar a la fiesta</span><div class="stick"></div></div>
 </section>
 
 <!-- ================= COUNTDOWN ================= -->
