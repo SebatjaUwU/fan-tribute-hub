@@ -97,6 +97,7 @@
     color:#F2D98A; text-shadow:0 0 16px rgba(242,217,138,0.5), 0 0 40px rgba(255,163,97,0.25);
     margin:0 0 8px;
   }
+  .crawl-word{ display:inline-block; white-space:nowrap; }
   .crawl-char{ opacity:0; display:inline-block; animation: crawlCharIn 0.45s ease forwards; }
   @keyframes crawlCharIn{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:translateY(0);} }
   @keyframes crawlFadeOut{ to{ opacity:0; transform:translateY(-12px);} }
@@ -405,7 +406,7 @@
 
   <div class="intro-crawl" id="introCrawl">
     <p class="crawl-line" data-text="Después de dos fechas exitosas de sold out del End of Summer 2016, el verano acabó..."></p>
-    <p class="crawl-line" data-text="Pero llega Halloween del 2016 con los himnos de la electrónica del 2016."></p>
+    <p class="crawl-line" data-text="Pero llega Halloween del 2016 con los himnos de la electrónica del 2016. 🧡"></p>
   </div>
 
   <div class="intro-content">
@@ -783,35 +784,48 @@
   }
   enterBtn.addEventListener('click', enterNight);
 
-  // ---------- Crawl estilo Star Wars (letra por letra, lento) ----------
+  // ---------- Crawl estilo Star Wars (letra por letra) ----------
   var introRevealOffset = 0;
   (function () {
     var crawl = document.getElementById('introCrawl');
     if (!crawl) return;
     var lines = crawl.querySelectorAll('.crawl-line');
-    var charDelay = 0.03;   // segundos por letra (lento)
-    var lineGap = 0.45;     // pausa entre las dos lineas
-    var t = 0.4;            // arranque tras cargar la intro
+    var charDelay = 0.016;  // segundos por letra
+    var lineGap = 0.28;     // pausa entre las dos lineas
+    var t = 0.3;            // arranque tras cargar la intro
     lines.forEach(function (line) {
       var text = line.getAttribute('data-text') || '';
       line.textContent = '';
-      for (var i = 0; i < text.length; i++) {
-        var ch = text[i];
-        var span = document.createElement('span');
-        span.className = 'crawl-char';
-        span.textContent = ch === ' ' ? ' ' : ch;
-        span.style.animationDelay = t.toFixed(2) + 's';
-        line.appendChild(span);
-        t += charDelay;
-      }
+      var words = text.split(' ');
+      words.forEach(function (word, wi) {
+        var wordSpan = document.createElement('span');
+        wordSpan.className = 'crawl-word';
+        Array.from(word).forEach(function (ch) {
+          var span = document.createElement('span');
+          span.className = 'crawl-char';
+          span.textContent = ch;
+          span.style.animationDelay = t.toFixed(2) + 's';
+          wordSpan.appendChild(span);
+          t += charDelay;
+        });
+        line.appendChild(wordSpan);
+        if (wi < words.length - 1) {
+          var spaceSpan = document.createElement('span');
+          spaceSpan.className = 'crawl-char';
+          spaceSpan.textContent = ' ';
+          spaceSpan.style.animationDelay = t.toFixed(2) + 's';
+          line.appendChild(spaceSpan);
+          t += charDelay;
+        }
+      });
       t += lineGap;
     });
-    var holdTime = 1.0;
+    var holdTime = 0.6;
     var fadeOutAt = t + holdTime;
-    crawl.style.animation = 'crawlFadeOut 0.9s ease forwards ' + fadeOutAt.toFixed(2) + 's';
-    setTimeout(function () { if (crawl.parentNode) crawl.style.display = 'none'; }, (fadeOutAt + 0.9) * 1000);
+    crawl.style.animation = 'crawlFadeOut 0.7s ease forwards ' + fadeOutAt.toFixed(2) + 's';
+    setTimeout(function () { if (crawl.parentNode) crawl.style.display = 'none'; }, (fadeOutAt + 0.7) * 1000);
 
-    var newLogoDelay = fadeOutAt + 0.6;
+    var newLogoDelay = fadeOutAt + 0.4;
     introRevealOffset = newLogoDelay - 1.7;
 
     function shiftDelay(el) {
