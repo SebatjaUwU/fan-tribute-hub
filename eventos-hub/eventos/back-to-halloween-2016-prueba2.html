@@ -1,4 +1,5 @@
 <title>Back to Halloween 2016</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat+Brush&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -387,6 +388,22 @@
   .footer-social a:hover{ border-color:var(--orange); color:var(--orange-soft); }
   .footer-social svg{ width:15px; height:15px; }
   .footer-bottom{ margin-top:24px; font-size:12px; color:var(--white-dim); opacity:0.55; }
+
+  /* ================= Ajustes mobile (evita desbordes y solapes) ================= */
+  @media (max-width:900px){
+    .nav .wrap > .nav-cta{ display:none; }
+    .scroll-cue{ position:static; left:auto; bottom:auto; transform:none; margin:26px auto 0; }
+  }
+  @media (max-width:680px){
+    .chip{ white-space:normal; word-break:break-word; overflow-wrap:break-word; min-width:0; max-width:100%; }
+    .preventa-top{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .ticket-top{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .preventa-price{ font-size:28px; }
+    .ticket-price{ font-size:26px; }
+    .countdown-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 12px; max-width:320px; margin:0 auto; }
+    .countdown-colon{ display:none; }
+    .countdown-tile{ min-width:0; width:100%; }
+  }
 </style>
 
 <svg width="0" height="0" style="position:absolute">
@@ -445,6 +462,7 @@
 </nav>
 <div class="nav-mobile" id="mobileNav">
   <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
+  <a href="#localidades" class="nav-cta">🎟️ Comprar boleta</a>
 </div>
 
 <!-- ================= HERO ================= -->
@@ -686,7 +704,7 @@
 <!-- ================= MAPA ================= -->
 <section class="map-section">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Ubicación</div><h2>Find the night</h2></div>
+    <div class="section-head reveal"><div class="eyebrow">Ubicación</div><h2>Encuentra la noche</h2></div>
     <div class="map-card reveal">
       <iframe src="https://www.google.com/maps?q=Capital+Live+Concerts+Kr+13+%2348-90+Chapinero+Bogot%C3%A1&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Capital Live Concerts"></iframe>
       <div class="map-actions">
