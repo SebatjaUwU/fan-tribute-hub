@@ -218,8 +218,10 @@
   .nav-links a{ text-decoration:none; opacity:0.75; transition:opacity 0.2s, color 0.2s; }
   .nav-links a:hover{ opacity:1; color:var(--orange-soft); }
   @media (min-width:900px){ .nav-links{ display:flex; } }
-  .nav-cta{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; padding:11px 20px; border-radius:2px; text-decoration:none; border:1px solid var(--orange); color:var(--orange-soft); transition: background 0.3s ease, color 0.3s ease; }
-  .nav-cta:hover{ background:var(--orange); color:#1A0B00; }
+  .nav-cta{ display:inline-flex; align-items:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; padding:4px 4px 4px 18px; border-radius:100px; border:2px solid transparent; background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--orange), var(--purple-glow)) border-box; text-decoration:none; color:var(--white); transition: transform 0.25s ease; }
+  .nav-cta-orb{ margin-left:14px; width:30px; height:30px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--orange), var(--purple-glow)); }
+  .nav-cta-orb svg{ width:13px; height:13px; color:#1A0B00; }
+  .nav-cta:hover{ transform:translateY(-2px); }
   .nav-burger{ display:flex; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; }
   .nav-burger span{ width:22px; height:2px; background:var(--white); display:block; }
   @media (min-width:900px){ .nav-burger{ display:none; } }
@@ -248,15 +250,18 @@
   .chip:hover::after{ content:'👻'; margin-left:7px; display:inline-block; animation: chipGhostPop 0.4s ease; }
   @keyframes chipGhostPop{ from{ opacity:0; transform:translateY(5px) scale(0.5); } to{ opacity:1; transform:translateY(0) scale(1); } }
   .hero-actions{ display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:34px; }
-  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:18px 38px; border-radius:2px; background:var(--orange-soft); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
+  .btn-solid{ display:inline-flex; align-items:center; padding:5px 5px 5px 28px; border-radius:100px; border:2px solid transparent; background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--orange), var(--purple-glow)) border-box; color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:0.05em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .btn-solid-orb{ margin-left:22px; width:48px; height:48px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--orange), var(--purple-glow)); color:#1A0B00; }
+  .btn-solid-orb svg{ width:19px; height:19px; }
+  .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.3); }
   .hero-link-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 22px; }
   .hero-link{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-dim); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:3px; transition: color 0.25s ease, border-color 0.25s ease; }
   .hero-link:hover{ color:var(--white); border-color:var(--white); }
   .hero-link svg{ width:13px; height:13px; transition: transform 0.25s ease; }
   .hero-link:hover svg{ transform:translateX(3px); }
   .hero-link-sep{ color:var(--line); font-size:11px; }
-  .merch-sticker{ display:inline-flex; align-items:center; gap:6px; padding:7px 14px 7px 11px; border:1.5px dashed var(--purple-glow); border-radius:100px; transform:rotate(-3deg); font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--purple-glow); text-decoration:none; background:rgba(155,92,255,0.08); transition: transform 0.25s ease, background 0.25s ease; }
+  .merch-sticker{ display:inline-flex; align-items:center; gap:7px; padding:7px 14px 7px 11px; border:1.5px dashed var(--purple-glow); border-radius:100px; transform:rotate(-3deg); font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--purple-glow); text-decoration:none; background:rgba(155,92,255,0.08); transition: transform 0.25s ease, background 0.25s ease; }
+  .merch-sticker svg{ width:14px; height:14px; }
   .merch-sticker:hover{ transform:rotate(0deg) scale(1.06); background:rgba(155,92,255,0.16); }
   .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; width:100%; padding:0 24px; }
   .scroll-cue span{ display:block; max-width:230px; text-align:center; white-space:normal; }
@@ -335,14 +340,6 @@
   @media (max-width:700px){ .timeline{ flex-wrap:wrap; gap:20px 0; } .timeline::before{ display:none; } .timeline-year{ flex:1 1 33%; } }
 
   /* ================= Experiencia (4 bloques) ================= */
-  .experience-section{ padding:100px 0; }
-  .experience-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
-  @media (max-width:900px){ .experience-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media (max-width:520px){ .experience-grid{ grid-template-columns:1fr; } }
-  .experience-cell{ background:var(--black); padding:34px 26px; }
-  .experience-cell .ic{ font-size:26px; margin-bottom:16px; }
-  .experience-cell h3{ font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.06em; margin-bottom:10px; }
-  .experience-cell p{ font-size:13.5px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Tickets (estilo boleta underground) ================= */
   .tickets-section{ padding:100px 0 90px; }
@@ -413,7 +410,7 @@
   .buy-btn--backstage{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--red-soft), var(--purple-glow)) border-box; }
   .buy-btn--backstage .buy-btn-orb{ background:linear-gradient(135deg, var(--red-soft), var(--purple-glow)); color:#1A0B00; }
   .buy-btn--backstage:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(224,89,107,0.28); }
-  .buy-btn--locked{ padding:14px 20px; justify-content:center; background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
+  .buy-btn--locked{ padding:14px 20px; justify-content:center; border-color:var(--line); background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
 
   /* ================= Info ================= */
   .info-section{ padding:20px 0 100px; }
@@ -546,15 +543,15 @@
   <div class="wrap">
     <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
     <div class="nav-links">
-      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
+      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
     </div>
-    <a class="nav-cta" href="#localidades">🎟️ Comprar boleta</a>
+    <a class="nav-cta" href="#localidades">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
     <button class="nav-burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
-  <a href="#localidades" class="nav-cta">🎟️ Comprar boleta</a>
+  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
+  <a href="#localidades" class="nav-cta">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
 </div>
 
 <!-- ================= HERO ================= -->
@@ -592,14 +589,14 @@
       <span class="chip">🔞 +18</span>
     </div>
     <div class="hero-actions">
-      <a class="btn-solid" href="#localidades">🎟️ Comprar boleta</a>
+      <a class="btn-solid" href="#localidades">Comprar boleta<span class="btn-solid-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
       <div class="hero-link-row">
         <a class="hero-link" href="#localidades">
           Ver localidades
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
         <span class="hero-link-sep">·</span>
-        <a class="merch-sticker" href="../back-to-halloween-2016-merch.html">🛍️ Merch</a>
+        <a class="merch-sticker" href="../back-to-halloween-2016-merch.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Merch</a>
       </div>
     </div>
   </div>
@@ -669,18 +666,6 @@
 </section>
 
 <!-- ================= EXPERIENCIA ================= -->
-<section class="experience-section" id="experiencia">
-  <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">La experiencia</div><h2>Más que una fiesta</h2></div>
-    <div class="experience-grid">
-      <div class="experience-cell reveal"><div class="ic">🎧</div><h3>EDM</h3><p>Los sonidos que marcaron una época.</p></div>
-      <div class="experience-cell reveal"><div class="ic">👻</div><h3>Halloween</h3><p>Una noche completamente transformada.</p></div>
-      <div class="experience-cell reveal"><div class="ic">🔥</div><h3>Rave</h3><p>Luces, humo, energía y música.</p></div>
-      <div class="experience-cell reveal"><div class="ic">🧡</div><h3>Comunidad</h3><p>Personas conectadas por la misma música.</p></div>
-    </div>
-  </div>
-</section>
-
 <!-- ================= LOCALIDADES ================= -->
 <section class="tickets-section" id="localidades">
   <div class="wrap">
@@ -876,7 +861,7 @@
     <span>BACK TO HALLOWEEN 2016</span>
     <span>BOGOTÁ 🇨🇴 · 31 OCTUBRE</span>
   </div>
-  <a class="btn-solid" href="#localidades">🎟️ Consigue tu boleta</a>
+  <a class="btn-solid" href="#localidades">Consigue tu boleta<span class="btn-solid-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
 </section>
 
 <footer>
