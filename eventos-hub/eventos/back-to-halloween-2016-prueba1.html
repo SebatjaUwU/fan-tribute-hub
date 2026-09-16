@@ -89,6 +89,17 @@
   .intro-content{ position:relative; z-index:3; text-align:center; opacity:0; animation: fadeIn 1s ease forwards 1.7s; }
   @keyframes fadeIn{ to{ opacity:1; } }
   .intro-ghosts, .intro-extras{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+
+  /* ================= Crawl tipo Star Wars ================= */
+  .intro-crawl{ position:relative; z-index:3; max-width:620px; margin:0 auto 30px; padding:0 26px; text-align:center; }
+  .crawl-line{
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(15px,2.7vw,21px); letter-spacing:0.05em; line-height:1.7;
+    color:#F2D98A; text-shadow:0 0 16px rgba(242,217,138,0.5), 0 0 40px rgba(255,163,97,0.25);
+    margin:0 0 8px;
+  }
+  .crawl-char{ opacity:0; display:inline-block; animation: crawlCharIn 0.45s ease forwards; }
+  @keyframes crawlCharIn{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:translateY(0);} }
+  @keyframes crawlFadeOut{ to{ opacity:0; transform:translateY(-12px);} }
   #enterBtn{
     position:relative; z-index:3; margin-top:38px; display:inline-flex; align-items:center; gap:10px; padding:15px 34px;
     border-radius:2px; background:transparent; border:1px solid var(--orange); color:var(--orange-soft);
@@ -391,6 +402,11 @@
     <source src="../../edc-preparty/ASSETS/download.mp4" type="video/mp4">
   </video>
   <div class="intro-video-overlay"></div>
+
+  <div class="intro-crawl" id="introCrawl">
+    <p class="crawl-line" data-text="Después de dos fechas exitosas de sold out del End of Summer 2016, el verano acabó..."></p>
+    <p class="crawl-line" data-text="Pero llega Halloween del 2016 con los himnos de la electrónica del 2016."></p>
+  </div>
 
   <div class="intro-content">
     <div class="event-logo">
@@ -767,6 +783,50 @@
   }
   enterBtn.addEventListener('click', enterNight);
 
+  // ---------- Crawl estilo Star Wars (letra por letra, lento) ----------
+  var introRevealOffset = 0;
+  (function () {
+    var crawl = document.getElementById('introCrawl');
+    if (!crawl) return;
+    var lines = crawl.querySelectorAll('.crawl-line');
+    var charDelay = 0.03;   // segundos por letra (lento)
+    var lineGap = 0.45;     // pausa entre las dos lineas
+    var t = 0.4;            // arranque tras cargar la intro
+    lines.forEach(function (line) {
+      var text = line.getAttribute('data-text') || '';
+      line.textContent = '';
+      for (var i = 0; i < text.length; i++) {
+        var ch = text[i];
+        var span = document.createElement('span');
+        span.className = 'crawl-char';
+        span.textContent = ch === ' ' ? ' ' : ch;
+        span.style.animationDelay = t.toFixed(2) + 's';
+        line.appendChild(span);
+        t += charDelay;
+      }
+      t += lineGap;
+    });
+    var holdTime = 1.0;
+    var fadeOutAt = t + holdTime;
+    crawl.style.animation = 'crawlFadeOut 0.9s ease forwards ' + fadeOutAt.toFixed(2) + 's';
+    setTimeout(function () { if (crawl.parentNode) crawl.style.display = 'none'; }, (fadeOutAt + 0.9) * 1000);
+
+    var newLogoDelay = fadeOutAt + 0.6;
+    introRevealOffset = newLogoDelay - 1.7;
+
+    function shiftDelay(el) {
+      if (!el) return;
+      var current = getComputedStyle(el).animationDelay;
+      var shifted = current.split(',').map(function (s) { return (parseFloat(s) + introRevealOffset).toFixed(2) + 's'; }).join(', ');
+      el.style.animationDelay = shifted;
+    }
+    shiftDelay(document.querySelector('.intro-content'));
+    shiftDelay(enterBtn);
+    document.querySelectorAll('.intro-ghosts .ghost').forEach(shiftDelay);
+    shiftDelay(document.querySelector('.spider-thread'));
+    shiftDelay(document.querySelector('.spider'));
+  })();
+
   // ---------- Particulas intro ----------
   (function () {
     var holder = document.querySelector('.particles-holder');
@@ -778,7 +838,7 @@
       p.style.width = size + 'px'; p.style.height = size + 'px';
       p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
       p.style.animationDuration = (3 + Math.random() * 3) + 's';
-      p.style.animationDelay = (2.2 + Math.random() * 2) + 's';
+      p.style.animationDelay = (2.2 + introRevealOffset + Math.random() * 2) + 's';
       holder.appendChild(p);
     }
   })();
