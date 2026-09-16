@@ -1,7 +1,7 @@
 <title>Back to Halloween 2016</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat+Brush&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --black: #050406;
@@ -32,7 +32,7 @@
   .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
   ::selection{ background: var(--orange); color:#1A0B00; }
   section{ position:relative; background:var(--black); overflow:hidden; }
-  .display{ font-family:'Michroma', 'Space Grotesk', sans-serif; }
+  .display{ font-family:'Bebas Neue', 'Space Grotesk', sans-serif; }
 
   /* ---------- Cursor glow (desktop solamente) ---------- */
   #cursorGlow{
@@ -57,22 +57,20 @@
   .dark-eyes span{ width:6px; height:6px; border-radius:50%; background:var(--orange-soft); box-shadow:0 0 8px var(--orange-soft); }
   @keyframes eyesBlink{ 0%,88%,100%{ opacity:0; } 90%,96%{ opacity:0.9; } }
 
-  /* ================= Logo tipografico ================= */
+  /* ================= Logo ================= */
   .event-logo{ text-align:center; }
   .event-logo .l1{
     display:block; font-family:'JetBrains Mono',monospace; font-weight:500; font-size:clamp(11px,1.6vw,13px);
-    letter-spacing:0.5em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px;
+    letter-spacing:0.5em; text-transform:uppercase; color:var(--white-dim); margin-bottom:14px;
   }
-  .event-logo .l2{
-    display:block; font-family:'Michroma',sans-serif; font-weight:400; font-size:clamp(30px,7vw,68px);
-    line-height:1.15; letter-spacing:0.01em; text-transform:uppercase;
-    background:linear-gradient(180deg, var(--orange-soft) 0%, var(--orange) 45%, var(--purple) 100%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter: drop-shadow(0 0 26px rgba(255,107,26,0.4)) drop-shadow(0 0 60px rgba(106,47,217,0.3));
+  .brand-logo-img{
+    display:block; margin:0 auto; width:min(230px,58vw); aspect-ratio:1/1; object-fit:cover; border-radius:14px;
+    box-shadow:0 0 0 1px rgba(255,163,97,0.25), 0 20px 60px rgba(106,47,217,0.35), 0 0 70px rgba(255,107,26,0.2);
   }
+  .brand-logo-img--nav{ width:38px; height:38px; margin:0; border-radius:8px; box-shadow:0 0 0 1px rgba(255,163,97,0.3); }
   .event-logo .l3{
     display:block; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(14px,2.6vw,20px);
-    letter-spacing:0.6em; color:var(--moon); margin-top:14px; filter: drop-shadow(0 0 14px rgba(242,233,201,0.5));
+    letter-spacing:0.6em; color:var(--moon); margin-top:16px; filter: drop-shadow(0 0 14px rgba(242,233,201,0.5));
   }
 
   /* ================= Intro cinematica ================= */
@@ -112,7 +110,7 @@
   .nav{ position:fixed; top:0; left:0; right:0; z-index:200; padding:18px 0; background:transparent; border-bottom:1px solid transparent; transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease, border-color 0.4s ease; }
   .nav.scrolled{ background:rgba(5,4,6,0.82); backdrop-filter:blur(14px); padding:12px 0; border-color:var(--line); }
   .nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
-  .nav-logo{ font-family:'Michroma',sans-serif; font-size:12px; letter-spacing:0.02em; display:flex; align-items:center; gap:8px; }
+  .nav-logo{ font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.04em; display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--white); }
   .nav-logo .accent{ color:var(--orange); }
   .nav-links{ display:none; gap:30px; font-size:11.5px; letter-spacing:0.12em; font-family:'JetBrains Mono',monospace; text-transform:uppercase; }
   .nav-links a{ text-decoration:none; opacity:0.75; transition:opacity 0.2s, color 0.2s; }
@@ -125,7 +123,7 @@
   @media (min-width:900px){ .nav-burger{ display:none; } }
   .nav-mobile{ display:none; position:fixed; inset:0; z-index:190; background:rgba(5,4,6,0.97); flex-direction:column; align-items:center; justify-content:center; gap:26px; }
   .nav-mobile.open{ display:flex; }
-  .nav-mobile a{ font-family:'Michroma',sans-serif; font-size:16px; text-decoration:none; text-transform:uppercase; }
+  .nav-mobile a{ font-family:'Bebas Neue',sans-serif; font-size:16px; text-decoration:none; text-transform:uppercase; }
 
   /* ================= Hero ================= */
   .hero{ position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:120px 24px 80px; background: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(106,47,217,0.16), transparent 60%), var(--black); }
@@ -141,12 +139,13 @@
   .hero-content{ position:relative; z-index:3; opacity:0; animation: fadeUp 1.1s cubic-bezier(.2,.8,.2,1) forwards 0.2s; transition: transform 0.6s ease-out; }
   @keyframes fadeUp{ from{ opacity:0; transform:translateY(30px);} to{ opacity:1; transform:translateY(0);} }
   .hero-sub{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.24em; text-transform:uppercase; color:var(--white-dim); }
+  .hero-sub.brush{ margin-top:8px; font-family:'Caveat Brush', cursive; font-size:clamp(17px,2.4vw,22px); letter-spacing:0.02em; text-transform:none; color:var(--orange-soft); }
   .hero-meta{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px; }
   .chip{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; padding:9px 18px; border:1px solid var(--line); border-radius:2px; color:var(--white-dim); background:rgba(237,234,230,0.03); }
   .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px; }
-  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:linear-gradient(90deg, var(--orange), var(--dark-red)); color:#1A0B00; font-family:'Michroma',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .btn-solid{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:linear-gradient(90deg, var(--orange), var(--dark-red)); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; box-shadow:0 10px 28px rgba(255,107,26,0.25); transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 34px rgba(255,107,26,0.4); }
-  .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Michroma',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
+  .btn-outline{ display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:2px; background:transparent; border:1px solid var(--line); color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition: border-color 0.3s ease, transform 0.3s ease; }
   .btn-outline:hover{ transform:translateY(-3px); border-color:var(--purple-glow); }
   .scroll-cue{ position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0.6; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); animation: bob 2.4s ease-in-out infinite; }
   .scroll-cue .stick{ width:1px; height:26px; background:linear-gradient(180deg, var(--white-dim), transparent); }
@@ -161,7 +160,7 @@
   .eyebrow::before{ content:''; width:22px; height:1px; background:var(--orange-soft); }
   .section-head{ text-align:center; max-width:640px; margin:0 auto 52px; position:relative; z-index:1; }
   .section-head .eyebrow{ justify-content:center; } .section-head .eyebrow::before{ display:none; }
-  .section-head h2{ font-family:'Michroma',sans-serif; font-size:clamp(22px,3.6vw,36px); color:var(--white); line-height:1.3; }
+  .section-head h2{ font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,3.6vw,36px); color:var(--white); line-height:1.3; }
   .section-head p{ margin-top:14px; font-size:15px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Countdown ================= */
@@ -173,7 +172,7 @@
   @keyframes numPulse{ 0%{ transform:scale(1.35); color:var(--white);} 100%{ transform:scale(1); color:var(--orange-soft);} }
   .countdown-label{ margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
   .countdown-colon{ font-family:'JetBrains Mono',monospace; font-size:clamp(24px,5vw,40px); color:var(--white-dim); opacity:0.4; }
-  .countdown-done{ display:none; text-align:center; font-family:'Michroma',sans-serif; font-size:clamp(20px,4vw,32px); color:var(--orange-soft); }
+  .countdown-done{ display:none; text-align:center; font-family:'Bebas Neue',sans-serif; font-size:clamp(20px,4vw,32px); color:var(--orange-soft); }
   @media (max-width:560px){ .countdown-tile{ min-width:62px; padding:14px 4px; } }
 
   /* ================= Concept ================= */
@@ -187,12 +186,12 @@
     max-width:760px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; gap:16px 24px; text-align:center;
   }
   .lineup-cloud .t1{
-    font-family:'Michroma',sans-serif; font-size:clamp(22px,4.4vw,38px); line-height:1.25;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,4.4vw,38px); line-height:1.25;
     background:linear-gradient(90deg, var(--orange-soft) 0%, var(--orange) 55%, var(--purple) 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
   .lineup-cloud .t2{
-    font-family:'Michroma',sans-serif; font-size:clamp(17px,3vw,24px); line-height:1.3;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(17px,3vw,24px); line-height:1.3;
     background:linear-gradient(90deg, var(--purple-glow), var(--red-soft));
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
@@ -229,7 +228,7 @@
   @media (max-width:520px){ .experience-grid{ grid-template-columns:1fr; } }
   .experience-cell{ background:var(--black); padding:34px 26px; }
   .experience-cell .ic{ font-size:26px; margin-bottom:16px; }
-  .experience-cell h3{ font-family:'Michroma',sans-serif; font-size:13px; letter-spacing:0.06em; margin-bottom:10px; }
+  .experience-cell h3{ font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.06em; margin-bottom:10px; }
   .experience-cell p{ font-size:13.5px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Tickets (estilo boleta underground) ================= */
@@ -246,12 +245,20 @@
   .preventa:hover{ transform:translateY(-6px); box-shadow:0 20px 50px rgba(255,107,26,0.2), 0 0 0 1px rgba(255,107,26,0.25); }
   .preventa-badge{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:6px 12px; border-radius:100px; background:rgba(255,107,26,0.14); border:1px solid rgba(255,107,26,0.35); color:var(--orange-soft); margin-bottom:18px; }
   .preventa-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
-  .preventa-kind{ font-family:'Michroma',sans-serif; font-size:16px; color:var(--orange-soft); }
+  .preventa-kind{ font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--orange-soft); }
   .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
   .preventa:hover .preventa-price{ transform:scale(1.06); text-shadow:0 0 20px rgba(255,163,97,0.6); }
   .preventa-price sup{ font-size:14px; font-weight:600; color:var(--white-dim); margin-right:2px; }
   .preventa-desc{ font-size:14px; line-height:1.6; color:var(--white-dim); margin-bottom:22px; }
   .preventa-desc strong{ color:var(--white); }
+
+  .stock-indicator{ display:flex; align-items:center; gap:8px; margin:2px 0 18px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.04em; color:var(--white-dim); }
+  .stock-dot{ flex:none; width:7px; height:7px; border-radius:50%; background:var(--orange-soft); box-shadow:0 0 8px rgba(255,163,97,0.6); }
+  .stock-indicator.is-low{ color:var(--red-soft); }
+  .stock-indicator.is-low .stock-dot{ background:var(--red-soft); box-shadow:0 0 8px rgba(224,89,107,0.6); animation:dotPulse 1.1s ease-in-out infinite; }
+  .stock-indicator.is-soldout{ color:var(--white-dim); opacity:0.7; }
+  .stock-indicator.is-soldout .stock-dot{ background:var(--white-dim); box-shadow:none; }
+  @keyframes dotPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(224,89,107,0.5);} 50%{ box-shadow:0 0 0 6px rgba(224,89,107,0);} }
 
   .ticket{ position:relative; border-radius:6px; padding:32px 28px 26px; border:1px solid var(--line); background:rgba(237,234,230,0.02); box-shadow:0 0 0 1px transparent; transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; overflow:hidden; }
   .ticket::after{ content:''; position:absolute; top:-10px; left:50%; width:18px; height:18px; background:var(--black); border-radius:50%; transform:translateX(-50%); }
@@ -264,7 +271,7 @@
   .ticket--backstage{ border-color:rgba(224,89,107,0.4); background:linear-gradient(165deg, rgba(224,89,107,0.1), rgba(106,47,217,0.08)); box-shadow:0 0 24px rgba(224,89,107,0.12); }
   .ticket--backstage:hover{ box-shadow:0 24px 54px rgba(224,89,107,0.25); border-color:rgba(224,89,107,0.6); }
   .ticket-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; gap:12px; }
-  .ticket-kind{ font-family:'Michroma',sans-serif; font-size:14px; }
+  .ticket-kind{ font-family:'Bebas Neue',sans-serif; font-size:14px; }
   .ticket--premium .ticket-kind{ color:var(--purple-glow); }
   .ticket--backstage .ticket-kind{ color:var(--red-soft); }
   .ticket-tag{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; padding:5px 10px; border-radius:100px; border:1px solid var(--line); color:var(--white-dim); white-space:nowrap; }
@@ -281,7 +288,7 @@
   .ticket-spark{ position:absolute; width:4px; height:4px; border-radius:50%; background:var(--orange-soft); pointer-events:none; opacity:0; animation: sparkPop 0.7s ease forwards; }
   @keyframes sparkPop{ 0%{ opacity:0.9; transform:translate(0,0) scale(1); } 100%{ opacity:0; transform:translate(var(--dx),var(--dy)) scale(0.3); } }
 
-  .buy-btn{ margin-top:20px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 18px; border-radius:2px; font-family:'Michroma',sans-serif; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition: transform 0.25s ease; }
+  .buy-btn{ margin-top:20px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 18px; border-radius:2px; font-family:'Bebas Neue',sans-serif; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition: transform 0.25s ease; }
   .buy-btn svg{ width:13px; height:13px; }
   .buy-btn--whatsapp{ background:linear-gradient(90deg, #25D366, #1EBE57); color:#04150C; }
   .buy-btn--whatsapp:hover{ transform:translateY(-2px); }
@@ -300,7 +307,7 @@
   .info-cell:nth-child(2) .info-icon{ color:var(--purple-glow); }
   .info-cell:nth-child(3) .info-icon{ color:var(--red-soft); }
   .info-label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; }
-  .info-cell h3{ font-family:'Michroma',sans-serif; font-size:13.5px; margin-bottom:8px; }
+  .info-cell h3{ font-family:'Bebas Neue',sans-serif; font-size:13.5px; margin-bottom:8px; }
   .info-cell p{ font-size:13px; line-height:1.6; color:var(--white-dim); }
 
   /* ================= Galeria ================= */
@@ -320,9 +327,14 @@
 
   /* ================= Mapa ================= */
   .map-section{ padding:20px 0 100px; }
-  .map-placeholder{ position:relative; height:280px; border-radius:6px; border:1px solid var(--line); background:radial-gradient(circle at 30% 30%, rgba(106,47,217,0.18), var(--charcoal) 60%); display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .map-placeholder .pin{ font-size:34px; filter:drop-shadow(0 0 14px rgba(255,107,26,0.6)); animation: bob 2.4s ease-in-out infinite; }
-  .map-note{ margin-top:16px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--white-dim); }
+  .map-card{ border-radius:6px; overflow:hidden; border:1px solid var(--line); background:var(--charcoal); }
+  .map-card iframe{ width:100%; height:280px; border:0; display:block; filter:grayscale(0.35) contrast(1.05) brightness(0.9); }
+  .map-actions{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; }
+  .map-addr{ font-size:13px; line-height:1.55; color:var(--white-dim); }
+  .map-addr strong{ display:block; color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:0.02em; margin-bottom:3px; }
+  .map-btn{ display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:100px; text-decoration:none; white-space:nowrap; background:linear-gradient(90deg, var(--orange), var(--purple)); color:#1A0B00; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; transition: transform 0.25s ease; }
+  .map-btn:hover{ transform:translateY(-2px); }
+  .map-btn svg{ width:14px; height:14px; }
 
   /* ================= FAQ ================= */
   .faq-section{ padding:20px 0 110px; }
@@ -338,7 +350,7 @@
   /* ================= CTA final cinematico ================= */
   .final-cta{ min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px; }
   .final-moon{ position:absolute; top:6%; left:50%; width:min(360px,64vw); height:min(360px,64vw); border-radius:50%; transform:translateX(-50%); background:radial-gradient(circle at 38% 34%, #FFFDF3, var(--moon) 55%, #C9BE93 100%); box-shadow:0 0 100px 22px rgba(242,233,201,0.22); opacity:0.5; }
-  .final-cta h2{ position:relative; z-index:2; font-family:'Michroma',sans-serif; font-size:clamp(30px,7vw,64px); line-height:1.2; color:var(--white); }
+  .final-cta h2{ position:relative; z-index:2; font-family:'Bebas Neue',sans-serif; font-size:clamp(30px,7vw,64px); line-height:1.2; color:var(--white); }
   .final-cta h2 span{ display:block; background:linear-gradient(90deg, var(--orange), var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .final-meta{ position:relative; z-index:2; margin-top:26px; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.12em; color:var(--white-dim); display:flex; flex-direction:column; gap:6px; }
   .final-cta .btn-solid{ position:relative; z-index:2; margin-top:32px; }
@@ -347,7 +359,7 @@
 
   /* ================= Footer ================= */
   footer{ padding:56px 0 40px; border-top:1px solid var(--line); text-align:center; }
-  .footer-title{ font-family:'Michroma',sans-serif; font-size:15px; }
+  .footer-title{ font-family:'Bebas Neue',sans-serif; font-size:15px; }
   .footer-title .accent{ color:var(--orange); }
   .footer-sub{ margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.2em; text-transform:uppercase; color:var(--white-dim); }
   .footer-tagline{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--white-dim); opacity:0.6; }
@@ -375,7 +387,7 @@
   <div class="intro-content">
     <div class="event-logo">
       <span class="l1">Fan Tribute presenta</span>
-      <span class="l2">Back to Halloween</span>
+      <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016.jpg" alt="Back to Halloween 2016">
       <span class="l3">2016</span>
     </div>
     <button id="enterBtn" type="button">Enter the night →</button>
@@ -399,7 +411,7 @@
 <!-- ================= NAV ================= -->
 <nav class="nav" id="mainNav">
   <div class="wrap">
-    <div class="nav-logo">🎃 BACK TO <span class="accent">HALLOWEEN</span> 2016</div>
+    <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016.jpg" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
     <div class="nav-links">
       <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#experiencia">Experiencia</a><a href="#faq">FAQ</a>
     </div>
@@ -434,13 +446,15 @@
   <div class="hero-content" id="heroContent">
     <div class="event-logo">
       <span class="l1">Fan Tribute presenta</span>
-      <span class="l2" style="font-size:clamp(30px,7vw,68px);">Back to Halloween</span>
+      <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016.jpg" alt="Back to Halloween 2016">
       <span class="l3">2016</span>
     </div>
     <p class="hero-sub">Una noche para volver al 2016.</p>
+    <p class="hero-sub brush">+ concurso de disfraces 🎭</p>
     <div class="hero-meta">
-      <span class="chip">📍 Bogotá 🇨🇴</span>
+      <span class="chip">📍 Capital Live Concerts, Chapinero</span>
       <span class="chip">📅 31 de octubre</span>
+      <span class="chip">🎭 Concurso de disfraces</span>
       <span class="chip">🔞 +18</span>
     </div>
     <div class="hero-actions">
@@ -473,7 +487,7 @@
   <div class="wrap">
     <div class="section-head reveal"><div class="eyebrow">El concepto</div><h2>Una noche para volver al 2016</h2></div>
     <div class="concept-text reveal">
-      <p>Volvemos a una época donde la música electrónica se sentía diferente. Una noche para recordar los sonidos, las canciones y la energía que marcaron una generación. <strong>Halloween, EDM y nostalgia en una sola noche.</strong></p>
+      <p>Volvemos a una época donde la música electrónica se sentía diferente. Una noche para recordar los sonidos, las canciones y la energía que marcaron una generación. <strong>Halloween, EDM y nostalgia en una sola noche.</strong> Y como es Halloween, habrá <strong>concurso de disfraces</strong> con premios para los mejores looks de la noche.</p>
     </div>
   </div>
 </section>
@@ -535,6 +549,7 @@
       <div class="preventa-badge">Cupo limitado</div>
       <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price"><sup>$</sup>32K</div></div>
       <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso.</p>
+      <div class="stock-indicator" id="stockPreventa1"></div>
       <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20BACK%20TO%20HALLOWEEN%202016%20%E2%80%94%20%2432.000" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
         Comprar
@@ -545,6 +560,7 @@
       <div class="ticket ticket--locked reveal">
         <div class="ticket-top"><div class="ticket-kind">Preventa 2</div><div class="ticket-tag">Bloqueado</div></div>
         <div class="ticket-price">$37K</div>
+        <div class="stock-indicator" id="stockPreventa2"></div>
         <hr class="perforation">
         <ul class="ticket-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>2 bebidas personales (cerveza o hidratación)</span></li>
@@ -568,22 +584,26 @@
 
 <section class="tickets-section">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Segundo piso</div><h2>Balcón &amp; Backstage</h2><p>Hall Stage, Trío VIP y Backstage — próximamente por Wompi.</p></div>
+    <div class="section-head reveal"><div class="eyebrow">Segundo piso</div><h2>Balcón &amp; Backstage</h2><p>Hall Stage, Trío VIP y Backstage ya disponibles por Wompi.</p></div>
     <div class="ticket-grid ticket-grid--3">
-      <div class="ticket ticket--locked reveal">
-        <div class="ticket-top"><div class="ticket-kind">🟣 Hall Stage</div><div class="ticket-tag">Bloqueado</div></div>
+      <div class="ticket reveal">
+        <div class="ticket-top"><div class="ticket-kind">🟣 Hall Stage</div></div>
         <div class="ticket-price">$70K</div>
         <div class="ticket-price-note">Acceso exclusivo al balcón · Segundo piso</div>
+        <div class="stock-indicator" id="stockHallstage"></div>
         <hr class="perforation">
         <ul class="ticket-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso exclusivo al balcón, segundo piso</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>4 bebidas personales a elección</span></li>
         </ul>
-        <button class="buy-btn buy-btn--locked" type="button" disabled>Comprar</button>
+        <a class="buy-btn buy-btn--premium" href="https://checkout.wompi.co/l/jCazhj" target="_blank" rel="noopener">
+          Comprar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
-      <div class="ticket ticket--premium ticket--locked reveal">
-        <div class="ticket-top"><div class="ticket-kind">🟡 Trío VIP</div><div class="ticket-tag">Bloqueado</div></div>
+      <div class="ticket ticket--premium reveal">
+        <div class="ticket-top"><div class="ticket-kind">🟡 Trío VIP</div></div>
         <div class="ticket-price">$250K</div>
         <div class="ticket-price-note">Mesa para 3 personas</div>
         <hr class="perforation">
@@ -593,10 +613,13 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso exclusivo al balcón, segundo piso</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
         </ul>
-        <button class="buy-btn buy-btn--locked" type="button" disabled>Reservar</button>
+        <a class="buy-btn buy-btn--premium" href="https://checkout.wompi.co/l/vVVSym" target="_blank" rel="noopener">
+          Reservar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
-      <div class="ticket ticket--backstage ticket--locked reveal">
-        <div class="ticket-top"><div class="ticket-kind">🔴 Backstage</div><div class="ticket-tag">Bloqueado</div></div>
+      <div class="ticket ticket--backstage reveal">
+        <div class="ticket-top"><div class="ticket-kind">🔴 Backstage</div></div>
         <div class="ticket-price">$400K</div>
         <div class="ticket-price-note">Mesa para 4–5 personas</div>
         <hr class="perforation">
@@ -606,7 +629,10 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🍾 1 botella a elección + 1 six de cerveza + 1 agua</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>⚡ Acceso rápido a barra y baños</span></li>
         </ul>
-        <button class="buy-btn buy-btn--locked" type="button" disabled>Reservar</button>
+        <a class="buy-btn buy-btn--backstage" href="https://checkout.wompi.co/l/bqsf6u" target="_blank" rel="noopener">
+          Reservar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </div>
@@ -623,7 +649,7 @@
       </div>
       <div class="info-cell reveal">
         <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-7.4 8-13a8 8 0 1 0-16 0c0 5.6 8 13 8 13z"/><circle cx="12" cy="9" r="2.6"/></svg>
-        <div class="info-label">Lugar</div><h3>Por confirmar</h3><p>El venue exacto se anuncia pronto.</p>
+        <div class="info-label">Lugar</div><h3>Capital Live Concerts</h3><p>Kr 13 #48-90, Chapinero, Bogotá D.C.</p>
       </div>
       <div class="info-cell reveal">
         <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 8.7 9 10 5-1.3 9-5 9-10V6l-9-4z"/></svg>
@@ -637,9 +663,16 @@
 <section class="map-section">
   <div class="wrap">
     <div class="section-head reveal"><div class="eyebrow">Ubicación</div><h2>Find the night</h2></div>
-    <!-- Cuando tengas la direccion real, reemplaza este placeholder por un <iframe> de Google Maps -->
-    <div class="map-placeholder reveal"><span class="pin">📍</span></div>
-    <p class="map-note">📍 Bogotá 🇨🇴 — dirección exacta próximamente.</p>
+    <div class="map-card reveal">
+      <iframe src="https://www.google.com/maps?q=Capital+Live+Concerts+Kr+13+%2348-90+Chapinero+Bogot%C3%A1&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Capital Live Concerts"></iframe>
+      <div class="map-actions">
+        <div class="map-addr"><strong>Capital Live Concerts</strong>Kr 13 #48-90, Chapinero, Bogotá D.C.</div>
+        <a class="map-btn" href="https://www.google.com/maps/dir/?api=1&destination=Capital+Live+Concerts+Kr+13+%2348-90+Chapinero+Bogot%C3%A1" target="_blank" rel="noopener">
+          Cómo llegar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -650,7 +683,7 @@
     <div class="faq-list">
       <details class="faq-item reveal">
         <summary>¿Dónde será el evento?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <div class="faq-answer">Bogotá, Colombia. El venue exacto se anuncia próximamente junto con la dirección.</div>
+        <div class="faq-answer">En <strong>Capital Live Concerts</strong> — Kr 13 #48-90, Chapinero, Bogotá D.C.</div>
       </details>
       <details class="faq-item reveal">
         <summary>¿Cuál es la edad mínima?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
@@ -658,7 +691,7 @@
       </details>
       <details class="faq-item reveal">
         <summary>¿Puedo ir disfrazado?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <div class="faq-answer">¡Claro! Los disfraces son bienvenidos y hacen parte de la experiencia.</div>
+        <div class="faq-answer">¡Claro! Los disfraces son bienvenidos y hacen parte de la experiencia. Además habrá <strong>concurso de disfraces</strong> con premios para los mejores looks de la noche.</div>
       </details>
       <details class="faq-item reveal">
         <summary>¿Qué incluye cada localidad?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
@@ -805,6 +838,31 @@
     }
     tick(); setInterval(tick, 1000);
   })();
+
+  // ---------- Stock de boletas (edita "remaining" manualmente aqui) ----------
+  var STOCK = {
+    preventa1: { total: 50, remaining: 50, lowThreshold: 10 },
+    preventa2: { total: 50, remaining: 50, lowThreshold: 10 },
+    hallstage: { total: 20, remaining: 20, lowThreshold: 5 }
+  };
+  function renderStock(key, elId) {
+    var cfg = STOCK[key];
+    var el = document.getElementById(elId);
+    if (!cfg || !el) return;
+    var r = cfg.remaining;
+    if (r <= 0) {
+      el.classList.add('is-soldout');
+      el.innerHTML = '<span class="stock-dot"></span> Agotado';
+    } else if (r <= cfg.lowThreshold) {
+      el.classList.add('is-low');
+      el.innerHTML = '<span class="stock-dot"></span> ¡Solo quedan ' + r + ' boletas!';
+    } else {
+      el.innerHTML = '<span class="stock-dot"></span> Quedan ' + r + ' de ' + cfg.total + ' boletas';
+    }
+  }
+  renderStock('preventa1', 'stockPreventa1');
+  renderStock('preventa2', 'stockPreventa2');
+  renderStock('hallstage', 'stockHallstage');
 
   // ---------- Reveal on scroll ----------
   var io = new IntersectionObserver(function (entries) {
