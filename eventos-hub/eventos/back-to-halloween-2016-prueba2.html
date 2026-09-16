@@ -90,8 +90,6 @@
     padding:24px 0; transition: opacity 1.1s ease, filter 1.1s ease, transform 1.1s ease;
   }
   #intro.leaving{ opacity:0; filter:blur(10px) brightness(1.6); transform:scale(1.18); pointer-events:none; }
-  .intro-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-  .intro-video-overlay{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(5,4,6,0.35) 0%, rgba(5,4,6,0.55) 55%, rgba(5,4,6,0.85) 100%); }
   .intro-content{ position:relative; z-index:3; text-align:center; opacity:0; animation: fadeIn 1s ease forwards 1.7s; }
   @keyframes fadeIn{ to{ opacity:1; } }
   .intro-ghosts, .intro-extras{ position:absolute; inset:0; pointer-events:none; z-index:2; }
@@ -420,11 +418,6 @@
 
 <!-- ================= INTRO ================= -->
 <div id="intro">
-  <video class="intro-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-    <source src="../../edc-preparty/ASSETS/download.mp4" type="video/mp4">
-  </video>
-  <div class="intro-video-overlay"></div>
-
   <div class="intro-crawl" id="introCrawl">
     <p class="crawl-line" data-text="Después de dos fechas exitosas de sold out del End of Summer 2016, el verano acabó..."></p>
     <p class="crawl-line" data-text="Pero llega Halloween del 2016 con los himnos de la electrónica del 2016. 🧡"></p>
