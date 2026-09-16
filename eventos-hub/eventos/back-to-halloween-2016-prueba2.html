@@ -44,14 +44,19 @@
   @media (pointer:fine){ #cursorGlow.on{ display:block; } }
 
   /* ---------- Controles flotantes ---------- */
-  .floating-controls{ position:fixed; right:18px; bottom:18px; z-index:150; display:flex; flex-direction:column; gap:10px; }
-  .fc-btn{
-    width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(23,21,28,0.85);
-    backdrop-filter:blur(8px); color:var(--white-dim); display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:16px; transition:border-color 0.2s, color 0.2s;
+  .floating-controls{
+    position:fixed; right:18px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); z-index:150;
+    display:flex; flex-direction:column; gap:10px; padding:6px; border-radius:100px;
+    background:rgba(23,21,28,0.55); backdrop-filter:blur(10px); border:1px solid var(--line);
   }
-  .fc-btn:hover{ border-color:var(--orange); color:var(--orange-soft); }
-  .fc-btn[aria-pressed="true"]{ color:var(--orange-soft); border-color:var(--orange); }
+  .fc-btn{
+    width:42px; height:42px; border-radius:50%; border:1px solid var(--line); background:rgba(5,4,6,0.6);
+    color:var(--white-dim); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:border-color 0.25s ease, color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .fc-btn svg{ width:18px; height:18px; } .fc-btn svg[hidden]{ display:none; }
+  .fc-btn:hover{ border-color:var(--orange); color:var(--orange-soft); transform:translateY(-2px); box-shadow:0 6px 18px rgba(255,107,26,0.25); }
+  .fc-btn[aria-pressed="true"]{ color:#1A0B00; background:linear-gradient(135deg, var(--orange), var(--purple)); border-color:transparent; box-shadow:0 0 16px rgba(255,107,26,0.35); }
 
   /* ---------- Ojos en la oscuridad ---------- */
   .dark-eyes{ position:absolute; display:flex; gap:8px; opacity:0; animation: eyesBlink 9s ease-in-out infinite; }
@@ -786,8 +791,10 @@
 </footer>
 
 <div class="floating-controls">
-  <button class="fc-btn" id="motionToggle" type="button" aria-pressed="false" aria-label="Reducir animaciones" title="Reducir animaciones">✋</button>
-  <button class="fc-btn" id="audioToggle" type="button" aria-pressed="false" aria-label="Reproducir ambiente" title="Play the night (agrega tu propio audio en /assets/halloween/audio/)">▶</button>
+  <button class="fc-btn" id="audioToggle" type="button" aria-pressed="false" aria-label="Reproducir ambiente" title="Reproducir ambiente (agrega tu propio audio en /assets/halloween/audio/)">
+    <svg class="fc-icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5Z"/></svg>
+    <svg class="fc-icon-pause" viewBox="0 0 24 24" fill="currentColor" hidden><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+  </button>
 </div>
 
 <script>
@@ -986,21 +993,17 @@
   });
 
 
-  // ---------- Reducir animaciones (toggle manual) ----------
-  var motionToggle = document.getElementById('motionToggle');
-  motionToggle.addEventListener('click', function () {
-    var on = document.documentElement.classList.toggle('no-motion');
-    motionToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
-
   // ---------- Audio (placeholder -- agrega tu archivo real) ----------
   // Coloca tu archivo en /assets/halloween/audio/ambiente.mp3 y descomenta:
   // var nightAudio = new Audio('/assets/halloween/audio/ambiente.mp3'); nightAudio.loop = true;
   var audioToggle = document.getElementById('audioToggle');
+  var iconPlay = audioToggle.querySelector('.fc-icon-play');
+  var iconPause = audioToggle.querySelector('.fc-icon-pause');
   var playing = false;
   audioToggle.addEventListener('click', function () {
     playing = !playing;
-    audioToggle.textContent = playing ? '❚❚' : '▶';
+    iconPlay.hidden = playing;
+    iconPause.hidden = !playing;
     audioToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
     // if (nightAudio) { playing ? nightAudio.play() : nightAudio.pause(); }
   });
