@@ -688,7 +688,6 @@
       <div class="ticket ticket--locked reveal">
         <div class="ticket-top"><div class="ticket-kind">Preventa 2</div><div class="ticket-tag">Bloqueado</div></div>
         <div class="ticket-price">$37K</div>
-        <div class="stock-indicator" id="stockPreventa2"></div>
         <hr class="perforation">
         <ul class="ticket-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>2 bebidas personales (cerveza o hidratación)</span></li>
@@ -1050,13 +1049,12 @@
       el.innerHTML = '<span class="stock-dot"></span> Agotado';
     } else if (r <= cfg.lowThreshold) {
       el.classList.add('is-low');
-      el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas boletas!';
+      el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas boletas! · Cupo total: ' + cfg.total;
     } else {
       el.innerHTML = '<span class="stock-dot"></span> Quedan ' + r + ' de ' + cfg.total + ' boletas';
     }
   }
   renderStock('preventa1', 'stockPreventa1');
-  renderStock('preventa2', 'stockPreventa2');
   renderStock('hallstage', 'stockHallstage');
 
   // ---------- Reveal on scroll ----------
