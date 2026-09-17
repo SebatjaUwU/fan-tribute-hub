@@ -176,6 +176,25 @@
   .cta-btn:hover{ transform:translateY(-3px); box-shadow:0 14px 36px rgba(34,211,122,0.35); }
   .cta-btn svg{ width:14px; height:14px; }
 
+  /* ---------- Promo Halloween (cross-evento) ---------- */
+  .halloween-promo{ padding:70px 0; }
+  .halloween-promo-card{
+    max-width:720px; margin:0 auto; text-align:center; padding:44px 36px;
+    border:1px solid var(--line); border-radius:24px;
+    background: radial-gradient(120% 140% at 50% 0%, rgba(155,93,229,0.14), transparent 60%), rgba(245,239,217,0.02);
+  }
+  .halloween-promo-card h3{ font-family:'Unbounded', sans-serif; font-weight:800; font-size:clamp(22px,3.4vw,30px); color:var(--cream); margin-bottom:14px; line-height:1.2; }
+  .halloween-promo-card p{ font-size:14.5px; line-height:1.65; color:var(--cream-dim); max-width:520px; margin:0 auto; }
+  .promo-cta-btn{
+    display:inline-flex; align-items:center; gap:10px; margin-top:26px; padding:16px 34px; border-radius:100px;
+    background: linear-gradient(90deg, var(--purple), var(--gold));
+    color:#0B0705; font-family:'Unbounded', sans-serif; font-weight:700; font-size:13px; letter-spacing:0.06em;
+    text-transform:uppercase; text-decoration:none; transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow:0 10px 30px rgba(155,93,229,0.25);
+  }
+  .promo-cta-btn:hover{ transform:translateY(-3px); box-shadow:0 14px 36px rgba(249,178,51,0.35); }
+  .promo-cta-btn svg{ width:14px; height:14px; }
+
   .merch-cta-wrap{ position:relative; opacity:0; animation: fadeUp 0.9s ease forwards 2.4s; }
   .merch-cta-btn{
     display:inline-flex; align-items:center; gap:10px; padding:16px 30px; border-radius:100px;
@@ -903,6 +922,21 @@
         <summary>¿Cómo pago mi entrada?<span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
         <div class="faq-answer">Preventa 2, General, VIP y Backstage se pagan por Wompi (tarjeta, Nequi, PSE, Bre-B). Preventa 1 se compra directo por WhatsApp mientras dure el cupo de los primeros 40.</div>
       </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROMO HALLOWEEN ================= -->
+<section class="halloween-promo">
+  <div class="wrap">
+    <div class="halloween-promo-card">
+      <div class="eyebrow">🎃 Próximo evento</div>
+      <h3>¿Te perdiste END OF SUMMER?</h3>
+      <p>No te quedes por fuera de la próxima. <strong>BACK TO HALLOWEEN 2016</strong> llega el 31 de octubre a Capital Live Concerts, Bogotá — los mismos himnos del EDM 2016, ahora con espíritu de Halloween.</p>
+      <a class="promo-cta-btn" href="back-to-halloween-2016.html">
+        Ver Back to Halloween 2016
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </section>
