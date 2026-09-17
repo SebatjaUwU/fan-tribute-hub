@@ -1050,7 +1050,7 @@
       el.innerHTML = '<span class="stock-dot"></span> Agotado';
     } else if (r <= cfg.lowThreshold) {
       el.classList.add('is-low');
-      el.innerHTML = '<span class="stock-dot"></span> ¡Solo quedan ' + r + ' boletas!';
+      el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas boletas!';
     } else {
       el.innerHTML = '<span class="stock-dot"></span> Quedan ' + r + ' de ' + cfg.total + ' boletas';
     }
