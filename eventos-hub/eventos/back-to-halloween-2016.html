@@ -124,7 +124,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: var(--black); color: var(--white); font-family:'Space Grotesk', sans-serif; overflow-x:hidden;
     cursor: default;
   }
-  body.intro-active{ overflow:hidden; height:100vh; }
   a{ color:inherit; }
   img,svg{ display:block; max-width:100%; }
   button{ font-family:inherit; }
@@ -181,35 +180,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     letter-spacing:0.6em; color:var(--moon); margin-top:16px; filter: drop-shadow(0 0 14px rgba(242,233,201,0.5));
   }
 
-  /* ================= Intro cinematica ================= */
-  #intro{
-    position:fixed; inset:0; z-index:1000; background:var(--black);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto; overflow-x:hidden;
-    padding:24px 0; transition: opacity 1.1s ease, filter 1.1s ease, transform 1.1s ease;
-  }
-  #intro.leaving{ opacity:0; filter:blur(10px) brightness(1.6); transform:scale(1.18); pointer-events:none; }
-  .intro-content{ position:relative; z-index:3; text-align:center; opacity:0; animation: fadeIn 1s ease forwards 1.7s; }
   @keyframes fadeIn{ to{ opacity:1; } }
-  .intro-ghosts, .intro-extras{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+
+  /* ================= Popup "Star Wars" (no bloqueante) ================= */
+  #intro{
+    position:fixed; left:18px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); z-index:250;
+    width:min(340px, calc(100vw - 36px)); background:rgba(5,4,6,0.94); border:1px solid var(--line); border-radius:10px;
+    padding:20px 40px 18px 20px; box-shadow:0 20px 50px rgba(0,0,0,0.5); backdrop-filter:blur(8px);
+    opacity:0; animation: fadeIn 0.6s ease forwards 0.3s;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #intro.leaving{ opacity:0; transform:translateY(16px); pointer-events:none; }
+  .intro-close{
+    position:absolute; top:10px; right:10px; width:26px; height:26px; border-radius:50%; border:1px solid var(--line);
+    background:transparent; color:var(--white-dim); font-size:15px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .intro-close:hover{ border-color:var(--orange); color:var(--orange-soft); }
 
   /* ================= Crawl tipo Star Wars ================= */
-  .intro-crawl{ position:relative; z-index:3; max-width:620px; margin:0 auto 30px; padding:0 26px; text-align:center; }
+  .intro-crawl{ position:relative; text-align:left; }
   .crawl-line{
-    font-family:'Bebas Neue',sans-serif; font-size:clamp(17px,4.2vw,22px); letter-spacing:0.05em; line-height:1.7;
-    color:#F2D98A; text-shadow:0 0 16px rgba(242,217,138,0.5), 0 0 40px rgba(255,163,97,0.25);
-    margin:0 0 8px;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(13px,3.2vw,15px); letter-spacing:0.04em; line-height:1.55;
+    color:#F2D98A; text-shadow:0 0 12px rgba(242,217,138,0.4);
+    margin:0 0 6px;
   }
   .crawl-word{ display:inline-block; white-space:nowrap; }
   .crawl-char{ opacity:0; display:inline-block; animation: crawlCharIn 0.45s ease forwards; }
   @keyframes crawlCharIn{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:translateY(0);} }
   @keyframes crawlFadeOut{ to{ opacity:0; transform:translateY(-12px);} }
-  #enterBtn{
-    position:relative; z-index:3; margin-top:38px; display:inline-flex; align-items:center; gap:10px; padding:15px 34px;
-    border-radius:2px; background:transparent; border:1px solid var(--orange); color:var(--orange-soft);
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:11.5px; letter-spacing:0.35em; text-transform:uppercase;
-    cursor:pointer; opacity:0; animation: fadeIn 1s ease forwards 3.2s; transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  }
-  #enterBtn:hover{ background:var(--orange); color:#1A0B00; box-shadow:0 0 30px rgba(255,107,26,0.5); }
 
   .ghost{ position:absolute; opacity:0; filter: drop-shadow(0 0 18px rgba(155,92,255,0.35)); }
   .ghost path{ fill:rgba(237,234,230,0.72); }
@@ -217,12 +216,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @keyframes ghostIn{ from{ opacity:0; transform:translateY(30px) scale(0.7);} to{ opacity:0.68; transform:translateY(0) scale(1);} }
   @keyframes ghostDrift{ 0%,100%{ margin-left:0; margin-top:0;} 50%{ margin-left:24px; margin-top:-18px;} }
   .bat-shape{ fill:var(--black); }
-  .spider-thread{ position:absolute; top:0; width:1px; background:linear-gradient(180deg, rgba(237,234,230,0.5), rgba(237,234,230,0.15)); opacity:0; animation: fadeIn 0.8s ease forwards 2.4s; }
-  .spider{ position:absolute; opacity:0; animation: fadeIn 0.8s ease forwards 2.8s, spiderBob 4s ease-in-out infinite 2.8s; }
-  @keyframes spiderBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(14px);} }
-  .spider-body{ fill:var(--black); } .spider-leg{ stroke:var(--black); stroke-width:1.4; fill:none; }
-  .particle{ position:absolute; border-radius:50%; background:var(--moon); opacity:0; animation: particleTwinkle ease-in-out infinite; }
-  @keyframes particleTwinkle{ 0%,100%{ opacity:0.1; transform:translateY(0);} 50%{ opacity:0.72; transform:translateY(-22px);} }
 
   /* ================= Nav ================= */
   .nav{ position:fixed; top:0; left:0; right:0; z-index:200; padding:18px 0; background:transparent; border-bottom:1px solid transparent; transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease, border-color 0.4s ease; }
@@ -542,34 +535,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <div id="cursorGlow"></div>
 
-<!-- ================= INTRO ================= -->
+<!-- ================= POPUP (crawl estilo Star Wars, no bloqueante) ================= -->
 <div id="intro">
+  <button class="intro-close" id="introClose" type="button" aria-label="Cerrar">×</button>
   <div class="intro-crawl" id="introCrawl">
     <p class="crawl-line" data-text="Después de dos fechas exitosas de sold out del End of Summer 2016, el verano acabó..."></p>
     <p class="crawl-line" data-text="Pero llega Halloween del 2016 con los himnos de la electrónica del 2016. 🧡"></p>
-  </div>
-
-  <div class="intro-content">
-    <div class="event-logo">
-      <img class="brand-logo-fan" src="../../edc-preparty/ASSETS/fan-tribute-logo-transparent.png" alt="Fan Tribute">
-      <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">
-      <span class="l3">2016</span>
-    </div>
-    <button id="enterBtn" type="button">Entrar a la fiesta →</button>
-  </div>
-
-  <div class="intro-ghosts">
-    <svg class="ghost g-in" style="width:70px; top:60%; left:18%; animation-delay:2.4s, 3.2s;"><use href="#ghostShape"/></svg>
-    <svg class="ghost g-in" style="width:50px; top:20%; left:72%; animation-delay:2.7s, 3.5s;"><use href="#ghostShape"/></svg>
-    <svg class="ghost g-in" style="width:40px; top:70%; left:65%; animation-delay:3s, 3.8s;"><use href="#ghostShape"/></svg>
-  </div>
-  <div class="intro-extras">
-    <div class="spider-thread" style="right:14%; height:120px;"></div>
-    <svg class="spider" style="right:calc(14% - 9px); top:112px; width:18px;" viewBox="0 0 24 24">
-      <ellipse class="spider-body" cx="12" cy="14" rx="5" ry="6"/>
-      <g class="spider-leg"><path d="M7 10 L1 6M7 13 L0 13M7 16 L1 20M17 10 L23 6M17 13 L24 13M17 16 L23 20"/></g>
-    </svg>
-    <div class="particles-holder"></div>
   </div>
 </div>
 
@@ -578,20 +549,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="wrap">
     <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
     <div class="nav-links">
-      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
+      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" data-track="nav_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
     </div>
     <a class="nav-cta" href="#localidades" data-track="nav_comprar_boleta">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
     <button class="nav-burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
+  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" data-track="nav_menu_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
   <a href="#localidades" class="nav-cta" data-track="nav_menu_comprar_boleta">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
 </div>
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="inicio">
-  <video class="hero-video" muted loop playsinline preload="none" aria-hidden="true">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
     <source src="../../edc-preparty/ASSETS/download.mp4" type="video/mp4">
   </video>
   <div class="hero-video-overlay"></div>
@@ -924,19 +895,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-  // ---------- Intro ----------
-  document.body.classList.add('intro-active');
+  // ---------- Popup crawl (no bloqueante) ----------
   var intro = document.getElementById('intro');
-  var enterBtn = document.getElementById('enterBtn');
-  function enterNight(){
-    if (intro.classList.contains('leaving')) return;
+  var introClose = document.getElementById('introClose');
+  function closeIntro() {
+    if (!intro || intro.classList.contains('leaving')) return;
     intro.classList.add('leaving');
-    document.body.classList.remove('intro-active');
-    var heroVideoEl = document.querySelector('.hero-video');
-    if (heroVideoEl) { heroVideoEl.play().catch(function(){}); }
-    setTimeout(function(){ if (intro.parentNode) intro.remove(); }, 1150);
+    setTimeout(function () { if (intro.parentNode) intro.remove(); }, 550);
   }
-  enterBtn.addEventListener('click', enterNight);
+  introClose.addEventListener('click', closeIntro);
 
   // ---------- Tracking de clics (Analytics / GTM) ----------
   function trackEvent(label) {
@@ -946,21 +913,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       gtag('event', 'cta_click', { event_category: 'engagement', event_label: label });
     }
   }
-  trackEvent('intro_view');
-  enterBtn.addEventListener('click', function () { trackEvent('enter_night_click'); });
   document.querySelectorAll('[data-track]').forEach(function (el) {
     el.addEventListener('click', function () { trackEvent(el.getAttribute('data-track')); });
   });
 
   // ---------- Crawl estilo Star Wars (letra por letra) ----------
-  var introRevealOffset = 0;
   (function () {
     var crawl = document.getElementById('introCrawl');
     if (!crawl) return;
     var lines = crawl.querySelectorAll('.crawl-line');
     var charDelay = 0.016;  // segundos por letra
     var lineGap = 0.28;     // pausa entre las dos lineas
-    var t = 0.3;            // arranque tras cargar la intro
+    var t = 0.3;            // arranque tras cargar la pagina
     lines.forEach(function (line) {
       var text = line.getAttribute('data-text') || '';
       line.textContent = '';
@@ -988,41 +952,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       });
       t += lineGap;
     });
-    var holdTime = 0.6;
+    var holdTime = 2.2;
     var fadeOutAt = t + holdTime;
-    crawl.style.animation = 'crawlFadeOut 0.7s ease forwards ' + fadeOutAt.toFixed(2) + 's';
-    setTimeout(function () { if (crawl.parentNode) crawl.style.display = 'none'; }, (fadeOutAt + 0.7) * 1000);
-
-    var newLogoDelay = fadeOutAt + 0.4;
-    introRevealOffset = newLogoDelay - 1.7;
-
-    function shiftDelay(el) {
-      if (!el) return;
-      var current = getComputedStyle(el).animationDelay;
-      var shifted = current.split(',').map(function (s) { return (parseFloat(s) + introRevealOffset).toFixed(2) + 's'; }).join(', ');
-      el.style.animationDelay = shifted;
-    }
-    shiftDelay(document.querySelector('.intro-content'));
-    shiftDelay(enterBtn);
-    document.querySelectorAll('.intro-ghosts .ghost').forEach(shiftDelay);
-    shiftDelay(document.querySelector('.spider-thread'));
-    shiftDelay(document.querySelector('.spider'));
-  })();
-
-  // ---------- Particulas intro ----------
-  (function () {
-    var holder = document.querySelector('.particles-holder');
-    var count = window.innerWidth < 640 ? 10 : 20;
-    for (var i = 0; i < count; i++) {
-      var p = document.createElement('div');
-      p.className = 'particle';
-      var size = Math.random() * 2.5 + 1;
-      p.style.width = size + 'px'; p.style.height = size + 'px';
-      p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
-      p.style.animationDuration = (3 + Math.random() * 3) + 's';
-      p.style.animationDelay = (2.2 + introRevealOffset + Math.random() * 2) + 's';
-      holder.appendChild(p);
-    }
+    setTimeout(closeIntro, fadeOutAt * 1000);
   })();
 
   // ---------- Nav ----------
@@ -1190,8 +1122,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     var msg = document.getElementById('songVoteMsg');
     var board = document.getElementById('songVoteBoard');
 
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var isSubmitting = false;
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (isSubmitting) return;
       var raw = input.value.trim();
       if (!raw) return;
       var slug = slugify(raw);
@@ -1201,6 +1136,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         msg.className = 'song-vote-msg is-info';
         return;
       }
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.6';
+      msg.textContent = 'Enviando tu voto…';
+      msg.className = 'song-vote-msg is-info';
       var ref = db.collection('songVotes').doc(slug);
       db.runTransaction(function (tx) {
         return tx.get(ref).then(function (doc) {
@@ -1218,6 +1158,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }).catch(function () {
         msg.textContent = 'No se pudo registrar tu voto, intenta de nuevo.';
         msg.className = 'song-vote-msg is-error';
+      }).finally(function () {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '';
       });
     });
 
