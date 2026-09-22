@@ -52,12 +52,6 @@
   .nav-links a{ text-decoration:none; opacity:0.8; transition:opacity 0.2s, color 0.2s; }
   .nav-links a:hover{ opacity:1; color:var(--orange-soft); }
   @media (min-width:800px){ .nav-links{ display:flex; } }
-  .nav-cta{
-    font-family:'Unbounded', sans-serif; font-weight:700; font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
-    padding:10px 18px; border-radius:100px; text-decoration:none;
-    background:linear-gradient(90deg, var(--orange), var(--gold)); color:#1a0a00;
-    box-shadow:0 0 22px rgba(255,106,43,0.35);
-  }
 
   /* ---------- Hero: amanecer sobre el océano ---------- */
   .hero{
@@ -194,6 +188,18 @@
   .event-card--summer:hover{ box-shadow:0 20px 50px rgba(255,106,43,0.18); border-color:rgba(255,106,43,0.5); }
   .event-card--edc{ border-color:rgba(30,111,255,0.28); }
   .event-card--edc:hover{ box-shadow:0 20px 50px rgba(30,111,255,0.18); border-color:rgba(30,111,255,0.5); }
+  .event-card--halloween .event-banner{
+    background: linear-gradient(160deg, #2a1233, #150a1c);
+  }
+  .event-card--halloween .event-banner::after{
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,106,43,0.4), transparent 60%),
+                radial-gradient(circle at 75% 70%, rgba(155,93,229,0.35), transparent 55%);
+  }
+  .event-card--halloween{ border-color:rgba(255,106,43,0.32); }
+  .event-card--halloween:hover{ box-shadow:0 20px 50px rgba(255,106,43,0.2); border-color:rgba(255,106,43,0.55); }
+  .event-card--halloween .event-tag{ background:rgba(255,106,43,0.16); border:1px solid rgba(255,106,43,0.45); color:var(--orange-soft); }
+  .event-tag--past{ background:rgba(185,198,222,0.1); border:1px solid var(--line); color:var(--dim); }
 
   .event-tag{
     display:inline-block; align-self:flex-start; font-family:'JetBrains Mono', monospace; font-size:10.5px;
@@ -239,9 +245,7 @@
     <div class="nav-links">
       <a href="#about">Nosotros</a>
       <a href="#eventos">Eventos</a>
-      <a href="comprar/index.html">Boletería</a>
     </div>
-    <a class="nav-cta" href="comprar/index.html">Comprar entradas</a>
   </div>
 </nav>
 
@@ -287,12 +291,12 @@
     </div>
 
     <div class="events-grid">
-      <a class="event-card event-card--summer" href="eventos-hub/index.html">
+      <a class="event-card event-card--halloween" href="eventos-hub/eventos/back-to-halloween-2016.html">
         <div class="event-banner"></div>
         <div class="event-body">
-          <div class="event-tag">Fan Tribute</div>
-          <div class="event-title">END OF SUMMER</div>
-          <div class="event-date">Dos fechas · 4 y 5 de septiembre · Teatro Republik, Bogotá</div>
+          <div class="event-tag">Próximo evento</div>
+          <div class="event-title">BACK TO HALLOWEEN 2016</div>
+          <div class="event-date">31 de octubre de 2026 · Capital Live Concerts, Bogotá</div>
           <div class="event-cta">
             Ver evento
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -305,7 +309,20 @@
         <div class="event-body">
           <div class="event-tag">Fan Tribute presenta</div>
           <div class="event-title">PRE-EDC Bogotá</div>
-          <div class="event-date">Fecha por confirmar · La previa antes del EDC Colombia</div>
+          <div class="event-date">Sábado 3 de octubre de 2026 · La previa antes del EDC Colombia</div>
+          <div class="event-cta">
+            Ver evento
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a class="event-card event-card--summer" href="eventos-hub/index.html">
+        <div class="event-banner"></div>
+        <div class="event-body">
+          <div class="event-tag event-tag--past">Evento finalizado</div>
+          <div class="event-title">END OF SUMMER</div>
+          <div class="event-date">Dos fechas · 4 y 5 de septiembre · Teatro Republik, Bogotá</div>
           <div class="event-cta">
             Ver evento
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -324,9 +341,9 @@
         <span>FAN TRIBUTE</span>
       </div>
       <div class="footer-social">
-        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
-        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2c.4 2.6 2 4.4 4.6 4.7v3.1c-1.6 0-3-.5-4.3-1.4v6.9c0 3.7-3 6.7-6.7 6.7S3.4 19 3.4 15.3s3-6.7 6.7-6.7c.4 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.9 0-3.4 1.5-3.4 3.4s1.5 3.4 3.4 3.4 3.5-1.5 3.5-3.4V2h3Z"/></svg></a>
-        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg></a>
+        <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="https://www.tiktok.com/@fantribute_col" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2c.4 2.6 2 4.4 4.6 4.7v3.1c-1.6 0-3-.5-4.3-1.4v6.9c0 3.7-3 6.7-6.7 6.7S3.4 19 3.4 15.3s3-6.7 6.7-6.7c.4 0 .7 0 1 .1v3.2c-.3-.1-.7-.2-1-.2-1.9 0-3.4 1.5-3.4 3.4s1.5 3.4 3.4 3.4 3.5-1.5 3.5-3.4V2h3Z"/></svg></a>
+        <a href="https://wa.me/573161088178" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg></a>
       </div>
     </div>
     <div class="footer-bottom">© 2026 Fan Tribute · Bogotá, Colombia · Todos los eventos son independientes y organizados por promotores locales.</div>
