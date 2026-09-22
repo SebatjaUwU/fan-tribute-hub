@@ -226,6 +226,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .nav-links{ display:none; gap:30px; font-size:11.5px; letter-spacing:0.12em; font-family:'JetBrains Mono',monospace; text-transform:uppercase; }
   .nav-links a{ text-decoration:none; opacity:0.75; transition:opacity 0.2s, color 0.2s; }
   .nav-links a:hover{ opacity:1; color:var(--orange-soft); }
+  .nav-link--new{
+    opacity:1 !important; font-weight:700;
+    background:linear-gradient(90deg, var(--orange), var(--purple-glow));
+    -webkit-background-clip:text; background-clip:text; color:transparent !important;
+    animation: navNewPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes navNewPulse{ 0%,100%{ filter:brightness(1) drop-shadow(0 0 0 transparent); } 50%{ filter:brightness(1.4) drop-shadow(0 0 6px rgba(255,107,26,0.5)); } }
   @media (min-width:900px){ .nav-links{ display:flex; } }
   .nav-cta{ display:inline-flex; align-items:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; padding:4px 4px 4px 18px; border-radius:100px; border:2px solid transparent; background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--orange), var(--purple-glow)) border-box; text-decoration:none; color:var(--white); transition: transform 0.25s ease; }
   .nav-cta-orb{ margin-left:14px; width:30px; height:30px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--orange), var(--purple-glow)); }
@@ -549,14 +556,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="wrap">
     <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
     <div class="nav-links">
-      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" data-track="nav_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
+      <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" class="nav-link--new" data-track="nav_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
     </div>
     <a class="nav-cta" href="#localidades" data-track="nav_comprar_boleta">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
     <button class="nav-burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" data-track="nav_menu_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
+  <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" class="nav-link--new" data-track="nav_menu_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
   <a href="#localidades" class="nav-cta" data-track="nav_menu_comprar_boleta">Comprar boleta<span class="nav-cta-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 1 0 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span></a>
 </div>
 
