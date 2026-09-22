@@ -357,6 +357,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ================= Experiencia (4 bloques) ================= */
 
+  /* ================= Vota tu cancion (ranking en vivo) ================= */
+  .song-vote-section{ padding:100px 0; }
+  .song-vote-form{ max-width:520px; margin:0 auto 8px; display:flex; gap:10px; flex-wrap:wrap; }
+  .song-vote-form input{
+    flex:1 1 260px; min-width:0; padding:15px 18px; border-radius:2px; border:1px solid var(--line);
+    background:rgba(237,234,230,0.03); color:var(--white); font-family:'Space Grotesk',sans-serif; font-size:14px;
+  }
+  .song-vote-form input::placeholder{ color:var(--white-dim); }
+  .song-vote-form input:focus{ outline:none; border-color:var(--orange); }
+  .song-vote-form button{ flex:none; }
+  .song-vote-msg{ max-width:520px; margin:0 auto 30px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:12px; min-height:16px; }
+  .song-vote-msg.is-success{ color:var(--orange-soft); }
+  .song-vote-msg.is-info{ color:var(--white-dim); }
+  .song-vote-msg.is-error{ color:var(--red-soft); }
+  .song-vote-board{ max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+  .song-vote-empty{ text-align:center; color:var(--white-dim); font-size:14px; }
+  .song-vote-row{ display:flex; align-items:center; gap:14px; padding:14px 18px; border:1px solid var(--line); border-radius:4px; background:rgba(237,234,230,0.02); }
+  .song-vote-rank{ flex:none; width:28px; font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--orange-soft); }
+  .song-vote-info{ flex:1; min-width:0; }
+  .song-vote-label{ font-size:14px; color:var(--white); margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song-vote-bar-wrap{ height:6px; border-radius:100px; background:rgba(237,234,230,0.08); overflow:hidden; }
+  .song-vote-bar{ height:100%; border-radius:100px; background:linear-gradient(90deg, var(--orange), var(--purple)); transition:width 0.5s ease; }
+  .song-vote-count{ flex:none; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white-dim); min-width:34px; text-align:right; }
+
   /* ================= Tickets (estilo boleta underground) ================= */
   .tickets-section{ padding:100px 0 90px; }
   .tickets-section .section-head h2{ background:linear-gradient(90deg, var(--orange), var(--dark-red), var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -676,6 +700,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
+<!-- ================= VOTA TU CANCION ================= -->
+<section class="song-vote-section" id="canciones">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Arma el playlist</div><h2>¿Qué canción quieres que suene?</h2><p>Pide tu himno favorito del 2016 y mira en vivo cuáles son los más pedidos.</p></div>
+    <form class="song-vote-form reveal" id="songVoteForm">
+      <input type="text" id="songVoteInput" placeholder="Ej: Wake Me Up - Avicii" maxlength="60" autocomplete="off" required>
+      <button class="buy-btn buy-btn--premium" type="submit">
+        Votar
+        <span class="buy-btn-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+      </button>
+    </form>
+    <div class="song-vote-msg" id="songVoteMsg"></div>
+    <div class="song-vote-board reveal" id="songVoteBoard"><p class="song-vote-empty">Cargando ranking…</p></div>
+  </div>
+</section>
+
 <!-- ================= EXPERIENCIA ================= -->
 <!-- ================= LOCALIDADES ================= -->
 <section class="tickets-section" id="localidades">
@@ -881,6 +921,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </button>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
   // ---------- Intro ----------
   document.body.classList.add('intro-active');
@@ -1106,4 +1148,104 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     audioToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
     // if (nightAudio) { playing ? nightAudio.play() : nightAudio.pause(); }
   });
+
+  // ---------- Vota tu cancion (ranking en vivo con Firebase) ----------
+  (function () {
+    var firebaseConfig = {
+      apiKey: "AIzaSyDth6WmnNMUaDceYNCsLeVTsLUIjAL4-eM",
+      authDomain: "back-to-halloween.firebaseapp.com",
+      projectId: "back-to-halloween",
+      storageBucket: "back-to-halloween.firebasestorage.app",
+      messagingSenderId: "174367772693",
+      appId: "1:174367772693:web:6138627043ff374929be1c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+    function slugify(text) {
+      return text.toLowerCase().trim()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80);
+    }
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    var VOTED_KEY = 'halloween2016_song_votes';
+    function getVotedSongs() {
+      try { return JSON.parse(localStorage.getItem(VOTED_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function addVotedSong(slug) {
+      var voted = getVotedSongs();
+      voted.push(slug);
+      try { localStorage.setItem(VOTED_KEY, JSON.stringify(voted)); } catch (e) {}
+    }
+
+    var form = document.getElementById('songVoteForm');
+    var input = document.getElementById('songVoteInput');
+    var msg = document.getElementById('songVoteMsg');
+    var board = document.getElementById('songVoteBoard');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var raw = input.value.trim();
+      if (!raw) return;
+      var slug = slugify(raw);
+      if (!slug) { return; }
+      if (getVotedSongs().indexOf(slug) !== -1) {
+        msg.textContent = 'Ya votaste por esta canción. ¡Gracias!';
+        msg.className = 'song-vote-msg is-info';
+        return;
+      }
+      var ref = db.collection('songVotes').doc(slug);
+      db.runTransaction(function (tx) {
+        return tx.get(ref).then(function (doc) {
+          if (!doc.exists) {
+            tx.set(ref, { label: raw.slice(0, 60), votes: 1 });
+          } else {
+            tx.update(ref, { votes: (doc.data().votes || 0) + 1 });
+          }
+        });
+      }).then(function () {
+        addVotedSong(slug);
+        input.value = '';
+        msg.textContent = '¡Tu voto quedó registrado!';
+        msg.className = 'song-vote-msg is-success';
+      }).catch(function () {
+        msg.textContent = 'No se pudo registrar tu voto, intenta de nuevo.';
+        msg.className = 'song-vote-msg is-error';
+      });
+    });
+
+    db.collection('songVotes').orderBy('votes', 'desc').limit(10)
+      .onSnapshot(function (snapshot) {
+        var rows = [];
+        snapshot.forEach(function (doc) {
+          var d = doc.data();
+          rows.push({ label: d.label || '', votes: d.votes || 0 });
+        });
+        if (rows.length === 0) {
+          board.innerHTML = '<p class="song-vote-empty">Sé el primero en pedir una canción.</p>';
+          return;
+        }
+        var maxVotes = rows[0].votes || 1;
+        board.innerHTML = rows.map(function (r, i) {
+          var pct = Math.max(8, Math.round((r.votes / maxVotes) * 100));
+          return '<div class="song-vote-row">' +
+            '<div class="song-vote-rank">#' + (i + 1) + '</div>' +
+            '<div class="song-vote-info">' +
+              '<div class="song-vote-label">' + escapeHtml(r.label) + '</div>' +
+              '<div class="song-vote-bar-wrap"><div class="song-vote-bar" style="width:' + pct + '%"></div></div>' +
+            '</div>' +
+            '<div class="song-vote-count">' + r.votes + '</div>' +
+          '</div>';
+        }).join('');
+      }, function () {
+        board.innerHTML = '<p class="song-vote-empty">No se pudo cargar el ranking.</p>';
+      });
+  })();
 </script>
