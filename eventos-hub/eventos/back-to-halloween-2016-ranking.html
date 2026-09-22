@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ranking completo — Playlist Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #050406;
+    --charcoal: #17151C;
+    --white: #EDEAE6;
+    --white-dim: #A79FB0;
+    --orange: #FF6B1A;
+    --orange-soft: #FFA361;
+    --purple: #6A2FD9;
+    --purple-glow: #9B5CFF;
+    --line: rgba(237,234,230,0.14);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:var(--black); color:var(--white); font-family:'Space Grotesk',sans-serif; min-height:100vh; }
+  .wrap{ max-width:720px; margin:0 auto; padding:48px 24px 80px; }
+  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.28em; text-transform:uppercase; color:var(--orange-soft); margin-bottom:10px; }
+  h1{ font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,6vw,44px); letter-spacing:0.02em; margin-bottom:8px; }
+  .sub{ font-size:13.5px; color:var(--white-dim); line-height:1.6; margin-bottom:32px; max-width:560px; }
+  .sub strong{ color:var(--white); }
+  .toolbar{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; margin-bottom:22px; padding:16px 18px; border:1px solid var(--line); border-radius:6px; background:rgba(237,234,230,0.02); }
+  .total{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white-dim); }
+  .total strong{ color:var(--orange-soft); font-size:16px; }
+  .copy-btn{
+    display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:100px; border:1.5px solid var(--purple-glow);
+    background:transparent; color:var(--purple-glow); font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.06em;
+    text-transform:uppercase; cursor:pointer; transition: background 0.25s ease, color 0.25s ease;
+  }
+  .copy-btn:hover{ background:var(--purple-glow); color:#1A0B00; }
+  .copy-btn.is-copied{ border-color:var(--orange); color:var(--orange-soft); }
+  .board{ display:flex; flex-direction:column; gap:8px; }
+  .row{ display:flex; align-items:center; gap:14px; padding:12px 16px; border:1px solid var(--line); border-radius:4px; background:rgba(237,234,230,0.02); }
+  .rank{ flex:none; width:30px; font-family:'Bebas Neue',sans-serif; font-size:15px; color:var(--white-dim); }
+  .row:nth-child(1) .rank{ color:var(--orange-soft); font-size:18px; }
+  .row:nth-child(2) .rank, .row:nth-child(3) .rank{ color:var(--purple-glow); }
+  .info{ flex:1; min-width:0; }
+  .label{ font-size:14px; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:5px; }
+  .bar-wrap{ height:5px; border-radius:100px; background:rgba(237,234,230,0.08); overflow:hidden; }
+  .bar{ height:100%; border-radius:100px; background:linear-gradient(90deg, var(--orange), var(--purple)); transition:width 0.5s ease; }
+  .count{ flex:none; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white-dim); min-width:30px; text-align:right; }
+  .empty{ text-align:center; color:var(--white-dim); font-size:14px; padding:40px 0; }
+  .footer-note{ margin-top:36px; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--white-dim); opacity:0.6; text-align:center; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Uso interno — Fan Tribute</div>
+    <h1>Ranking completo</h1>
+    <p class="sub">Todas las canciones pedidas en <strong>Playlist Night</strong> (Back to Halloween 2016), sin límite de 10. Esta página no está enlazada desde el sitio público — úsala para armar el setlist real con el DJ.</p>
+    <div class="toolbar">
+      <div class="total" id="totalInfo">Cargando…</div>
+      <button class="copy-btn" id="copyBtn" type="button">Copiar lista</button>
+    </div>
+    <div class="board" id="board"><p class="empty">Cargando ranking…</p></div>
+    <p class="footer-note">Conectado en vivo a la misma base de datos del formulario público.</p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDth6WmnNMUaDceYNCsLeVTsLUIjAL4-eM",
+      authDomain: "back-to-halloween.firebaseapp.com",
+      projectId: "back-to-halloween",
+      storageBucket: "back-to-halloween.firebasestorage.app",
+      messagingSenderId: "174367772693",
+      appId: "1:174367772693:web:6138627043ff374929be1c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    var board = document.getElementById('board');
+    var totalInfo = document.getElementById('totalInfo');
+    var copyBtn = document.getElementById('copyBtn');
+    var currentRows = [];
+
+    db.collection('songVotes').orderBy('votes', 'desc').limit(200)
+      .onSnapshot(function (snapshot) {
+        var rows = [];
+        snapshot.forEach(function (doc) {
+          var d = doc.data();
+          rows.push({ label: d.label || '(sin nombre)', votes: d.votes || 0 });
+        });
+        currentRows = rows;
+
+        var totalVotes = rows.reduce(function (sum, r) { return sum + r.votes; }, 0);
+        totalInfo.innerHTML = rows.length + ' canciones distintas · <strong>' + totalVotes + '</strong> votos en total';
+
+        if (rows.length === 0) {
+          board.innerHTML = '<p class="empty">Todavía no hay votos.</p>';
+          return;
+        }
+        var maxVotes = rows[0].votes || 1;
+        board.innerHTML = rows.map(function (r, i) {
+          var pct = Math.max(6, Math.round((r.votes / maxVotes) * 100));
+          return '<div class="row">' +
+            '<div class="rank">#' + (i + 1) + '</div>' +
+            '<div class="info">' +
+              '<div class="label">' + escapeHtml(r.label) + '</div>' +
+              '<div class="bar-wrap"><div class="bar" style="width:' + pct + '%"></div></div>' +
+            '</div>' +
+            '<div class="count">' + r.votes + '</div>' +
+          '</div>';
+        }).join('');
+      }, function () {
+        board.innerHTML = '<p class="empty">No se pudo cargar el ranking.</p>';
+      });
+
+    copyBtn.addEventListener('click', function () {
+      var text = currentRows.map(function (r, i) {
+        return (i + 1) + '. ' + r.label + ' — ' + r.votes + ' votos';
+      }).join('\n');
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.textContent = '¡Copiado!';
+        copyBtn.classList.add('is-copied');
+        setTimeout(function () {
+          copyBtn.textContent = 'Copiar lista';
+          copyBtn.classList.remove('is-copied');
+        }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>
