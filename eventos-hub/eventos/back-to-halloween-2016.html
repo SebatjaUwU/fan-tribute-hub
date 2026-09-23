@@ -709,6 +709,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="preventa-badge">Cupo limitado</div>
       <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price"><sup>$</sup>32K</div></div>
       <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso. Incluye <strong>concurso de disfraces</strong> 🎭. <strong>Solo hasta agotar existencias</strong> — al agotarse sube a Preventa 2.</p>
+      <div class="stock-indicator" id="stockPreventa1"></div>
       <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20Preventa%201%20para%20BACK%20TO%20HALLOWEEN%202016%20%E2%80%94%20%2432.000" target="_blank" rel="noopener" data-track="buy_preventa1_whatsapp">
         Comprar
         <span class="buy-btn-orb">
@@ -1053,11 +1054,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       el.innerHTML = '<span class="stock-dot"></span> Agotado';
     } else if (r <= cfg.lowThreshold) {
       el.classList.add('is-low');
-      el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas boletas! · Cupo total: ' + cfg.total;
+      el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas! · ' + r + ' / ' + cfg.total;
     } else {
-      el.innerHTML = '<span class="stock-dot"></span> Quedan ' + r + ' de ' + cfg.total + ' boletas';
+      el.innerHTML = '<span class="stock-dot"></span> ' + r + ' / ' + cfg.total;
     }
   }
+  renderStock('preventa1', 'stockPreventa1');
   renderStock('hallstage', 'stockHallstage');
 
   // ---------- Reveal on scroll ----------
