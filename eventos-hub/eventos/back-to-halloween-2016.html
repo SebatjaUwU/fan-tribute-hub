@@ -793,6 +793,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="ticket-top"><div class="ticket-kind">🔴 Backstage</div></div>
         <div class="ticket-price">$400K</div>
         <div class="ticket-price-note">Mesa para 4–5 personas — la experiencia más exclusiva de la noche</div>
+        <div class="stock-indicator" id="stockBackstage"></div>
         <hr class="perforation">
         <ul class="ticket-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Mesa y sillas para 4–5 personas</span></li>
@@ -1042,7 +1043,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   var STOCK = {
     preventa1: { total: 50, remaining: 30, lowThreshold: 10 },
     preventa2: { total: 50, remaining: 50, lowThreshold: 10 },
-    hallstage: { total: 20, remaining: 4, lowThreshold: 5 }
+    hallstage: { total: 20, remaining: 4, lowThreshold: 5 },
+    backstage: { total: 5, remaining: 4, lowThreshold: 2 }
   };
   function renderStock(key, elId) {
     var cfg = STOCK[key];
@@ -1061,6 +1063,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   renderStock('preventa1', 'stockPreventa1');
   renderStock('hallstage', 'stockHallstage');
+  renderStock('backstage', 'stockBackstage');
 
   // ---------- Reveal on scroll ----------
   var io = new IntersectionObserver(function (entries) {
