@@ -1594,15 +1594,47 @@ function leerCorreosNegocio_() {
 // envio a la mitad (100/dia en cuentas gratis, ~1500/dia en Workspace).
 const PROMO_ENVIADOS_PROP = 'PROMO_PRE_EDC_ENVIADOS';
 
+// Cada Script Property aguanta ~9KB, asi que la lista se reparte en
+// trozos: PROP, PROP_2, PROP_3... (el primero sigue siendo PROP, para no
+// perder lo que ya estaba guardado antes de este cambio).
+const PROMO_ENVIADOS_MAX_CHARS = 8000;
+
+function promoEnviadosKey_(prop, n) {
+  return n === 1 ? prop : prop + '_' + n;
+}
+
 function getPromoEnviados_(prop) {
-  const raw = PropertiesService.getScriptProperties().getProperty(prop || PROMO_ENVIADOS_PROP);
-  return raw ? raw.split(',') : [];
+  prop = prop || PROMO_ENVIADOS_PROP;
+  const props = PropertiesService.getScriptProperties();
+  let enviados = [];
+  for (let n = 1; ; n++) {
+    const raw = props.getProperty(promoEnviadosKey_(prop, n));
+    if (!raw) break;
+    enviados = enviados.concat(raw.split(','));
+  }
+  return enviados;
 }
 
 function marcarPromoEnviado_(email, prop) {
-  const enviados = getPromoEnviados_(prop);
-  enviados.push(email.toLowerCase());
-  PropertiesService.getScriptProperties().setProperty(prop || PROMO_ENVIADOS_PROP, enviados.join(','));
+  prop = prop || PROMO_ENVIADOS_PROP;
+  const props = PropertiesService.getScriptProperties();
+  let n = 1;
+  while (props.getProperty(promoEnviadosKey_(prop, n + 1))) n++;
+  const key = promoEnviadosKey_(prop, n);
+  const raw = props.getProperty(key);
+  const valor = raw ? raw + ',' + email.toLowerCase() : email.toLowerCase();
+  if (raw && valor.length > PROMO_ENVIADOS_MAX_CHARS) {
+    props.setProperty(promoEnviadosKey_(prop, n + 1), email.toLowerCase());
+  } else {
+    props.setProperty(key, valor);
+  }
+}
+
+function borrarPromoEnviados_(prop) {
+  const props = PropertiesService.getScriptProperties();
+  for (let n = 1; props.getProperty(promoEnviadosKey_(prop, n)); n++) {
+    props.deleteProperty(promoEnviadosKey_(prop, n));
+  }
 }
 
 /**
@@ -1611,7 +1643,7 @@ function marcarPromoEnviado_(email, prop) {
  * la promo a todo el mundo desde cero.
  */
 function resetPromoEnviados() {
-  PropertiesService.getScriptProperties().deleteProperty(PROMO_ENVIADOS_PROP);
+  borrarPromoEnviados_(PROMO_ENVIADOS_PROP);
   Logger.log('Registro de enviados de PROMO PRE-EDC borrado.');
 }
 
@@ -1719,7 +1751,7 @@ function enviarPromoHalloween() {
 }
 
 function resetPromoHalloweenEnviados() {
-  PropertiesService.getScriptProperties().deleteProperty(PROMO_HALLOWEEN_ENVIADOS_PROP);
+  borrarPromoEnviados_(PROMO_HALLOWEEN_ENVIADOS_PROP);
   Logger.log('Registro de enviados de PROMO HALLOWEEN borrado.');
 }
 
