@@ -1725,7 +1725,7 @@ function resetPromoHalloweenEnviados() {
 
 function enviarPromoHalloween_(destinatarios, registrar) {
   const flyerBlob = Utilities.newBlob(Utilities.base64Decode(PROMO_HALLOWEEN_FLYER_B64), 'image/jpeg', 'back-to-halloween-2016.jpg');
-  const subject = 'Back to Halloween 2016 🎃 — Sábado 31 de octubre en Capital Live Concerts';
+  const subject = 'Back to Halloween 2016 - Sábado 31 de octubre en Capital Live Concerts';
   const htmlBody = buildPromoHalloweenHtml_();
 
   const yaEnviados = registrar ? getPromoEnviados_(PROMO_HALLOWEEN_ENVIADOS_PROP) : [];
@@ -1775,14 +1775,14 @@ function buildPromoHalloweenHtml_() {
     '<div style="height:6px; background-color:' + orange + '; background:linear-gradient(90deg,' + orange + ',' + purple + ');"></div>' +
     '<div style="max-width:480px; margin:0 auto; padding:40px 24px 8px; text-align:center; font-family:Arial,Helvetica,sans-serif;">' +
 
-      '<p style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:' + orange + '; font-weight:700; margin:0 0 6px;">Fan Tribute presenta 🎃</p>' +
+      '<p style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:' + orange + '; font-weight:700; margin:0 0 6px;">Fan Tribute presenta</p>' +
       '<h1 style="font-size:30px; font-weight:800; color:' + cream + '; margin:0 0 6px; font-family:Georgia,\'Times New Roman\',serif;">Back to Halloween 2016</h1>' +
       '<p style="font-size:13px; color:' + dim + '; margin:0 0 26px;">S&aacute;bado 31 de octubre &middot; Capital Live Concerts &middot; KR 13 #48-90, Bogot&aacute;</p>' +
 
       '<img src="cid:flyer" width="432" style="display:block; width:100%; max-width:432px; border-radius:16px; margin:0 auto 24px;" alt="Flyer Back to Halloween 2016">' +
 
       '<p style="font-size:14px; line-height:1.7; color:' + cream + '; margin:0 0 14px; text-align:left;">Estuviste en uno de nuestros eventos y queremos que seas de los primeros en saberlo: vuelve <strong>2016</strong>, ahora en versi&oacute;n Halloween. Tributo a Avicii, Martin Garrix, David Guetta, Skrillex, Alan Walker, Marshmello y muchos m&aacute;s.</p>' +
-      '<p style="font-size:14px; line-height:1.7; color:' + cream + '; margin:0 0 26px; text-align:left;">Ven disfrazado: hay <strong>concurso de disfraces</strong> 🎭. La Preventa 1 es de cupo limitado y el precio sube por etapas.</p>' +
+      '<p style="font-size:14px; line-height:1.7; color:' + cream + '; margin:0 0 26px; text-align:left;">Ven disfrazado: hay <strong>concurso de disfraces</strong>. La Preventa 1 es de cupo limitado y el precio sube por etapas.</p>' +
 
       boton('Preventa 1 &middot; $32K por WhatsApp', 'https://wa.me/573161088178?text=Hola%2C%20quiero%20comprar%20una%20preventa%201%20para%20back%20to%20halloween%202016%2C%20%C2%BFComo%20puedo%20realizar%20el%20pago%3F%20', '#25D366', '#04150C') +
       boton('Hall Stage &middot; $70K', 'https://checkout.wompi.co/l/jCazhj', orange, '#1A0B00') +
