@@ -404,6 +404,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
   .preventa:hover .preventa-price{ transform:scale(1.06); text-shadow:0 0 20px rgba(255,163,97,0.6); }
   .preventa-price sup{ font-size:14px; font-weight:600; color:var(--white-dim); margin-right:2px; }
+  .preventa-price-wrap{ text-align:right; }
+  .preventa-was{ margin-top:4px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--white-dim); }
+  .preventa-was s{ color:var(--red-soft); text-decoration-thickness:2px; }
+  .preventa-was em{ font-style:normal; color:var(--orange-soft); }
   .preventa-desc{ font-size:15px; line-height:1.6; color:var(--white-dim); margin-bottom:22px; }
   .preventa-desc strong{ color:var(--white); }
 
@@ -527,6 +531,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media (max-width:680px){
     .chip{ white-space:normal; word-break:break-word; overflow-wrap:break-word; min-width:0; max-width:100%; }
     .preventa-top{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .preventa-price-wrap{ text-align:left; }
     .ticket-top{ flex-direction:column; align-items:flex-start; gap:6px; }
     .preventa-price{ font-size:28px; }
     .ticket-price{ font-size:26px; }
@@ -707,7 +712,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <div class="preventa reveal">
       <div class="preventa-badge">Cupo limitado</div>
-      <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price"><sup>$</sup>32K</div></div>
+      <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price-wrap"><div class="preventa-price"><sup>$</sup>32K</div><div class="preventa-was">Antes <s>$35K</s> · <em>Solo porque es mes de Halloween</em></div></div></div>
       <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso. Incluye <strong>concurso de disfraces</strong> 🎭. <strong>Solo hasta agotar existencias</strong> — al agotarse sube a Preventa 2.</p>
       <div class="stock-indicator" id="stockPreventa1"></div>
       <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%2C%20quiero%20comprar%20una%20preventa%201%20para%20back%20to%20halloween%202016%2C%20%C2%BFComo%20puedo%20realizar%20el%20pago%3F%20" target="_blank" rel="noopener" data-track="buy_preventa1_whatsapp">
