@@ -1939,10 +1939,6 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 const QR_HW_SHEET_ID = '13tybmgGnPrFhQyBYkdR5EMWU1sfraOAGhMHOoc6WFl0';
 const QR_HW_SHEET_GID = 0;
 const QR_HW_ASSETS_URL = 'https://fan-tribute-co.netlify.app/edc-preparty/ASSETS/qr-halloween/';
-// Pagina que arma la boleta completa como imagen PNG (y el QR solo) para
-// descargarla; el correo la enlaza con los datos de cada boleta.
-const QR_HW_BOLETA_URL = 'https://fan-tribute-co.netlify.app/eventos-hub/eventos/boleta-halloween.html';
-
 // Llave = tipo de entrada normalizado (minusculas, sin tildes).
 const QR_HW_TIPOS = {
   'preventa 1': { key: 'p1',   tipo: 'Preventa 1', prefijo: 'BTH16-P1',   accent: '#ff9a3c', zona: 'Pista · Primer piso', sello: true },
@@ -2363,8 +2359,19 @@ function enviarQRHalloween_(d) {
     const qr = UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' + encodeURIComponent(ticketId))
       .getBlob().setName(ticketId + '.png');
     inlineImages['qr' + i] = qr;
-    attachments.push(qr.copyBlob().setName(ticketId + '.png'));
-    return { ticketId: ticketId, cid: 'qr' + i, entrada: (i + 1) + ' de ' + d.ticketIds.length };
+    const entrada = (i + 1) + ' de ' + d.ticketIds.length;
+
+    // Adjunto: la boleta completa como imagen (como en End of Summer). Si
+    // falla, el correo sale igual con el QR en el cuerpo y adjunto solo.
+    try {
+      attachments.push(generarBoletaHalloweenPng_({
+        cfg: cfg, nombre: d.nombre, ticketId: ticketId, entrada: entrada, orden: d.orden, qrBlob: qr.copyBlob()
+      }));
+    } catch (err) {
+      Logger.log('No se pudo generar la boleta completa de ' + ticketId + ' (' + err + '); se adjunta solo el QR.');
+      attachments.push(qr.copyBlob().setName(ticketId + '-QR.png'));
+    }
+    return { ticketId: ticketId, cid: 'qr' + i, entrada: entrada };
   });
 
   GmailApp.sendEmail(d.email, 'Tu QR para Back to Halloween 2016 - ' + cfg.tipo, '', {
@@ -2372,6 +2379,122 @@ function enviarQRHalloween_(d) {
     inlineImages: inlineImages,
     attachments: attachments,
     name: 'Fan Tribute'
+  });
+}
+
+// ---- Boleta completa como imagen PNG adjunta ----
+// Igual que End of Summer (generateTicketPng_): se arma en Google Slides y
+// se exporta como PNG. Como el diseno es vertical y SlidesApp no deja
+// cambiar el tamano de pagina, se usa una plantilla de Slides del tamano
+// exacto de la boleta, que se crea sola la primera vez a partir de
+// edc-preparty/ASSETS/qr-halloween/plantilla-<ancho>x<alto>.pptx (por eso
+// hace falta el servicio avanzado "Drive API"). Encima va boleta-<tipo>.png
+// (el diseno con los datos de ejemplo borrados) y sobre ella el nombre, la
+// entrada, el QR, el codigo y el numero de orden. Medidas en px de esa
+// imagen (1 px = 1 pt en la plantilla).
+const QR_HW_BOLETA_PNG = {
+  p1:   { w: 784, h: 2744, nombre: { x: 75, cy: 875, maxW: 455 }, entrada: { x: 404, cy: 962 }, qr: { x: 202, y: 1084, size: 380 }, codigo: { x0: 72, x1: 712, cy: 1532 } },
+  p2:   { w: 784, h: 2744, nombre: { x: 75, cy: 875, maxW: 637 }, entrada: { x: 404, cy: 962 }, qr: { x: 202, y: 1084, size: 380 }, codigo: { x0: 72, x1: 712, cy: 1532 } },
+  gen:  { w: 784, h: 2744, nombre: { x: 75, cy: 875, maxW: 637 }, entrada: { x: 404, cy: 962 }, qr: { x: 202, y: 1084, size: 380 }, codigo: { x0: 72, x1: 712, cy: 1532 } },
+  hall: { w: 784, h: 2744, nombre: { x: 75, cy: 875, maxW: 637 }, entrada: { x: 404, cy: 962 }, qr: { x: 202, y: 1084, size: 380 }, codigo: { x0: 72, x1: 712, cy: 1532 } },
+  trio: { w: 780, h: 2815, nombre: { x: 75, cy: 875, maxW: 633 }, entrada: { x: 402, cy: 962 }, qr: { x: 201, y: 1113, size: 379 }, codigo: { x0: 72, x1: 708, cy: 1562 }, orden: { x: 108, cy: 2202 } },
+  back: { w: 780, h: 2924, nombre: { x: 75, cy: 875, maxW: 633 }, entrada: { x: 402, cy: 962 }, qr: { x: 201, y: 1113, size: 379 }, codigo: { x0: 72, x1: 708, cy: 1562 }, orden: { x: 108, cy: 2202 } }
+};
+
+// ID de la plantilla de Slides de ese tamano (guardado en Script
+// Properties). Si no existe, la crea convirtiendo el .pptx publicado.
+function getPlantillaHalloween_(w, h) {
+  const props = PropertiesService.getScriptProperties();
+  const key = 'QR_HW_PLANTILLA_' + w + 'x' + h;
+  const guardada = props.getProperty(key);
+  if (guardada) {
+    try {
+      if (!DriveApp.getFileById(guardada).isTrashed()) return guardada;
+    } catch (e) { /* la borraron: se crea de nuevo */ }
+  }
+  if (typeof Drive === 'undefined') {
+    throw new Error('falta activar el servicio avanzado "Drive API" (en el editor: Servicios > + > Drive API > Agregar)');
+  }
+
+  const pptx = UrlFetchApp.fetch(QR_HW_ASSETS_URL + 'plantilla-' + w + 'x' + h + '.pptx').getBlob()
+    .setContentType('application/vnd.openxmlformats-officedocument.presentationml.presentation');
+  const nombre = 'Plantilla boleta Halloween ' + w + 'x' + h + ' (no borrar)';
+  const archivo = Drive.Files.create
+    ? Drive.Files.create({ name: nombre, mimeType: MimeType.GOOGLE_SLIDES }, pptx)                  // Drive API v3
+    : Drive.Files.insert({ title: nombre, mimeType: MimeType.GOOGLE_SLIDES }, pptx, { convert: true }); // Drive API v2
+  props.setProperty(key, archivo.id);
+
+  const pres = SlidesApp.openById(archivo.id);
+  Logger.log('Plantilla creada: "' + nombre + '" — pagina de ' + pres.getPageWidth() + ' x ' + pres.getPageHeight() + ' pt');
+  return archivo.id;
+}
+
+/**
+ * d: { cfg, nombre, ticketId, entrada, orden, qrBlob }
+ * Devuelve la boleta completa como PNG, llamada <ticketId>.png.
+ */
+function generarBoletaHalloweenPng_(d) {
+  const b = QR_HW_BOLETA_PNG[d.cfg.key];
+  const copia = DriveApp.getFileById(getPlantillaHalloween_(b.w, b.h)).makeCopy('tmp-boleta-' + d.ticketId);
+
+  try {
+    const pres = SlidesApp.openById(copia.getId());
+    const k = pres.getPageWidth() / b.w;
+    const slide = pres.getSlides()[0];
+    slide.getPageElements().forEach(function (e) { e.remove(); });
+
+    slide.insertImage(qrHwAsset_('boleta-' + d.cfg.key + '.png'), 0, 0, b.w * k, b.h * k);
+    slide.insertImage(d.qrBlob, b.qr.x * k, b.qr.y * k, b.qr.size * k, b.qr.size * k);
+
+    // Los cuadros de texto de Slides traen 0.1" de relleno a cada lado; se
+    // compensa en x, y el texto se centra en vertical sobre "cy".
+    const RELLENO = 7.2;
+    const texto = function (str, x, cy, ancho, size, color, fuente, centrado) {
+      const alto = size * k * 2;
+      const tb = slide.insertTextBox(str, x * k - RELLENO, cy * k - alto / 2, ancho * k + RELLENO * 2, alto);
+      tb.setContentAlignment(SlidesApp.ContentAlignment.MIDDLE);
+      const t = tb.getText();
+      t.getTextStyle().setFontFamily(fuente).setFontSize(size * k).setBold(true).setForegroundColor(color);
+      t.getParagraphStyle().setParagraphAlignment(centrado ? SlidesApp.ParagraphAlignment.CENTER : SlidesApp.ParagraphAlignment.START);
+    };
+
+    // El nombre va en una sola linea: si es largo se achica la letra
+    // (aprox. 0.56 em por caracter en Archivo negrita).
+    const nombre = String(d.nombre || '');
+    const tamNombre = Math.max(22, Math.min(40, Math.floor(b.nombre.maxW / (Math.max(nombre.length, 1) * 0.56))));
+    texto(nombre, b.nombre.x, b.nombre.cy, b.nombre.maxW, tamNombre, '#f4eefc', 'Archivo');
+    texto(d.entrada, b.entrada.x, b.entrada.cy, 220, 28, '#f4eefc', 'Archivo');
+    texto(d.ticketId, b.codigo.x0, b.codigo.cy, b.codigo.x1 - b.codigo.x0, 30, '#120c1c', 'Roboto Mono', true);
+    if (b.orden && d.orden) texto(d.orden, b.orden.x, b.orden.cy, 320, 52, d.cfg.accent, 'Roboto Mono');
+
+    pres.saveAndClose();
+
+    const exportUrl = 'https://docs.google.com/presentation/d/' + copia.getId() + '/export/png?id=' + copia.getId() + '&pageid=' + slide.getObjectId();
+    const resp = UrlFetchApp.fetch(exportUrl, {
+      headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+      muteHttpExceptions: true
+    });
+    if (resp.getResponseCode() !== 200) throw new Error('Export de Slides devolvio ' + resp.getResponseCode());
+    return resp.getBlob().setName(d.ticketId + '.png');
+  } finally {
+    copia.setTrashed(true);
+  }
+}
+
+/**
+ * Ejecutar a mano una vez (despues de activar Drive API): crea las 3
+ * plantillas y guarda en tu Drive una boleta de ejemplo de Preventa 1 y
+ * una de Backstage para que veas como quedan, sin mandar correos. El
+ * registro de ejecucion muestra los links.
+ */
+function probarBoletaHalloween() {
+  [['preventa 1', 'Juan Sebastian Parra', '1 de 1', ''], ['backstage', 'Laura Alejandra Rodriguez', '2 de 5', '#001']].forEach(function (p) {
+    const cfg = QR_HW_TIPOS[p[0]];
+    const ticketId = codigoHalloween_(cfg, 9999, p[1], '');
+    const qr = UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' + encodeURIComponent(ticketId)).getBlob();
+    const png = generarBoletaHalloweenPng_({ cfg: cfg, nombre: p[1], ticketId: ticketId, entrada: p[2], orden: p[3], qrBlob: qr });
+    const archivo = DriveApp.createFile(png.setName('PRUEBA ' + ticketId + '.png'));
+    Logger.log('Boleta de prueba ' + cfg.tipo + ': ' + archivo.getUrl());
   });
 }
 
@@ -2390,14 +2513,6 @@ function buildQrHalloweenHtml_(d) {
 
   const label = function (t) {
     return '<div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:' + DIM + '; font-weight:600; padding-bottom:4px;">' + t + '</div>';
-  };
-  const urlBoleta = function (t) {
-    return QR_HW_BOLETA_URL +
-      '?t=' + c.key +
-      '&n=' + encodeURIComponent(d.nombre || '') +
-      '&c=' + encodeURIComponent(t.ticketId) +
-      '&e=' + encodeURIComponent(t.entrada) +
-      (c.combo ? '&o=' + encodeURIComponent(d.orden || '') : '');
   };
   const imgRow = function (cid, alt) {
     return '<tr><td style="padding:0; line-height:0; font-size:0;"><img src="cid:' + cid + '" width="360" alt="' + alt + '" style="display:block; width:100%; max-width:360px; height:auto; border:0;"></td></tr>';
@@ -2447,17 +2562,14 @@ function buildQrHalloweenHtml_(d) {
         '<tr><td bgcolor="' + CARD + '" style="background:' + CARD + '; padding:18px 20px 0; font-family:' + FONT + '; color:' + TXT + ';">' + titular + '</td></tr>' +
         '<tr><td bgcolor="' + CARD + '" style="background:' + CARD + '; padding:20px 20px 0;">' + qr + '</td></tr>' +
         (c.combo ? imgRow('foota', 'Incluye') + ordenBox + imgRow('footb', 'Fan Tribute') : imgRow('foot', 'Incluye')) +
-      '</table>' +
-      '<div style="max-width:360px; margin:0 auto; padding-top:14px; text-align:center;">' +
-        '<a href="' + urlBoleta(t) + '" style="display:inline-block; padding:13px 26px; border-radius:999px; background:' + A + '; color:#120c1c; font-family:' + FONT + '; font-size:14px; font-weight:700; text-decoration:none;">Descargar boleta</a>' +
-      '</div>';
-  }).join('<div style="height:32px; line-height:32px; font-size:0;">&nbsp;</div>');
+      '</table>';
+  }).join('<div style="height:28px; line-height:28px; font-size:0;">&nbsp;</div>');
 
   return '' +
   '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="' + BG + '" style="background:' + BG + ';"><tr><td align="center" style="padding:28px 12px 32px;">' +
     '<div style="max-width:360px; margin:0 auto; padding:0 0 22px; font-family:' + FONT + '; color:' + TXT + '; text-align:center;">' +
       '<div style="font-size:17px; font-weight:700; padding-bottom:6px;">Hola' + (primerNombre ? ' ' + escapeHtml_(primerNombre) : '') + ', ' + (n > 1 ? 'aquí están tus ' + n + ' boletas' : 'aquí está tu boleta') + '</div>' +
-      '<div style="font-size:13px; line-height:1.55; color:' + DIM + ';">Guarda este correo y presenta el QR en la entrada junto a tu documento.' + (n > 1 ? ' Cada QR es para una persona.' : '') + ' Con el botón "Descargar boleta" la guardas como imagen.</div>' +
+      '<div style="font-size:13px; line-height:1.55; color:' + DIM + ';">Guarda este correo y presenta el QR en la entrada junto a tu documento.' + (n > 1 ? ' Cada QR es para una persona.' : '') + ' ' + (n > 1 ? 'Las boletas completas van adjuntas' : 'La boleta completa va adjunta') + ' como imagen para que la guardes en tu celular.</div>' +
     '</div>' +
     tarjetas +
     '<div style="max-width:360px; margin:0 auto; padding-top:22px; font-family:' + FONT + '; font-size:11px; line-height:1.6; color:' + DIM + '; text-align:center;">Dudas por Instagram <strong style="color:' + TXT + ';">@fantribute_col</strong>.</div>' +
