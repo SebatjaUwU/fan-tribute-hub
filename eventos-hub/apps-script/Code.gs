@@ -1939,6 +1939,9 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 const QR_HW_SHEET_ID = '13tybmgGnPrFhQyBYkdR5EMWU1sfraOAGhMHOoc6WFl0';
 const QR_HW_SHEET_GID = 0;
 const QR_HW_ASSETS_URL = 'https://fan-tribute-co.netlify.app/edc-preparty/ASSETS/qr-halloween/';
+// Pagina que arma la boleta completa como imagen PNG (y el QR solo) para
+// descargarla; el correo la enlaza con los datos de cada boleta.
+const QR_HW_BOLETA_URL = 'https://fan-tribute-co.netlify.app/eventos-hub/eventos/boleta-halloween.html';
 
 // Llave = tipo de entrada normalizado (minusculas, sin tildes).
 const QR_HW_TIPOS = {
@@ -2388,6 +2391,14 @@ function buildQrHalloweenHtml_(d) {
   const label = function (t) {
     return '<div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:' + DIM + '; font-weight:600; padding-bottom:4px;">' + t + '</div>';
   };
+  const urlBoleta = function (t) {
+    return QR_HW_BOLETA_URL +
+      '?t=' + c.key +
+      '&n=' + encodeURIComponent(d.nombre || '') +
+      '&c=' + encodeURIComponent(t.ticketId) +
+      '&e=' + encodeURIComponent(t.entrada) +
+      (c.combo ? '&o=' + encodeURIComponent(d.orden || '') : '');
+  };
   const imgRow = function (cid, alt) {
     return '<tr><td style="padding:0; line-height:0; font-size:0;"><img src="cid:' + cid + '" width="360" alt="' + alt + '" style="display:block; width:100%; max-width:360px; height:auto; border:0;"></td></tr>';
   };
@@ -2436,14 +2447,17 @@ function buildQrHalloweenHtml_(d) {
         '<tr><td bgcolor="' + CARD + '" style="background:' + CARD + '; padding:18px 20px 0; font-family:' + FONT + '; color:' + TXT + ';">' + titular + '</td></tr>' +
         '<tr><td bgcolor="' + CARD + '" style="background:' + CARD + '; padding:20px 20px 0;">' + qr + '</td></tr>' +
         (c.combo ? imgRow('foota', 'Incluye') + ordenBox + imgRow('footb', 'Fan Tribute') : imgRow('foot', 'Incluye')) +
-      '</table>';
-  }).join('<div style="height:28px; line-height:28px; font-size:0;">&nbsp;</div>');
+      '</table>' +
+      '<div style="max-width:360px; margin:0 auto; padding-top:14px; text-align:center;">' +
+        '<a href="' + urlBoleta(t) + '" style="display:inline-block; padding:13px 26px; border-radius:999px; background:' + A + '; color:#120c1c; font-family:' + FONT + '; font-size:14px; font-weight:700; text-decoration:none;">Descargar boleta</a>' +
+      '</div>';
+  }).join('<div style="height:32px; line-height:32px; font-size:0;">&nbsp;</div>');
 
   return '' +
   '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="' + BG + '" style="background:' + BG + ';"><tr><td align="center" style="padding:28px 12px 32px;">' +
     '<div style="max-width:360px; margin:0 auto; padding:0 0 22px; font-family:' + FONT + '; color:' + TXT + '; text-align:center;">' +
       '<div style="font-size:17px; font-weight:700; padding-bottom:6px;">Hola' + (primerNombre ? ' ' + escapeHtml_(primerNombre) : '') + ', ' + (n > 1 ? 'aquí están tus ' + n + ' boletas' : 'aquí está tu boleta') + '</div>' +
-      '<div style="font-size:13px; line-height:1.55; color:' + DIM + ';">Guarda este correo y presenta el QR en la entrada junto a tu documento.' + (n > 1 ? ' Cada QR es para una persona.' : '') + ' También va adjunto por si quieres descargarlo.</div>' +
+      '<div style="font-size:13px; line-height:1.55; color:' + DIM + ';">Guarda este correo y presenta el QR en la entrada junto a tu documento.' + (n > 1 ? ' Cada QR es para una persona.' : '') + ' Con el botón "Descargar boleta" la guardas como imagen.</div>' +
     '</div>' +
     tarjetas +
     '<div style="max-width:360px; margin:0 auto; padding-top:22px; font-family:' + FONT + '; font-size:11px; line-height:1.6; color:' + DIM + '; text-align:center;">Dudas por Instagram <strong style="color:' + TXT + ';">@fantribute_col</strong>.</div>' +

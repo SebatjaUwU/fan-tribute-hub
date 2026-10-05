@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Tu boleta — BACK TO HALLOWEEN 2016</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg: #08060d;
+    --card: #170f24;
+    --text: #f4eefc;
+    --dim: #b8adc9;
+    --line: #2d2340;
+    --accent: #ff9a3c;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: Archivo, 'Helvetica Neue', Arial, sans-serif;
+    min-height:100vh;
+    padding:28px 16px 40px;
+  }
+  main{ max-width:400px; margin:0 auto; text-align:center; }
+  h1{ font-family: Anton, Impact, sans-serif; font-weight:400; font-size:30px; letter-spacing:0.04em; margin-bottom:4px; }
+  .sub{ font-size:13px; color: var(--dim); margin-bottom:20px; }
+  .status{ font-size:14px; color: var(--dim); padding:40px 0; }
+  .status.error{ color:#ff8a8a; }
+  #boleta{ display:none; width:100%; max-width:360px; height:auto; margin:0 auto 18px; border-radius:22px; }
+  .acciones{ display:none; flex-direction:column; gap:10px; max-width:360px; margin:0 auto; }
+  .btn{
+    display:block; padding:14px 20px; border-radius:999px;
+    font-weight:700; font-size:14px; text-decoration:none; text-align:center;
+  }
+  .btn-primary{ background: var(--accent); color:#120c1c; }
+  .btn-secondary{ background: rgba(244,238,252,0.06); color: var(--text); border:1px solid var(--line); }
+  .btn:focus-visible{ outline:2px solid var(--text); outline-offset:3px; }
+  .tip{ font-size:12px; line-height:1.6; color: var(--dim); margin-top:16px; }
+  .tip strong{ color: var(--text); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tu boleta</h1>
+  <p class="sub" id="sub">Back to Halloween 2016</p>
+  <p class="status" id="status">Generando tu boleta…</p>
+  <img id="boleta" alt="Boleta Back to Halloween 2016">
+  <div class="acciones" id="acciones">
+    <a class="btn btn-primary" id="dlBoleta" href="#">Descargar boleta completa</a>
+    <a class="btn btn-secondary" id="dlQr" href="#">Descargar solo el QR</a>
+  </div>
+  <p class="tip" id="tip" hidden>En iPhone también puedes <strong>mantener presionada la imagen</strong> y elegir "Guardar en Fotos". Presenta el QR en la entrada junto a tu documento.</p>
+</main>
+
+<script>
+(function () {
+  // Mismos datos que QR_HW_TIPOS en Code.gs y que el diseno de
+  // edc-preparty/ASSETS/Halloween (Boleta · <tipo>).
+  var TIPOS = {
+    p1:   { nombre: 'Preventa 1', accent: '#ff9a3c', zona: 'Pista · Primer piso', sello: true },
+    p2:   { nombre: 'Preventa 2', accent: '#ff9a3c', zona: 'Pista · Primer piso' },
+    gen:  { nombre: 'General',    accent: '#2ec4a6', zona: 'Pista · Primer piso' },
+    hall: { nombre: 'Hall Stage', accent: '#a67cff', zona: 'Balcón · Segundo piso' },
+    trio: { nombre: 'Trío VIP',   accent: '#f2c230', zona: 'Mesa VIP · Segundo piso', combo: ['1 botella a elección', '3 cervezas'] },
+    back: { nombre: 'Backstage',  accent: '#ff4f61', zona: 'Backstage · Junto a DJs', combo: ['1 botella a elección', '1 six de cerveza', '1 agua'] }
+  };
+  var ASSETS = '../../edc-preparty/ASSETS/qr-halloween/';
+  var BG = '#08060d', CARD = '#170f24', TXT = '#f4eefc', DIM = '#b8adc9';
+  var SANS = "Archivo, 'Helvetica Neue', Arial, sans-serif";
+  var MONO = "'JetBrains Mono', Menlo, Consolas, monospace";
+
+  var params = new URLSearchParams(location.search);
+  var key = params.get('t');
+  var tipo = TIPOS[key];
+  var nombre = (params.get('n') || '').trim().slice(0, 80);
+  var codigo = (params.get('c') || '').trim().toUpperCase();
+  var entrada = (params.get('e') || '1 de 1').trim().slice(0, 20);
+  var orden = (params.get('o') || '').trim().slice(0, 12);
+
+  var statusEl = document.getElementById('status');
+  function error(msg) {
+    statusEl.textContent = msg;
+    statusEl.classList.add('error');
+  }
+
+  if (!tipo || !/^BTH16-[A-Z0-9-]{3,40}$/.test(codigo) || !nombre) {
+    error('Este link está incompleto. Abre el botón "Descargar boleta" desde el correo que te llegó con tu QR.');
+    return;
+  }
+  document.getElementById('sub').textContent = tipo.nombre + ' · ' + codigo;
+  document.documentElement.style.setProperty('--accent', tipo.accent);
+
+  function cargarImagen(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error('No se pudo cargar ' + src)); };
+      img.src = src;
+    });
+  }
+
+  var imagenes = tipo.combo
+    ? [ASSETS + key + '-head.png', ASSETS + key + '-foot-a.png', ASSETS + key + '-foot-b.png']
+    : [ASSETS + key + '-head.png', ASSETS + key + '-foot.png'];
+  if (tipo.sello) imagenes.push(ASSETS + 'p1-sello.png');
+
+  var fuentes = ['600 10px Archivo', '700 20px Archivo', '400 12px Archivo', '700 15px "JetBrains Mono"'];
+
+  Promise.all([
+    Promise.all(imagenes.map(cargarImagen)),
+    Promise.all(fuentes.map(function (f) { return document.fonts.load(f); })).catch(function () {})
+  ]).then(function (res) {
+    var imgs = res[0];
+    var boleta = dibujarBoleta(imgs);
+    var qr = dibujarSoloQr();
+    mostrar(boleta, qr);
+  }).catch(function (err) {
+    error('No se pudo generar la boleta. Recarga la página o escríbenos por Instagram @fantribute_col.');
+    console.error(err);
+  });
+
+  // ---------- Utilidades de dibujo ----------
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  // Texto con letter-spacing, letra por letra (canvas no lo soporta en
+  // todos los navegadores). align: 'left' | 'center' | 'right'.
+  function textoEspaciado(ctx, texto, x, y, espacio, align) {
+    var anchos = texto.split('').map(function (ch) { return ctx.measureText(ch).width; });
+    var total = anchos.reduce(function (a, b) { return a + b; }, 0) + espacio * Math.max(0, texto.length - 1);
+    var cx = align === 'center' ? x - total / 2 : align === 'right' ? x - total : x;
+    var prev = ctx.textAlign;
+    ctx.textAlign = 'left';
+    texto.split('').forEach(function (ch, i) {
+      ctx.fillText(ch, cx, y);
+      cx += anchos[i] + espacio;
+    });
+    ctx.textAlign = prev;
+    return total;
+  }
+
+  function partirLineas(ctx, texto, maxW) {
+    var palabras = texto.split(/\s+/), lineas = [], actual = '';
+    palabras.forEach(function (p) {
+      var prueba = actual ? actual + ' ' + p : p;
+      if (ctx.measureText(prueba).width > maxW && actual) {
+        lineas.push(actual);
+        actual = p;
+      } else {
+        actual = prueba;
+      }
+    });
+    if (actual) lineas.push(actual);
+    return lineas;
+  }
+
+  function dibujarQr(ctx, texto, x, y, tam) {
+    var qr = qrcode(0, 'M');
+    qr.addData(texto);
+    qr.make();
+    var n = qr.getModuleCount();
+    ctx.fillStyle = '#120c1c';
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (!qr.isDark(r, c)) continue;
+        var x0 = Math.round(x + c * tam / n), x1 = Math.round(x + (c + 1) * tam / n);
+        var y0 = Math.round(y + r * tam / n), y1 = Math.round(y + (r + 1) * tam / n);
+        ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+      }
+    }
+  }
+
+  function check(ctx, x, y, tam, color, S) {
+    var k = tam / 24;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3 * k;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x + 5 * k, y + 12.5 * k);
+    ctx.lineTo(x + 9.5 * k, y + 17 * k);
+    ctx.lineTo(x + 19 * k, y + 7.5 * k);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---------- Boleta completa ----------
+  // Reproduce el diseno a 2x: encabezado y pie son los mismos recortes que
+  // usa el correo; lo del medio se dibuja con las medidas del diseno.
+  function dibujarBoleta(imgs) {
+    var head = imgs[0];
+    var W = head.naturalWidth;          // ancho de la tarjeta (720 o 716)
+    var S = W / 360;                    // escala del diseno (360px)
+    var PAD = Math.round(16 * S);       // margen oscuro alrededor, como el diseno
+    var canvas = document.createElement('canvas');
+    canvas.width = W + PAD * 2;
+    canvas.height = Math.round(3200 * S);
+    var ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    var y = PAD;
+    ctx.drawImage(head, PAD, y);
+    y += head.naturalHeight;
+
+    // --- Titular, zona y entrada ---
+    var mid0 = y;
+    var px = function (v) { return v * S; };
+    var X = PAD + px(20);
+    var cuerpo = [];   // se dibuja despues de pintar el fondo de la tarjeta
+
+    var yy = px(18);
+    cuerpo.push({ t: 'label', s: 'TITULAR', x: X, y: yy });
+    yy += px(16);
+    ctx.font = '700 ' + px(20) + 'px ' + SANS;
+    var maxNombre = tipo.sello ? px(236) : px(320);
+    var lineasNombre = partirLineas(ctx, nombre, maxNombre);
+    lineasNombre.forEach(function (l, i) { cuerpo.push({ t: 'nombre', s: l, x: X, y: yy + i * px(24) }); });
+    yy += lineasNombre.length * px(24) + px(12);
+
+    var col2 = X + px(165);
+    cuerpo.push({ t: 'label', s: 'ZONA', x: X, y: yy });
+    cuerpo.push({ t: 'label', s: 'ENTRADA', x: col2, y: yy });
+    yy += px(16);
+    ctx.font = '600 ' + px(14) + 'px ' + SANS;
+    var lineasZona = partirLineas(ctx, tipo.zona, px(155));
+    lineasZona.forEach(function (l, i) { cuerpo.push({ t: 'valor', s: l, x: X, y: yy + i * px(17) }); });
+    cuerpo.push({ t: 'valor', s: entrada, x: col2, y: yy });
+    yy += lineasZona.length * px(17) + px(20);
+
+    // --- Tarjeta blanca del QR ---
+    var qrTop = yy;
+    ctx.font = '400 ' + px(12) + 'px ' + SANS;
+    var lineasNota = partirLineas(ctx, 'Presenta este QR en la entrada junto a tu documento', px(284));
+    var qrAlto = px(18 + 220 + 10 + 18 + 10) + lineasNota.length * px(15) + px(18);
+    yy += qrAlto;
+
+    // Fondo de la parte del medio y su contenido.
+    var midH = Math.round(yy);
+    ctx.fillStyle = CARD;
+    ctx.fillRect(PAD, mid0, W, midH);
+
+    cuerpo.forEach(function (c) {
+      if (c.t === 'label') {
+        ctx.font = '600 ' + px(10) + 'px ' + SANS;
+        ctx.fillStyle = DIM;
+        textoEspaciado(ctx, c.s, c.x, mid0 + c.y, px(1.6), 'left');
+      } else if (c.t === 'nombre') {
+        ctx.font = '700 ' + px(20) + 'px ' + SANS;
+        ctx.fillStyle = TXT;
+        ctx.fillText(c.s, c.x, mid0 + c.y);
+      } else {
+        ctx.font = '600 ' + px(14) + 'px ' + SANS;
+        ctx.fillStyle = TXT;
+        ctx.fillText(c.s, c.x, mid0 + c.y);
+      }
+    });
+
+    if (tipo.sello) {
+      var sello = imgs[imgs.length - 1];
+      var sw = px(88), sh = sw * sello.naturalHeight / sello.naturalWidth;
+      ctx.drawImage(sello, PAD + W - px(14) - sw, mid0 + px(14), sw, sh);
+    }
+
+    var qy = mid0 + qrTop;
+    ctx.fillStyle = '#ffffff';
+    rr(ctx, X, qy, px(320), qrAlto, px(16));
+    ctx.fill();
+    dibujarQr(ctx, codigo, PAD + px(70), qy + px(18), px(220));
+    ctx.fillStyle = '#120c1c';
+    ctx.font = '700 ' + px(15) + 'px ' + MONO;
+    textoEspaciado(ctx, codigo, PAD + px(180), qy + px(18 + 220 + 10), px(1.2), 'center');
+    ctx.fillStyle = '#4a4058';
+    ctx.font = '400 ' + px(12) + 'px ' + SANS;
+    ctx.textAlign = 'center';
+    lineasNota.forEach(function (l, i) { ctx.fillText(l, PAD + px(180), qy + px(18 + 220 + 10 + 18 + 10) + i * px(15)); });
+    ctx.textAlign = 'left';
+
+    y = mid0 + midH;
+
+    // --- Pie ---
+    if (!tipo.combo) {
+      ctx.drawImage(imgs[1], PAD, y);
+      y += imgs[1].naturalHeight;
+    } else {
+      ctx.drawImage(imgs[1], PAD, y);
+      y += imgs[1].naturalHeight;
+      y = dibujarOrden(ctx, y, PAD, W, S);
+      ctx.drawImage(imgs[2], PAD, y);
+      y += imgs[2].naturalHeight;
+    }
+
+    // Recorta al alto real.
+    var final = document.createElement('canvas');
+    final.width = canvas.width;
+    final.height = Math.round(y + PAD);
+    var fctx = final.getContext('2d');
+    fctx.fillStyle = BG;
+    fctx.fillRect(0, 0, final.width, final.height);
+    fctx.drawImage(canvas, 0, 0);
+    return final;
+  }
+
+  // Recuadro "N° de orden" de las mesas (Trío VIP y Backstage).
+  function dibujarOrden(ctx, y0, PAD, W, S) {
+    var px = function (v) { return v * S; };
+    var A = tipo.accent;
+    var X = PAD + px(20), BW = px(320), P = px(16);
+
+    ctx.font = '400 ' + px(12) + 'px ' + SANS;
+    var desc = partirLineas(ctx, 'El combo es uno por mesa. En barra se valida con este número de orden y queda marcado como reclamado: cualquier boleta de la mesa puede presentarlo, pero solo se entrega una vez.', BW - P * 2);
+    var alto = P + px(16) + px(31) + px(14) + tipo.combo.length * px(28) - px(8) + px(14) + desc.length * px(18) + P;
+
+    ctx.fillStyle = CARD;
+    ctx.fillRect(PAD, y0, W, alto);
+    ctx.strokeStyle = A;
+    ctx.lineWidth = px(1.5);
+    rr(ctx, X + px(0.75), y0 + px(0.75), BW - px(1.5), alto - px(1.5), px(14));
+    ctx.stroke();
+
+    var iy = y0 + P;
+    ctx.fillStyle = DIM;
+    ctx.font = '600 ' + px(10) + 'px ' + SANS;
+    textoEspaciado(ctx, 'N° DE ORDEN', X + P, iy, px(1.6), 'left');
+    iy += px(16);
+    ctx.fillStyle = A;
+    ctx.font = '700 ' + px(26) + 'px ' + MONO;
+    ctx.fillText(orden || '#', X + P, iy);
+
+    // Pastilla "Pendiente", alineada abajo con el numero.
+    ctx.font = '700 ' + px(11) + 'px ' + SANS;
+    var tw = 0;
+    'PENDIENTE'.split('').forEach(function (ch) { tw += ctx.measureText(ch).width; });
+    tw += px(1.1) * 8;
+    var pw = tw + px(20), ph = px(25);
+    var pxr = X + BW - P - pw, pyt = iy + px(31) - ph;
+    ctx.fillStyle = '#2a2038';
+    rr(ctx, pxr, pyt, pw, ph, ph / 2);
+    ctx.fill();
+    ctx.fillStyle = TXT;
+    textoEspaciado(ctx, 'PENDIENTE', pxr + px(10), pyt + px(7), px(1.1), 'left');
+
+    iy += px(31) + px(14);
+    tipo.combo.forEach(function (item) {
+      check(ctx, X + P, iy + px(2), px(16), A, S);
+      ctx.fillStyle = TXT;
+      ctx.font = '400 ' + px(14) + 'px ' + SANS;
+      ctx.fillText(item, X + P + px(24), iy + px(1));
+      iy += px(28);
+    });
+    iy += px(14) - px(8);
+    ctx.fillStyle = DIM;
+    ctx.font = '400 ' + px(12) + 'px ' + SANS;
+    desc.forEach(function (l, i) { ctx.fillText(l, X + P, iy + i * px(18)); });
+
+    return y0 + alto;
+  }
+
+  // ---------- Solo el QR ----------
+  function dibujarSoloQr() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 760;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    dibujarQr(ctx, codigo, 60, 60, 520);
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#120c1c';
+    ctx.font = '700 30px ' + MONO;
+    textoEspaciado(ctx, codigo, 320, 610, 2.4, 'center');
+    ctx.fillStyle = '#4a4058';
+    ctx.font = '400 22px ' + SANS;
+    ctx.textAlign = 'center';
+    ctx.fillText(nombre + ' · ' + tipo.nombre, 320, 666);
+    ctx.fillText('Back to Halloween 2016', 320, 698);
+    return canvas;
+  }
+
+  function mostrar(boleta, qr) {
+    boleta.toBlob(function (blobBoleta) {
+      qr.toBlob(function (blobQr) {
+        var urlBoleta = URL.createObjectURL(blobBoleta);
+        var urlQr = URL.createObjectURL(blobQr);
+        var img = document.getElementById('boleta');
+        img.src = urlBoleta;
+        img.style.display = 'block';
+        var a1 = document.getElementById('dlBoleta');
+        a1.href = urlBoleta;
+        a1.download = codigo + '.png';
+        var a2 = document.getElementById('dlQr');
+        a2.href = urlQr;
+        a2.download = codigo + '-QR.png';
+        statusEl.style.display = 'none';
+        document.getElementById('acciones').style.display = 'flex';
+        document.getElementById('tip').hidden = false;
+      }, 'image/png');
+    }, 'image/png');
+  }
+})();
+</script>
+</body>
+</html>
