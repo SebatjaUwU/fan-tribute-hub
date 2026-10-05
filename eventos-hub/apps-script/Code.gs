@@ -1519,23 +1519,34 @@ function enviarPromoPreEdcNegocio() {
 // Correos unicos de negocio_fantribute (hoja "boletas"). Devuelve []
 // si no se puede abrir la hoja o no tiene columna de correo.
 function leerCorreosNegocio_() {
+  return leerCorreosHoja_(PROMO_NEGOCIO_SHEET_ID, PROMO_NEGOCIO_TAB, 'negocio_fantribute');
+}
+
+// Correos unicos de la hoja `tab` del spreadsheet `sheetId`, buscando
+// sola la fila de encabezados y la columna de correo. `nombre` solo se
+// usa en los logs. Devuelve [] si algo falla.
+function leerCorreosHoja_(sheetId, tab, nombre) {
   let ss;
   try {
-    ss = SpreadsheetApp.openById(PROMO_NEGOCIO_SHEET_ID);
+    ss = SpreadsheetApp.openById(sheetId);
   } catch (err) {
-    Logger.log('No se pudo abrir el spreadsheet negocio_fantribute (' + PROMO_NEGOCIO_SHEET_ID + '): ' + err);
+    Logger.log('No se pudo abrir el spreadsheet ' + nombre + ' (' + sheetId + '): ' + err);
     return [];
   }
 
-  const sheet = ss.getSheetByName(PROMO_NEGOCIO_TAB);
+  // getSheetByName distingue mayusculas ("boletas" vs "Boletas"), asi que
+  // si no la encuentra exacta, la busca ignorando mayusculas.
+  const sheet = ss.getSheetByName(tab) || ss.getSheets().filter(function (s) {
+    return s.getName().trim().toLowerCase() === tab.toLowerCase();
+  })[0];
   if (!sheet) {
-    Logger.log('No existe la hoja "' + PROMO_NEGOCIO_TAB + '" en negocio_fantribute.');
+    Logger.log('No existe la hoja "' + tab + '" en ' + nombre + '.');
     return [];
   }
 
   const data = sheet.getDataRange().getValues();
   if (data.length < 2) {
-    Logger.log('La hoja "' + PROMO_NEGOCIO_TAB + '" no tiene filas de datos.');
+    Logger.log('La hoja "' + tab + '" de ' + nombre + ' no tiene filas de datos.');
     return [];
   }
 
@@ -1568,7 +1579,7 @@ function leerCorreosNegocio_() {
   }
 
   if (colEmail === -1) {
-    Logger.log('No se encontro una columna de correo en las primeras ' + maxScan + ' filas de la hoja "' + PROMO_NEGOCIO_TAB + '".');
+    Logger.log('No se encontro una columna de correo en las primeras ' + maxScan + ' filas de la hoja "' + tab + '" de ' + nombre + '.');
     return [];
   }
 
@@ -1583,7 +1594,7 @@ function leerCorreosNegocio_() {
     destinatarios.push(email);
   }
 
-  Logger.log('negocio_fantribute: encabezados en fila ' + (filaHeader + 1) + ', columna de correo "' + data[filaHeader][colEmail] + '" \u2014 ' + destinatarios.length + ' destinatarios unicos.');
+  Logger.log(nombre + ': encabezados en fila ' + (filaHeader + 1) + ', columna de correo "' + data[filaHeader][colEmail] + '" \u2014 ' + destinatarios.length + ' destinatarios unicos.');
   return destinatarios;
 }
 
@@ -1719,8 +1730,8 @@ function buildPromoPreEdcHtml_() {
 // Igual que la promo PRE-EDC, pero con el flyer de Halloween
 // (edc-preparty/ASSETS/halloween.jpg, embebido en base64 al final de este
 // bloque). Se manda a los compradores APPROVED de "Repositorio QR" (eventos
-// en PROMO_HALLOWEEN_EVENTOS) + la lista de negocio_fantribute, sin repetir
-// correos. Tiene su propio registro de "ya enviados", separado del de
+// en PROMO_HALLOWEEN_EVENTOS) + negocio_fantribute + la segunda fecha, sin
+// repetir correos. Tiene su propio registro de "ya enviados", separado del de
 // PRE-EDC, asi que le llega a todos aunque ya hayan recibido la de PRE-EDC.
 //   - enviarPromoHalloweenPrueba(): SOLO a PROMO_PRUEBA_EMAILS. No los
 //     marca como enviados, asi que la puedes correr las veces que quieras.
@@ -1732,6 +1743,14 @@ const PROMO_HALLOWEEN_EVENTOS = ['End of Summer', 'Summer 2016'];
 const PROMO_HALLOWEEN_ENVIADOS_PROP = 'PROMO_HALLOWEEN_ENVIADOS';
 const PROMO_HALLOWEEN_URL = 'https://fan-tribute-co.netlify.app/eventos-hub/eventos/back-to-halloween-2016.html';
 
+// Tercera lista: spreadsheet "negocio_fantribute_segunda_fecha20082026",
+// hoja "Boletas", columna "Correo". Como comparte el registro de "ya
+// enviados" con las otras dos listas, al volver a correr
+// enviarPromoHalloween() solo les llega a los correos nuevos de esta hoja.
+// El ID es el pedazo de la URL del sheet entre /d/ y /edit.
+const PROMO_SEGUNDA_FECHA_SHEET_ID = '1WS8CROlnlShOtEuRsEOddAsNis704aJCg6rnzCXhUUs';
+const PROMO_SEGUNDA_FECHA_TAB = 'Boletas';
+
 function enviarPromoHalloweenPrueba() {
   enviarPromoHalloween_(PROMO_PRUEBA_EMAILS, false);
 }
@@ -1739,14 +1758,17 @@ function enviarPromoHalloweenPrueba() {
 function enviarPromoHalloween() {
   const vistos = {};
   const destinatarios = [];
-  leerCorreosRepositorio_(PROMO_HALLOWEEN_EVENTOS).concat(leerCorreosNegocio_()).forEach(function (email) {
-    const key = email.toLowerCase();
-    if (vistos[key]) return;
-    vistos[key] = true;
-    destinatarios.push(email);
-  });
+  leerCorreosRepositorio_(PROMO_HALLOWEEN_EVENTOS)
+    .concat(leerCorreosNegocio_())
+    .concat(leerCorreosHoja_(PROMO_SEGUNDA_FECHA_SHEET_ID, PROMO_SEGUNDA_FECHA_TAB, 'negocio_fantribute_segunda_fecha'))
+    .forEach(function (email) {
+      const key = email.toLowerCase();
+      if (vistos[key]) return;
+      vistos[key] = true;
+      destinatarios.push(email);
+    });
 
-  Logger.log('Destinatarios Halloween (ambas listas, sin repetir): ' + destinatarios.length);
+  Logger.log('Destinatarios Halloween (las tres listas, sin repetir): ' + destinatarios.length);
   enviarPromoHalloween_(destinatarios, true);
 }
 
