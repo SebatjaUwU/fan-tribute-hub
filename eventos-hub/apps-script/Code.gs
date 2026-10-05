@@ -1912,7 +1912,7 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 //
 //   - enviarQRsHalloween(): para cada fila APPROVED sin "Email enviado":
 //       1. Si no tiene Ticket ID, lo arma con el prefijo del tipo + Numero
-//          (ej. Preventa 1 con Numero 7 -> BTH16-P1-0007) y lo escribe en
+//          (ej. Juan Sebastian Parra, Preventa 1, Numero 7 -> BTH16-JSP-P1-0007) y lo escribe en
 //          la columna Ticket ID. Si la fila no tiene Numero, usa el
 //          siguiente libre de ese tipo y lo escribe tambien.
 //       2. Junta las filas del mismo correo y el mismo tipo en UN solo
@@ -2032,6 +2032,28 @@ function marcadoComoSi_(v) {
   return s === 'true' || s === 'si' || s === 'x' || s === '1';
 }
 
+// 3 letras del titular para el codigo: inicial de las 3 primeras palabras
+// del nombre (Juan Sebastian Parra -> JSP). Si el nombre tiene menos de 3
+// palabras se completa con las letras siguientes de la ultima (Sara Simhon
+// -> SSI, Brayan -> BRA); si no hay nombre, con las del correo.
+function inicialesHalloween_(nombre, email) {
+  let limpio = normalizaTexto_(nombre).replace(/[^a-z ]/g, ' ');
+  if (limpio.trim() === 'sin nombre') limpio = '';
+  const palabras = limpio.split(' ').filter(function (w) { return w; });
+  let ini = palabras.slice(0, 3).map(function (w) { return w.charAt(0); }).join('');
+  if (ini.length < 3 && palabras.length) ini = (ini + palabras[palabras.length - 1].slice(1)).slice(0, 3);
+  if (ini.length < 3) ini = (ini + normalizaTexto_(email).split('@')[0].replace(/[^a-z]/g, '')).slice(0, 3);
+  while (ini.length < 3) ini += 'X';
+  return ini.toUpperCase();
+}
+
+// Codigo del ticket: BTH16-<iniciales>-<tipo>-<numero>, ej.
+// BTH16-JSP-P1-0007. Las iniciales hacen que no baste con adivinar el
+// numero siguiente para falsificar la boleta de otra persona.
+function codigoHalloween_(cfg, numero, nombre, email) {
+  return 'BTH16-' + inicialesHalloween_(nombre, email) + '-' + cfg.prefijo.replace(/^BTH16-/, '') + '-' + pad_(numero, 4);
+}
+
 // Las columnas se leen por posicion (igual que "Repositorio QR"), asi que
 // antes de leer o escribir se confirma que la hoja tenga ese orden.
 function validarHojaHalloween_(encabezados, nombreHoja) {
@@ -2063,15 +2085,19 @@ function enviarQRsHalloween() {
   const donde = function (f) { return 'fila ' + (f.i + 1) + ' de "' + f.h.sheet.getName() + '"'; };
 
   // 1. Ticket IDs: los que ya existen se respetan; a los que faltan se les
-  // arma uno con el prefijo del tipo + Numero.
+  // arma uno con las iniciales del titular + tipo + Numero. Como las
+  // iniciales cambian por persona, los repetidos se detectan por tipo +
+  // Numero (llave "BTH16-P1|7"), no por el codigo completo.
   const usados = {};
   const maxNumero = {};
   filas.forEach(function (f) {
     const cfg = tipoHalloween_(f.v[2]);
-    const id = String(f.v[4] || '').trim();
-    if (id) usados[id] = f;
-    const n = parseInt(f.v[3], 10);
-    if (cfg && !isNaN(n)) maxNumero[cfg.prefijo] = Math.max(maxNumero[cfg.prefijo] || 0, n);
+    if (!cfg) return;
+    let n = parseInt(f.v[3], 10);
+    if (isNaN(n)) n = parseInt(String(f.v[4] || '').split('-').pop(), 10);
+    if (isNaN(n)) return;
+    if (String(f.v[4] || '').trim()) usados[cfg.prefijo + '|' + n] = f;
+    maxNumero[cfg.prefijo] = Math.max(maxNumero[cfg.prefijo] || 0, n);
   });
 
   const tiposDesconocidos = {};
@@ -2092,14 +2118,15 @@ function enviarQRsHalloween() {
       f.v[3] = numero;
     }
 
-    const id = cfg.prefijo + '-' + pad_(numero, 4);
-    if (usados[id]) {
-      Logger.log('En la ' + donde(f) + ' el codigo ' + id + ' ya lo tiene la ' + donde(usados[id]) + ' (Numero repetido). Se salta; corrige el Numero y vuelve a correr.');
+    const llave = cfg.prefijo + '|' + numero;
+    if (usados[llave]) {
+      Logger.log('En la ' + donde(f) + ' el ' + cfg.tipo + ' Numero ' + numero + ' ya lo tiene la ' + donde(usados[llave]) + ' (Numero repetido). Se salta; corrige el Numero y vuelve a correr.');
       return;
     }
+    const id = codigoHalloween_(cfg, numero, f.v[7], f.v[8]);
     f.h.sheet.getRange(f.i + 1, 5).setValue(id);
     f.v[4] = id;
-    usados[id] = f;
+    usados[llave] = f;
   });
   Object.keys(tiposDesconocidos).forEach(function (t) {
     Logger.log('Tipo de entrada desconocido: "' + t + '". Esas filas no se enviaron.');
@@ -2160,8 +2187,11 @@ function enviarQRsHalloween() {
 
 function enviarQRHalloweenPrueba() {
   PROMO_PRUEBA_EMAILS.forEach(function (email) {
-    enviarQRHalloween_({ email: email, nombre: 'Nombre de Prueba', cfg: QR_HW_TIPOS['preventa 1'], orden: '', ticketIds: ['BTH16-P1-PRUEBA'] });
-    enviarQRHalloween_({ email: email, nombre: 'Nombre de Prueba', cfg: QR_HW_TIPOS['backstage'], orden: '#001', ticketIds: ['BTH16-BACK-PRUEBA1', 'BTH16-BACK-PRUEBA2'] });
+    const p1 = QR_HW_TIPOS['preventa 1'], back = QR_HW_TIPOS['backstage'];
+    // Numeros 9998/9999: ninguna boleta real llega ahi, asi que estos QR de
+    // prueba nunca coinciden con uno vendido.
+    enviarQRHalloween_({ email: email, nombre: 'Nombre de Prueba', cfg: p1, orden: '', ticketIds: [codigoHalloween_(p1, 9999, 'Nombre de Prueba', email)] });
+    enviarQRHalloween_({ email: email, nombre: 'Nombre de Prueba', cfg: back, orden: '#000', ticketIds: [codigoHalloween_(back, 9998, 'Nombre de Prueba', email), codigoHalloween_(back, 9999, 'Nombre de Prueba', email)] });
   });
   Logger.log('Boletas de prueba enviadas a ' + PROMO_PRUEBA_EMAILS.join(', '));
 }
@@ -2223,7 +2253,7 @@ function registrarVentaHalloween_(v) {
     const filas = [];
     for (let k = 0; k < link.cantidad; k++) {
       const numero = maxNumero + 1 + k;
-      const ticketId = cfg.prefijo + '-' + pad_(numero, 4);
+      const ticketId = codigoHalloween_(cfg, numero, v.nombre, v.email);
       const fila = [new Date(), QR_HW_EVENTO, cfg.tipo, numero, ticketId, v.txKey, v.referencia,
                     v.nombre, v.email, v.telefono, monto, 'APPROVED', false, false, ''];
       while (fila.length < ancho) fila.push('');
