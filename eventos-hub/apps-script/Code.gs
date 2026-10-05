@@ -349,6 +349,22 @@ function manejarWebhookWompi_(body) {
 
     const referencia = tx.reference || '';
     const linkId = referencia.split('_')[0];
+
+    if (QR_HW_WOMPI_LINKS[linkId]) {
+      const cd = tx.customer_data || {};
+      if (!tx.customer_email) return jsonResponse_({ ok: true, status: 'sin_email' });
+      const r = registrarVentaHalloween_({
+        linkId: linkId,
+        txKey: tx.id || referencia,
+        referencia: referencia,
+        nombre: cd.full_name || 'Sin nombre',
+        email: tx.customer_email,
+        telefono: cd.phone_number || '',
+        montoTotal: (tx.amount_in_cents || 0) / 100
+      });
+      return jsonResponse_({ ok: true, status: r });
+    }
+
     const linkInfo = LINK_MAP[linkId];
 
     if (!linkInfo) {
@@ -517,6 +533,26 @@ function processWompiMessage_(message, thread, labelOk, labelReview, labelManual
   if (!parsed) {
     notifyReview_(message, 'No se encontro "ref." en el asunto — formato de correo inesperado.');
     thread.addLabel(labelReview);
+    return;
+  }
+
+  // Back to Halloween: va a su propio sheet y con su propio diseno de QR.
+  if (QR_HW_WOMPI_LINKS[parsed.linkId]) {
+    if (!parsed.email) {
+      notifyReview_(message, 'No se pudo extraer el correo del comprador (referencia ' + parsed.referencia + ').');
+      thread.addLabel(labelReview);
+      return;
+    }
+    registrarVentaHalloween_({
+      linkId: parsed.linkId,
+      txKey: parsed.txId || parsed.referencia,
+      referencia: parsed.referencia,
+      nombre: parsed.nombre || 'Sin nombre',
+      email: parsed.email,
+      telefono: parsed.telefono,
+      montoTotal: parsed.montoCOP
+    });
+    thread.addLabel(labelOk);
     return;
   }
 
@@ -1884,6 +1920,11 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 // "Orden" si la agregas al sheet; si no, se usa el Numero de la primera
 // boleta de esa compra (ej. #004).
 //
+// Ventas por Wompi (Hall Stage, Trio VIP, Backstage; ver QR_HW_WOMPI_LINKS):
+// entran solas al sheet y se envian sus QR, con el mismo trigger
+// checkWompiSales y el mismo webhook de End of Summer. Las que se pagaron
+// antes de activar esto se traen una vez con importarVentasWompiHalloween().
+//
 // El escaner de la entrada (doPost) busca los codigos BTH16-... en este
 // mismo sheet.
 
@@ -1902,6 +1943,18 @@ const QR_HW_TIPOS = {
   'backstage':  { key: 'back', tipo: 'Backstage',  prefijo: 'BTH16-BACK', accent: '#ff4f61', zona: 'Backstage · Junto a DJs',
                   combo: ['1 botella a elección', '1 six de cerveza', '1 agua'] }
 };
+
+// Links de Wompi de Halloween que entran solos al sheet (igual que el flujo
+// automatico de End of Summer: trigger de Gmail checkWompiSales + webhook).
+// payment_link_id -> tipo (llave de QR_HW_TIPOS) y cuantas boletas/QR
+// genera UNA compra de ese link. Para sumar Preventa 2 o General, agrega
+// su link_id aqui.
+const QR_HW_WOMPI_LINKS = {
+  'jCazhj': { tipo: 'hall stage', cantidad: 1 },
+  'vVVSym': { tipo: 'trio vip',   cantidad: 3 },
+  'bqsf6u': { tipo: 'backstage',  cantidad: 5 }
+};
+const QR_HW_EVENTO = 'Back to Halloween 2016';
 
 function normalizaTexto_(v) {
   return String(v == null ? '' : v)
@@ -1932,18 +1985,26 @@ function marcadoComoSi_(v) {
   return s === 'true' || s === 'si' || s === 'x' || s === '1';
 }
 
+// Las columnas se leen por posicion (igual que "Repositorio QR"), asi que
+// antes de leer o escribir se confirma que el sheet tenga ese orden.
+function validarHojaHalloween_(encabezados) {
+  const esperados = { 2: 'tipo de entrada', 3: 'numero', 4: 'ticket id', 5: 'transaccion id', 7: 'nombre', 8: 'email', 11: 'estado', 12: 'email enviado' };
+  for (const col in esperados) {
+    if (normalizaTexto_(encabezados[col]) !== esperados[col]) {
+      Logger.log('El encabezado de la columna ' + (Number(col) + 1) + ' del sheet de Halloween deberia ser "' + esperados[col] + '" y es "' + encabezados[col] + '".');
+      return false;
+    }
+  }
+  return true;
+}
+
 function enviarQRsHalloween() {
   const sheet = getHalloweenQrSheet_();
   const data = sheet.getDataRange().getValues();
 
-  // Las columnas se leen por posicion (igual que "Repositorio QR"), asi
-  // que primero se confirma que el sheet tenga ese orden.
-  const esperados = { 2: 'tipo de entrada', 3: 'numero', 4: 'ticket id', 7: 'nombre', 8: 'email', 11: 'estado', 12: 'email enviado' };
-  for (const col in esperados) {
-    if (normalizaTexto_(data[0][col]) !== esperados[col]) {
-      Logger.log('El encabezado de la columna ' + (Number(col) + 1) + ' deberia ser "' + esperados[col] + '" y es "' + data[0][col] + '". No se envio nada.');
-      return;
-    }
+  if (!validarHojaHalloween_(data[0])) {
+    Logger.log('No se envio nada.');
+    return;
   }
   const colOrden = data[0].map(normalizaTexto_).indexOf('orden');
 
@@ -2049,6 +2110,142 @@ function enviarQRHalloweenPrueba() {
     enviarQRHalloween_({ email: email, nombre: 'Nombre de Prueba', cfg: QR_HW_TIPOS['backstage'], orden: '#001', ticketIds: ['BTH16-BACK-PRUEBA1', 'BTH16-BACK-PRUEBA2'] });
   });
   Logger.log('Boletas de prueba enviadas a ' + PROMO_PRUEBA_EMAILS.join(', '));
+}
+
+/**
+ * Guarda una venta aprobada de Wompi de Halloween en el sheet (una fila por
+ * boleta: Trio VIP = 3, Backstage = 5) y le manda los QR al comprador.
+ * La llaman checkWompiSales (correos de Wompi), el webhook y
+ * importarVentasWompiHalloween. Si la transaccion ya esta en el sheet no
+ * hace nada, asi que no se duplica aunque llegue por varios caminos.
+ * Si el correo falla, las filas quedan sin "Email enviado" y
+ * enviarQRsHalloween() las reintenta.
+ *
+ * v: { linkId, txKey, referencia, nombre, email, telefono, montoTotal }
+ * Devuelve 'procesada' o 'ya_procesada'.
+ */
+function registrarVentaHalloween_(v) {
+  const link = QR_HW_WOMPI_LINKS[v.linkId];
+  const cfg = QR_HW_TIPOS[link.tipo];
+  const sheet = getHalloweenQrSheet_();
+  let inicio, ticketIds = [], orden = '';
+
+  // El webhook y el trigger de Gmail pueden llegar al mismo tiempo: el
+  // lock evita que los dos escriban la misma venta o el mismo Numero.
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const data = sheet.getDataRange().getValues();
+    if (!validarHojaHalloween_(data[0])) throw new Error('el sheet de Halloween no tiene las columnas esperadas');
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][5]).trim() === String(v.txKey)) return 'ya_procesada';
+    }
+
+    let colOrden = data[0].map(normalizaTexto_).indexOf('orden');
+    let maxNumero = 0, maxOrden = 0;
+    for (let i = 1; i < data.length; i++) {
+      if (tipoHalloween_(data[i][2]) !== cfg) continue;
+      const n = parseInt(data[i][3], 10);
+      if (!isNaN(n)) maxNumero = Math.max(maxNumero, n);
+      if (colOrden >= 0) {
+        const o = parseInt(String(data[i][colOrden]).replace(/\D/g, ''), 10);
+        if (!isNaN(o)) maxOrden = Math.max(maxOrden, o);
+      }
+    }
+
+    // Las mesas llevan numero de orden (uno por compra), guardado en una
+    // columna "Orden" al final del sheet; se crea la primera vez.
+    if (cfg.combo) {
+      if (colOrden === -1) {
+        colOrden = Math.max(data[0].length, HEADERS.length);
+        sheet.getRange(1, colOrden + 1).setValue('Orden');
+      }
+      orden = '#' + pad_(maxOrden + 1, 3);
+    }
+
+    const ancho = Math.max(HEADERS.length, colOrden + 1);
+    const monto = Math.round((v.montoTotal || 0) / link.cantidad);
+    const filas = [];
+    for (let k = 0; k < link.cantidad; k++) {
+      const numero = maxNumero + 1 + k;
+      const ticketId = cfg.prefijo + '-' + pad_(numero, 4);
+      const fila = [new Date(), QR_HW_EVENTO, cfg.tipo, numero, ticketId, v.txKey, v.referencia,
+                    v.nombre, v.email, v.telefono, monto, 'APPROVED', false, false, ''];
+      while (fila.length < ancho) fila.push('');
+      if (cfg.combo) fila[colOrden] = orden;
+      filas.push(fila);
+      ticketIds.push(ticketId);
+    }
+
+    inicio = sheet.getLastRow() + 1;
+    sheet.getRange(inicio, 1, filas.length, ancho).setValues(filas);
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+
+  try {
+    enviarQRHalloween_({ email: v.email, nombre: v.nombre, cfg: cfg, orden: orden, ticketIds: ticketIds });
+    sheet.getRange(inicio, 13, ticketIds.length, 1).setValues(ticketIds.map(function () { return [true]; }));
+    Logger.log('Halloween: ' + cfg.tipo + ' x' + ticketIds.length + ' para ' + v.email + ' (' + ticketIds.join(', ') + ')');
+  } catch (err) {
+    Logger.log('Halloween: venta ' + v.txKey + ' guardada pero el correo fallo (' + err + '). enviarQRsHalloween() la reintenta.');
+  }
+  return 'procesada';
+}
+
+/**
+ * Ejecutar a mano UNA vez: trae al sheet las ventas de Hall Stage, Trio VIP
+ * y Backstage que ya se pagaron por Wompi antes de activar esto (esos
+ * correos quedaron con la etiqueta QR-Revisar) y les manda los QR. Las que
+ * ya esten en el sheet se saltan, asi que se puede volver a correr sin
+ * duplicar nada.
+ */
+function importarVentasWompiHalloween() {
+  const labelOk = getOrCreateLabel_(LABEL_OK);
+  const labelReview = getOrCreateLabel_(LABEL_REVIEW);
+  const query = '"APROBADA" "ref." after:2026/09/01';
+  let encontradas = 0, nuevas = 0, yaEstaban = 0;
+
+  for (let start = 0; ; start += 100) {
+    const threads = GmailApp.search(query, start, 100);
+    if (threads.length === 0) break;
+
+    threads.forEach(function (thread) {
+      thread.getMessages().forEach(function (message) {
+        const parsed = parseWompiEmail_(message);
+        if (!parsed || !QR_HW_WOMPI_LINKS[parsed.linkId]) return;
+        encontradas++;
+
+        if (!parsed.email) {
+          Logger.log('Sin correo del comprador, revisala a mano: ' + message.getSubject());
+          return;
+        }
+        if (MailApp.getRemainingDailyQuota() <= 0) {
+          Logger.log('Cuota diaria de correo agotada — vuelve a correr importarVentasWompiHalloween() mañana.');
+          return;
+        }
+
+        const r = registrarVentaHalloween_({
+          linkId: parsed.linkId,
+          txKey: parsed.txId || parsed.referencia,
+          referencia: parsed.referencia,
+          nombre: parsed.nombre || 'Sin nombre',
+          email: parsed.email,
+          telefono: parsed.telefono,
+          montoTotal: parsed.montoCOP
+        });
+        if (r === 'procesada') nuevas++; else yaEstaban++;
+        thread.removeLabel(labelReview);
+        thread.addLabel(labelOk);
+      });
+    });
+
+    if (threads.length < 100) break;
+  }
+
+  Logger.log('--- Ventas Wompi de Halloween: ' + encontradas + ' encontradas, ' + nuevas + ' nuevas en el sheet, ' + yaEstaban + ' ya estaban ---');
 }
 
 // Imagenes fijas del diseno, descargadas una sola vez por ejecucion.
