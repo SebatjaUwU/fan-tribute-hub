@@ -164,9 +164,16 @@ function doPost(e) {
     return jsonResponse_({ ok: false, status: 'sin_codigo' });
   }
 
-  // Los codigos de Back to Halloween viven en su propio sheet.
-  const sheet = ticketId.indexOf('BTH16-') === 0 ? getHalloweenQrSheet_() : getSheet_();
-  const row = findRowByTicketId_(sheet, ticketId);
+  // Los codigos de Back to Halloween viven en su propio spreadsheet (hoja
+  // manual o "Ventas Wompi").
+  let sheet, row;
+  if (ticketId.indexOf('BTH16-') === 0) {
+    const hw = findHalloweenTicket_(ticketId);
+    if (hw) { sheet = hw.sheet; row = hw.row; }
+  } else {
+    sheet = getSheet_();
+    row = findRowByTicketId_(sheet, ticketId);
+  }
   if (!row) {
     return jsonResponse_({ ok: true, status: 'no_encontrado', ticketId: ticketId });
   }
@@ -1921,7 +1928,8 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 // boleta de esa compra (ej. #004).
 //
 // Ventas por Wompi (Hall Stage, Trio VIP, Backstage; ver QR_HW_WOMPI_LINKS):
-// entran solas al sheet y se envian sus QR, con el mismo trigger
+// entran solas a la hoja "Ventas Wompi" (mismo spreadsheet, se crea sola)
+// y se envian sus QR, con el mismo trigger
 // checkWompiSales y el mismo webhook de End of Summer. Las que se pagaron
 // antes de activar esto se traen una vez con importarVentasWompiHalloween().
 //
@@ -1955,6 +1963,8 @@ const QR_HW_WOMPI_LINKS = {
   'bqsf6u': { tipo: 'backstage',  cantidad: 5 }
 };
 const QR_HW_EVENTO = 'Back to Halloween 2016';
+// Hoja (pestaña) del mismo spreadsheet donde se guardan las ventas de Wompi.
+const QR_HW_WOMPI_TAB = 'Ventas Wompi';
 
 function normalizaTexto_(v) {
   return String(v == null ? '' : v)
@@ -1968,9 +1978,46 @@ function tipoHalloween_(texto) {
   return QR_HW_TIPOS[normalizaTexto_(texto)] || null;
 }
 
+// Hoja donde se escriben a mano las ventas (Nequi, etc.).
 function getHalloweenQrSheet_() {
   const ss = SpreadsheetApp.openById(QR_HW_SHEET_ID);
   return ss.getSheets().filter(function (s) { return s.getSheetId() === QR_HW_SHEET_GID; })[0] || ss.getSheets()[0];
+}
+
+// Hoja aparte (mismo archivo) donde el script guarda SOLO las ventas de
+// Wompi, para no mezclarse con lo que se escribe a mano. Si `crear` es
+// true y no existe, se crea con los mismos encabezados + "Orden".
+function getHalloweenWompiSheet_(crear) {
+  const ss = SpreadsheetApp.openById(QR_HW_SHEET_ID);
+  let sheet = ss.getSheetByName(QR_HW_WOMPI_TAB);
+  if (!sheet && crear) {
+    sheet = ss.insertSheet(QR_HW_WOMPI_TAB);
+    sheet.appendRow(HEADERS.concat(['Orden']));
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, HEADERS.length + 1).setFontWeight('bold');
+  }
+  return sheet;
+}
+
+// Las hojas de Halloween que existan (manual y Wompi), con sus datos.
+function hojasHalloween_(sheets) {
+  return sheets
+    .filter(function (s) { return s; })
+    .map(function (s) {
+      const data = s.getDataRange().getValues();
+      return { sheet: s, data: data, colOrden: data[0].map(normalizaTexto_).indexOf('orden') };
+    });
+}
+
+// Para el escaner: busca el Ticket ID en las dos hojas de Halloween.
+function findHalloweenTicket_(ticketId) {
+  const sheets = [getHalloweenQrSheet_(), getHalloweenWompiSheet_(false)];
+  for (let h = 0; h < sheets.length; h++) {
+    if (!sheets[h]) continue;
+    const row = findRowByTicketId_(sheets[h], ticketId);
+    if (row) return { sheet: sheets[h], row: row };
+  }
+  return null;
 }
 
 function pad_(n, len) {
@@ -1986,12 +2033,12 @@ function marcadoComoSi_(v) {
 }
 
 // Las columnas se leen por posicion (igual que "Repositorio QR"), asi que
-// antes de leer o escribir se confirma que el sheet tenga ese orden.
-function validarHojaHalloween_(encabezados) {
+// antes de leer o escribir se confirma que la hoja tenga ese orden.
+function validarHojaHalloween_(encabezados, nombreHoja) {
   const esperados = { 2: 'tipo de entrada', 3: 'numero', 4: 'ticket id', 5: 'transaccion id', 7: 'nombre', 8: 'email', 11: 'estado', 12: 'email enviado' };
   for (const col in esperados) {
     if (normalizaTexto_(encabezados[col]) !== esperados[col]) {
-      Logger.log('El encabezado de la columna ' + (Number(col) + 1) + ' del sheet de Halloween deberia ser "' + esperados[col] + '" y es "' + encabezados[col] + '".');
+      Logger.log('El encabezado de la columna ' + (Number(col) + 1) + ' de la hoja "' + nombreHoja + '" deberia ser "' + esperados[col] + '" y es "' + encabezados[col] + '".');
       return false;
     }
   }
@@ -1999,54 +2046,61 @@ function validarHojaHalloween_(encabezados) {
 }
 
 function enviarQRsHalloween() {
-  const sheet = getHalloweenQrSheet_();
-  const data = sheet.getDataRange().getValues();
-
-  if (!validarHojaHalloween_(data[0])) {
-    Logger.log('No se envio nada.');
-    return;
+  const hojas = hojasHalloween_([getHalloweenQrSheet_(), getHalloweenWompiSheet_(false)]);
+  for (let h = 0; h < hojas.length; h++) {
+    if (!validarHojaHalloween_(hojas[h].data[0], hojas[h].sheet.getName())) {
+      Logger.log('No se envio nada.');
+      return;
+    }
   }
-  const colOrden = data[0].map(normalizaTexto_).indexOf('orden');
+
+  // Todas las filas de las dos hojas juntas, para que la numeracion y los
+  // grupos tengan en cuenta ambas.
+  const filas = [];
+  hojas.forEach(function (h) {
+    for (let i = 1; i < h.data.length; i++) filas.push({ h: h, i: i, v: h.data[i] });
+  });
+  const donde = function (f) { return 'fila ' + (f.i + 1) + ' de "' + f.h.sheet.getName() + '"'; };
 
   // 1. Ticket IDs: los que ya existen se respetan; a los que faltan se les
   // arma uno con el prefijo del tipo + Numero.
   const usados = {};
   const maxNumero = {};
-  for (let i = 1; i < data.length; i++) {
-    const cfg = tipoHalloween_(data[i][2]);
-    const id = String(data[i][4] || '').trim();
-    if (id) usados[id] = i;
-    const n = parseInt(data[i][3], 10);
+  filas.forEach(function (f) {
+    const cfg = tipoHalloween_(f.v[2]);
+    const id = String(f.v[4] || '').trim();
+    if (id) usados[id] = f;
+    const n = parseInt(f.v[3], 10);
     if (cfg && !isNaN(n)) maxNumero[cfg.prefijo] = Math.max(maxNumero[cfg.prefijo] || 0, n);
-  }
+  });
 
   const tiposDesconocidos = {};
-  for (let i = 1; i < data.length; i++) {
-    if (String(data[i][11]).trim().toUpperCase() !== 'APPROVED') continue;
-    if (String(data[i][4] || '').trim()) continue;
-    const cfg = tipoHalloween_(data[i][2]);
+  filas.forEach(function (f) {
+    if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
+    if (String(f.v[4] || '').trim()) return;
+    const cfg = tipoHalloween_(f.v[2]);
     if (!cfg) {
-      tiposDesconocidos[data[i][2]] = true;
-      continue;
+      tiposDesconocidos[f.v[2]] = true;
+      return;
     }
 
-    let numero = parseInt(data[i][3], 10);
+    let numero = parseInt(f.v[3], 10);
     if (isNaN(numero)) {
       numero = (maxNumero[cfg.prefijo] || 0) + 1;
       maxNumero[cfg.prefijo] = numero;
-      sheet.getRange(i + 1, 4).setValue(numero);
-      data[i][3] = numero;
+      f.h.sheet.getRange(f.i + 1, 4).setValue(numero);
+      f.v[3] = numero;
     }
 
     const id = cfg.prefijo + '-' + pad_(numero, 4);
-    if (usados[id] !== undefined) {
-      Logger.log('Fila ' + (i + 1) + ': el codigo ' + id + ' ya lo tiene la fila ' + (usados[id] + 1) + ' (Numero repetido). Se salta esta fila; corrige el Numero y vuelve a correr.');
-      continue;
+    if (usados[id]) {
+      Logger.log('En la ' + donde(f) + ' el codigo ' + id + ' ya lo tiene la ' + donde(usados[id]) + ' (Numero repetido). Se salta; corrige el Numero y vuelve a correr.');
+      return;
     }
-    sheet.getRange(i + 1, 5).setValue(id);
-    data[i][4] = id;
-    usados[id] = i;
-  }
+    f.h.sheet.getRange(f.i + 1, 5).setValue(id);
+    f.v[4] = id;
+    usados[id] = f;
+  });
   Object.keys(tiposDesconocidos).forEach(function (t) {
     Logger.log('Tipo de entrada desconocido: "' + t + '". Esas filas no se enviaron.');
   });
@@ -2054,20 +2108,20 @@ function enviarQRsHalloween() {
   // 2. Agrupa lo pendiente por correo + tipo.
   const grupos = {};
   const orden = [];
-  for (let i = 1; i < data.length; i++) {
-    const cfg = tipoHalloween_(data[i][2]);
-    const email = String(data[i][8] || '').trim();
-    if (!cfg || !data[i][4] || email.indexOf('@') === -1) continue;
-    if (String(data[i][11]).trim().toUpperCase() !== 'APPROVED') continue;
-    if (marcadoComoSi_(data[i][12])) continue;
+  filas.forEach(function (f) {
+    const cfg = tipoHalloween_(f.v[2]);
+    const email = String(f.v[8] || '').trim();
+    if (!cfg || !f.v[4] || email.indexOf('@') === -1) return;
+    if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
+    if (marcadoComoSi_(f.v[12])) return;
 
     const key = email.toLowerCase() + '|' + cfg.key;
     if (!grupos[key]) {
-      grupos[key] = { email: email, cfg: cfg, nombre: String(data[i][7] || '').trim(), filas: [] };
+      grupos[key] = { email: email, cfg: cfg, nombre: String(f.v[7] || '').trim(), filas: [] };
       orden.push(key);
     }
-    grupos[key].filas.push(i);
-  }
+    grupos[key].filas.push(f);
+  });
 
   // 3. Envia un correo por grupo.
   let enviados = 0, boletas = 0;
@@ -2080,8 +2134,8 @@ function enviarQRsHalloween() {
     }
 
     const primera = grupo.filas[0];
-    let numOrden = colOrden >= 0 ? String(data[primera][colOrden] || '').trim() : '';
-    if (!numOrden) numOrden = pad_(data[primera][3], 3);
+    let numOrden = primera.h.colOrden >= 0 ? String(primera.v[primera.h.colOrden] || '').trim() : '';
+    if (!numOrden) numOrden = pad_(primera.v[3], 3);
     if (numOrden.charAt(0) !== '#') numOrden = '#' + numOrden;
 
     try {
@@ -2090,9 +2144,9 @@ function enviarQRsHalloween() {
         nombre: grupo.nombre,
         cfg: grupo.cfg,
         orden: numOrden,
-        ticketIds: grupo.filas.map(function (i) { return String(data[i][4]); })
+        ticketIds: grupo.filas.map(function (f) { return String(f.v[4]); })
       });
-      grupo.filas.forEach(function (i) { sheet.getRange(i + 1, 13).setValue(true); });
+      grupo.filas.forEach(function (f) { f.h.sheet.getRange(f.i + 1, 13).setValue(true); });
       enviados++;
       boletas += grupo.filas.length;
       Logger.log('Enviado a ' + grupo.email + ' — ' + grupo.cfg.tipo + ' x' + grupo.filas.length);
@@ -2113,13 +2167,14 @@ function enviarQRHalloweenPrueba() {
 }
 
 /**
- * Guarda una venta aprobada de Wompi de Halloween en el sheet (una fila por
- * boleta: Trio VIP = 3, Backstage = 5) y le manda los QR al comprador.
- * La llaman checkWompiSales (correos de Wompi), el webhook y
- * importarVentasWompiHalloween. Si la transaccion ya esta en el sheet no
- * hace nada, asi que no se duplica aunque llegue por varios caminos.
- * Si el correo falla, las filas quedan sin "Email enviado" y
- * enviarQRsHalloween() las reintenta.
+ * Guarda una venta aprobada de Wompi de Halloween en la hoja "Ventas Wompi"
+ * (una fila por boleta: Trio VIP = 3, Backstage = 5) y le manda los QR al
+ * comprador. La llaman checkWompiSales (correos de Wompi), el webhook y
+ * importarVentasWompiHalloween. Si la transaccion ya esta en alguna de las
+ * dos hojas no hace nada, asi que no se duplica aunque llegue por varios
+ * caminos. La numeracion sigue la de las dos hojas, para que nunca se
+ * repita un codigo. Si el correo falla, las filas quedan sin "Email
+ * enviado" y enviarQRsHalloween() las reintenta.
  *
  * v: { linkId, txKey, referencia, nombre, email, telefono, montoTotal }
  * Devuelve 'procesada' o 'ya_procesada'.
@@ -2127,7 +2182,7 @@ function enviarQRHalloweenPrueba() {
 function registrarVentaHalloween_(v) {
   const link = QR_HW_WOMPI_LINKS[v.linkId];
   const cfg = QR_HW_TIPOS[link.tipo];
-  const sheet = getHalloweenQrSheet_();
+  const sheet = getHalloweenWompiSheet_(true);
   let inicio, ticketIds = [], orden = '';
 
   // El webhook y el trigger de Gmail pueden llegar al mismo tiempo: el
@@ -2135,34 +2190,33 @@ function registrarVentaHalloween_(v) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    const data = sheet.getDataRange().getValues();
-    if (!validarHojaHalloween_(data[0])) throw new Error('el sheet de Halloween no tiene las columnas esperadas');
-
-    for (let i = 1; i < data.length; i++) {
-      if (String(data[i][5]).trim() === String(v.txKey)) return 'ya_procesada';
-    }
-
-    let colOrden = data[0].map(normalizaTexto_).indexOf('orden');
+    const hojas = hojasHalloween_([getHalloweenQrSheet_(), sheet]);
     let maxNumero = 0, maxOrden = 0;
-    for (let i = 1; i < data.length; i++) {
-      if (tipoHalloween_(data[i][2]) !== cfg) continue;
-      const n = parseInt(data[i][3], 10);
-      if (!isNaN(n)) maxNumero = Math.max(maxNumero, n);
-      if (colOrden >= 0) {
-        const o = parseInt(String(data[i][colOrden]).replace(/\D/g, ''), 10);
-        if (!isNaN(o)) maxOrden = Math.max(maxOrden, o);
+    for (let h = 0; h < hojas.length; h++) {
+      const hoja = hojas[h];
+      if (!validarHojaHalloween_(hoja.data[0], hoja.sheet.getName())) throw new Error('la hoja "' + hoja.sheet.getName() + '" no tiene las columnas esperadas');
+      for (let i = 1; i < hoja.data.length; i++) {
+        const fila = hoja.data[i];
+        if (String(fila[5]).trim() === String(v.txKey)) return 'ya_procesada';
+        if (tipoHalloween_(fila[2]) !== cfg) continue;
+        const n = parseInt(fila[3], 10);
+        if (!isNaN(n)) maxNumero = Math.max(maxNumero, n);
+        if (hoja.colOrden >= 0) {
+          const o = parseInt(String(fila[hoja.colOrden]).replace(/\D/g, ''), 10);
+          if (!isNaN(o)) maxOrden = Math.max(maxOrden, o);
+        }
       }
     }
 
-    // Las mesas llevan numero de orden (uno por compra), guardado en una
-    // columna "Orden" al final del sheet; se crea la primera vez.
-    if (cfg.combo) {
-      if (colOrden === -1) {
-        colOrden = Math.max(data[0].length, HEADERS.length);
-        sheet.getRange(1, colOrden + 1).setValue('Orden');
-      }
-      orden = '#' + pad_(maxOrden + 1, 3);
+    // Las mesas llevan numero de orden (uno por compra) en la columna
+    // "Orden" de la hoja de Wompi.
+    const wompi = hojas[hojas.length - 1];
+    let colOrden = wompi.colOrden;
+    if (colOrden === -1) {
+      colOrden = Math.max(wompi.data[0].length, HEADERS.length);
+      sheet.getRange(1, colOrden + 1).setValue('Orden');
     }
+    if (cfg.combo) orden = '#' + pad_(maxOrden + 1, 3);
 
     const ancho = Math.max(HEADERS.length, colOrden + 1);
     const monto = Math.round((v.montoTotal || 0) / link.cantidad);
@@ -2173,7 +2227,7 @@ function registrarVentaHalloween_(v) {
       const fila = [new Date(), QR_HW_EVENTO, cfg.tipo, numero, ticketId, v.txKey, v.referencia,
                     v.nombre, v.email, v.telefono, monto, 'APPROVED', false, false, ''];
       while (fila.length < ancho) fila.push('');
-      if (cfg.combo) fila[colOrden] = orden;
+      fila[colOrden] = orden;
       filas.push(fila);
       ticketIds.push(ticketId);
     }
@@ -2196,7 +2250,7 @@ function registrarVentaHalloween_(v) {
 }
 
 /**
- * Ejecutar a mano UNA vez: trae al sheet las ventas de Hall Stage, Trio VIP
+ * Ejecutar a mano UNA vez: trae a la hoja "Ventas Wompi" las ventas de Hall Stage, Trio VIP
  * y Backstage que ya se pagaron por Wompi antes de activar esto (esos
  * correos quedaron con la etiqueta QR-Revisar) y les manda los QR. Las que
  * ya esten en el sheet se saltan, asi que se puede volver a correr sin
