@@ -37,17 +37,6 @@
     overflow-x:hidden;
   }
 
-  /* Emojis flotando de fondo */
-  .spooky{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-  .spooky span{ position:absolute; font-size:28px; opacity:0.18; animation:floaty 9s ease-in-out infinite; }
-  .spooky span:nth-child(1){ top:8%;  left:6%;  animation-delay:0s; }
-  .spooky span:nth-child(2){ top:18%; right:8%; animation-delay:-2s; font-size:34px; }
-  .spooky span:nth-child(3){ top:52%; left:4%;  animation-delay:-4s; }
-  .spooky span:nth-child(4){ top:70%; right:6%; animation-delay:-1s; font-size:32px; }
-  .spooky span:nth-child(5){ top:88%; left:14%; animation-delay:-6s; }
-  .spooky span:nth-child(6){ top:40%; right:3%; animation-delay:-3s; font-size:22px; }
-  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-6deg); } 50%{ transform:translateY(-18px) rotate(6deg); } }
-
   .card{
     position:relative;
     z-index:1;
@@ -125,57 +114,24 @@
     color: var(--white-dim);
   }
   .steps li + li{ border-top:1px dashed var(--line); }
-  .steps .ico{ flex:none; font-size:20px; line-height:1.2; }
+  .steps .num{
+    flex:none; width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700;
+    color:#1A0B00; background: var(--orange-soft);
+  }
   .steps strong{ color: var(--white); }
 
-  /* Dulce o truco */
-  .trick{
+  .gift{
     border:1px solid rgba(155,92,255,0.35);
     border-radius:16px;
-    padding:18px 16px 16px;
+    padding:16px 18px;
     margin-bottom:22px;
-    background: rgba(106,47,217,0.08);
-  }
-  .trick-title{
-    font-family:'Bebas Neue', sans-serif;
-    font-size:26px;
-    letter-spacing:0.03em;
-    margin-bottom:4px;
-  }
-  .trick-hint{ font-size:12.5px; color: var(--white-dim); margin-bottom:14px; }
-  .trick-btns{ display:flex; gap:10px; }
-  .trick-btn{
-    flex:1;
-    padding:12px 10px;
-    border-radius:100px;
-    border:1px solid var(--line);
-    background: rgba(237,234,230,0.05);
-    color: var(--white);
-    font-family:'JetBrains Mono', monospace;
-    font-weight:700;
-    font-size:13px;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    cursor:pointer;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-  }
-  .trick-btn:hover{ transform:translateY(-2px); }
-  .trick-btn[aria-pressed="true"].is-dulce{ background: var(--orange); border-color: var(--orange); color:#1A0B00; }
-  .trick-btn[aria-pressed="true"].is-truco{ background: var(--purple); border-color: var(--purple-glow); }
-  .trick-btn:focus-visible{ outline:2px solid var(--orange-soft); outline-offset:2px; }
-  .trick-reveal{
-    display:none;
-    margin-top:14px;
-    padding:14px;
-    border-radius:12px;
-    background: rgba(5,4,6,0.55);
+    background: rgba(106,47,217,0.1);
     font-size:14px;
-    line-height:1.6;
-    text-align:left;
-    animation:pop 0.4s ease both;
+    line-height:1.65;
   }
-  .trick-reveal.show{ display:block; }
-  .trick-reveal strong{ color: var(--orange-soft); }
+  .gift strong{ color: var(--orange-soft); }
 
   .event-info{
     font-family:'JetBrains Mono', monospace;
@@ -219,16 +175,11 @@
     h1{ font-size:32px; }
   }
   @media (prefers-reduced-motion: reduce){
-    .spooky span, .status-icon, .trick-reveal{ animation:none; }
-    .trick-btn{ transition:none; }
+    .status-icon{ animation:none; }
   }
 </style>
 </head>
 <body>
-
-<div class="spooky" aria-hidden="true">
-  <span>🎃</span><span>🦇</span><span>👻</span><span>🕸️</span><span>🍬</span><span>💀</span>
-</div>
 
 <main class="card">
   <div class="brands">
@@ -239,33 +190,25 @@
   <div class="status-icon" aria-hidden="true">🎃</div>
   <p class="eyebrow">Dulce o truco…</p>
   <h1>¡Te tocó dulce! <span class="accent">Tu compra está confirmada</span></h1>
-  <p class="subtitle">Mantente pendiente de tu <strong>correo electrónico</strong> 📩: allí te llegará tu <strong>código QR</strong> para entrar a la fiesta más espeluznante de 2016. 👻</p>
+  <p class="subtitle">Mantente pendiente de tu <strong>correo electrónico</strong>: allí te llegará tu <strong>código QR</strong> para entrar a la fiesta más espeluznante de 2016.</p>
 
   <ul class="steps">
-    <li><span class="ico" aria-hidden="true">📬</span><span><strong>Revisa tu correo.</strong> Mira la bandeja de entrada y también <strong>spam</strong> o <strong>promociones</strong>: a veces el QR se esconde como un fantasma.</span></li>
-    <li><span class="ico" aria-hidden="true">📱</span><span><strong>Guarda tu QR.</strong> Hazle captura o descárgalo; lo necesitas para entrar.</span></li>
-    <li><span class="ico" aria-hidden="true">🦇</span><span><strong>Preséntalo en la entrada</strong> el día del evento, y ven disfrazado: hay <strong>concurso de disfraces</strong>. 🎭</span></li>
+    <li><span class="num" aria-hidden="true">1</span><span><strong>Revisa tu correo.</strong> Mira la bandeja de entrada y también <strong>spam</strong> o <strong>promociones</strong>: a veces el QR se esconde como un fantasma.</span></li>
+    <li><span class="num" aria-hidden="true">2</span><span><strong>Guarda tu QR.</strong> Hazle captura o descárgalo; lo necesitas para entrar.</span></li>
+    <li><span class="num" aria-hidden="true">3</span><span><strong>Preséntalo en la entrada</strong> el día del evento, y ven disfrazado: hay <strong>concurso de disfraces</strong>.</span></li>
   </ul>
 
-  <section class="trick" aria-labelledby="trickTitle">
-    <h2 class="trick-title" id="trickTitle">🍬 ¿Dulce o truco? 🕸️</h2>
-    <p class="trick-hint">Escoge uno y descubre qué te espera…</p>
-    <div class="trick-btns">
-      <button type="button" class="trick-btn is-dulce" data-pick="dulce" aria-pressed="false" aria-controls="trickReveal">🍬 Dulce</button>
-      <button type="button" class="trick-btn is-truco" data-pick="truco" aria-pressed="false" aria-controls="trickReveal">💀 Truco</button>
-    </div>
-    <div class="trick-reveal" id="trickReveal" aria-live="polite"></div>
-  </section>
+  <p class="gift">🎁 <strong>¡Dulce!</strong> Además de tu QR, <strong>puede que te lleves un regalo sorpresa</strong> la noche del evento. Ven con tu mejor disfraz y mantente atento… 🍬🎃</p>
 
   <p class="event-info">
-    <strong>🎃 Sábado 31 de octubre</strong><br>
+    <strong>Sábado 31 de octubre</strong><br>
     Capital Live Concerts · KR 13 #48-90, Bogotá<br>
     Evento tributo +18 · artista no presente
   </p>
 
   <div class="btn-row">
-    <a class="btn btn-primary" href="back-to-halloween-2016.html">Ver detalles del evento 🎃</a>
-    <a class="btn btn-secondary" href="https://instagram.com/fantribute_col" target="_blank" rel="noopener">Síguenos en Instagram 👻</a>
+    <a class="btn btn-primary" href="back-to-halloween-2016.html">Ver detalles del evento</a>
+    <a class="btn btn-secondary" href="https://instagram.com/fantribute_col" target="_blank" rel="noopener">Síguenos en Instagram</a>
   </div>
 
   <p class="ref" id="payRef"></p>
@@ -274,23 +217,6 @@
 
 <script>
   (function () {
-    var MENSAJES = {
-      dulce: '🎁 <strong>¡Dulce!</strong> Además de tu QR, <strong>puede que te lleves un regalo sorpresa</strong> la noche del evento. Ven con tu mejor disfraz y mantente atento… 🍬🎃',
-      truco: '💀 <strong>¡Truco!</strong> El truco es que tu QR puede esconderse en <strong>spam</strong> o <strong>promociones</strong> 👻. Revísalas… y quién sabe, igual <strong>podrías llevarte un regalo sorpresa</strong> esa noche. 🎁'
-    };
-
-    var reveal = document.getElementById('trickReveal');
-    var botones = document.querySelectorAll('.trick-btn');
-    Array.prototype.forEach.call(botones, function (btn) {
-      btn.addEventListener('click', function () {
-        Array.prototype.forEach.call(botones, function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-        reveal.classList.remove('show');
-        void reveal.offsetWidth; // reinicia la animacion
-        reveal.innerHTML = MENSAJES[btn.getAttribute('data-pick')];
-        reveal.classList.add('show');
-      });
-    });
-
     // Wompi redirige con ?id=<transaccion>; se muestra como referencia por si
     // la persona necesita escribirnos.
     var txId = new URLSearchParams(window.location.search).get('id');
