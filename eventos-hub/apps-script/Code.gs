@@ -2450,6 +2450,10 @@ function generarBoletaHalloweenPng_(d) {
     // compensa en x, y el texto se centra en vertical sobre "cy".
     const RELLENO = 7.2;
     const texto = function (str, x, cy, ancho, size, color, fuente, centrado) {
+      // Slides no deja dar formato a un cuadro de texto vacio ("has no
+      // text"), asi que un dato vacio (ej. fila sin Nombre) no se dibuja.
+      str = String(str == null ? '' : str).trim();
+      if (!str) return;
       const alto = size * k * 2;
       const tb = slide.insertTextBox(str, x * k - RELLENO, cy * k - alto / 2, ancho * k + RELLENO * 2, alto);
       tb.setContentAlignment(SlidesApp.ContentAlignment.MIDDLE);
