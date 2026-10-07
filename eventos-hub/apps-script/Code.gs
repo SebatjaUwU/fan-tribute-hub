@@ -78,7 +78,10 @@ const GMAIL_SEARCH = 'from:(no-reply@wompi.co) "APROBADA" -label:' + LABEL_OK + 
 // asunto, asi que no procesa cualquier cosa). Se excluye
 // "from:no-reply@wompi.co" para no volver a buscar los correos que ya
 // cubre GMAIL_SEARCH en la misma pasada.
-const FORWARDED_SEARCH = '"APROBADA" "ref." -from:no-reply@wompi.co -label:' + LABEL_OK + ' -label:' + LABEL_REVIEW + ' -label:' + LABEL_OLD + ' -label:' + LABEL_MANUAL;
+// Tambien se excluyen los avisos "Revisar venta no procesada" que manda el
+// propio script (notifyReview_): copian el asunto original con "APROBADA" y
+// "ref.", y sin esto se leian como un reenvio y generaban un segundo aviso.
+const FORWARDED_SEARCH = '"APROBADA" "ref." -from:no-reply@wompi.co -subject:"Revisar venta no procesada" -label:' + LABEL_OK + ' -label:' + LABEL_REVIEW + ' -label:' + LABEL_OLD + ' -label:' + LABEL_MANUAL;
 
 /**
  * Ignora cualquier correo de Wompi anterior a esta fecha/hora — asi no
