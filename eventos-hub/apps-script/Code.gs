@@ -2081,14 +2081,19 @@ function enviarQRsHalloween() {
   enviarQRsHalloween_(false);
 }
 
-// ---- Envio automatico de las ventas escritas a mano ----
-// activarEnvioAutomaticoQRHalloween() (ejecutar a mano UNA vez) crea un
-// activador que corre enviarQRsHalloweenAutomatico() cada 10 minutos. En
-// modo automatico solo se envian filas de la hoja manual que esten
-// completas (Nombre + correo valido + Estado APPROVED), para no mandar una
-// fila a medio escribir: llena la fila y pon APPROVED de ultimo. Las de
-// "Ventas Wompi" ya salen solas al momento de la compra.
+// ---- Reintento automatico de las ventas de Wompi ----
+// Las compras de Wompi se envian solas al momento (registrarVentaHalloween_).
+// Si ese envio falla (ej. se acabo la cuota de Gmail), la venta queda en
+// "Ventas Wompi" sin "Email enviado". activarEnvioAutomaticoQRHalloween()
+// (ejecutar a mano UNA vez) crea un activador que cada 10 minutos reintenta
+// solo esas. Las ventas escritas a mano en "Repositorio" NO se envian solas:
+// esas se mandan corriendo enviarQRsHalloween().
 const QR_HW_AUTO_FUNCION = 'enviarQRsHalloweenAutomatico';
+
+// Una venta de Wompi recien guardada puede estar enviandose todavia (armar
+// las boletas tarda); solo se reintenta pasado este tiempo, para no
+// mandarle el correo dos veces al comprador.
+const QR_HW_REINTENTO_MIN = 15;
 
 function enviarQRsHalloweenAutomatico() {
   enviarQRsHalloween_(true);
@@ -2097,7 +2102,7 @@ function enviarQRsHalloweenAutomatico() {
 function activarEnvioAutomaticoQRHalloween() {
   desactivarEnvioAutomaticoQRHalloween();
   ScriptApp.newTrigger(QR_HW_AUTO_FUNCION).timeBased().everyMinutes(10).create();
-  Logger.log('Listo: las ventas escritas a mano en "Repositorio" se envian solas cada 10 minutos.');
+  Logger.log('Listo: cada 10 minutos se reintentan las ventas de Wompi cuyo correo haya fallado.');
 }
 
 function desactivarEnvioAutomaticoQRHalloween() {
@@ -2128,11 +2133,15 @@ function enviarQRsHalloween_(automatico) {
 function enviarQRsHalloweenSinLock_(automatico) {
   const hojas = hojasHalloween_([getHalloweenQrSheet_(), getHalloweenWompiSheet_(false)]);
   hojas.forEach(function (h) { h.esWompi = h.sheet.getName() === QR_HW_WOMPI_TAB; });
-  // En modo automatico solo se toca una fila manual si ya esta completa.
-  const completa = function (f) {
-    return String(f.v[7] || '').trim() !== '' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(f.v[8] || '').trim());
+  // Venta de Wompi guardada hace menos de QR_HW_REINTENTO_MIN: puede que
+  // registrarVentaHalloween_ todavia la este enviando, asi que no se toca.
+  const wompiReciente = function (f) {
+    if (!f.h.esWompi) return false;
+    const fecha = f.v[0] instanceof Date ? f.v[0] : new Date(f.v[0]);
+    return !isNaN(fecha) && (Date.now() - fecha.getTime()) < QR_HW_REINTENTO_MIN * 60000;
   };
-  const saltarEnAutomatico = function (f) { return automatico && (f.h.esWompi || !completa(f)); };
+  // El automatico solo reintenta ventas de Wompi; las manuales se mandan a mano.
+  const saltar = function (f) { return wompiReciente(f) || (automatico && !f.h.esWompi); };
   for (let h = 0; h < hojas.length; h++) {
     if (!validarHojaHalloween_(hojas[h].data[0], hojas[h].sheet.getName())) {
       Logger.log('No se envio nada.');
@@ -2168,12 +2177,7 @@ function enviarQRsHalloweenSinLock_(automatico) {
   filas.forEach(function (f) {
     if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
     if (String(f.v[4] || '').trim()) return;
-    if (saltarEnAutomatico(f)) {
-      if (!f.h.esWompi && !marcadoComoSi_(f.v[12])) {
-        Logger.log('La ' + donde(f) + ' esta en APPROVED pero le falta el Nombre o el correo no es valido; se envia cuando este completa.');
-      }
-      return;
-    }
+    if (automatico && !f.h.esWompi) return;
     const cfg = tipoHalloween_(f.v[2]);
     if (!cfg) {
       tiposDesconocidos[f.v[2]] = true;
@@ -2211,7 +2215,10 @@ function enviarQRsHalloweenSinLock_(automatico) {
     if (!cfg || !f.v[4]) return;
     if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
     if (marcadoComoSi_(f.v[12])) return;
-    if (saltarEnAutomatico(f)) return;
+    if (saltar(f)) {
+      if (!automatico && f.h.esWompi) Logger.log('La ' + donde(f) + ' es una venta de Wompi de hace menos de ' + QR_HW_REINTENTO_MIN + ' min (puede estar enviandose); se salta por ahora.');
+      return;
+    }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       Logger.log('La ' + donde(f) + ' tiene un correo invalido ("' + email + '"); corrigelo y vuelve a correr.');
       return;
