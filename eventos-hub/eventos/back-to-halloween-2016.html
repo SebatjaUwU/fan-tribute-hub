@@ -477,7 +477,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .combo-mini{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); }
   .combo-mini-label{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; text-align:center; }
   .combo-mini-row{ display:flex; gap:8px; }
-  .combo-mini-btn{ flex:1; text-align:center; padding:16px 10px; border-radius:12px; border:1px solid rgba(255,107,26,0.4); color:var(--orange-soft); text-decoration:none; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; transition: background 0.2s ease, transform 0.2s ease; }
+  .combo-mini-btn{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 6px; border-radius:12px; border:1px solid rgba(255,107,26,0.4); color:var(--orange-soft); text-decoration:none; font-family:'JetBrains Mono',monospace; font-weight:700; transition: background 0.2s ease, transform 0.2s ease; }
+  .combo-n{ font-size:17px; line-height:1.2; }
+  .combo-p{ font-size:13px; line-height:1.2; color:var(--white); }
   .combo-mini-btn:hover{ background:rgba(255,107,26,0.12); transform:translateY(-2px); }
   .combo-mini-btn:focus-visible{ outline:2px solid var(--orange-soft); outline-offset:2px; }
   .buy-btn--locked{ padding:14px 20px; justify-content:center; border-color:var(--line); background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
@@ -729,7 +731,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ================= LOCALIDADES ================= -->
 <section class="tickets-section" id="localidades">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Últimas boletas de Preventa 1 por WhatsApp. Preventa 2 ya disponible por Wompi, también en combos x2 y x3. El precio va subiendo por etapas: al agotarse Preventa 2 se activa General.</p></div>
+    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Últimas boletas de Preventa 1 por WhatsApp. Preventa 2 ya disponible por Wompi, también en combos x2, x3 y x4. El precio va subiendo por etapas: al agotarse Preventa 2 se activa General.</p></div>
 
     <div class="preventa reveal">
       <div class="preventa-badge">Cupo limitado</div>
@@ -764,8 +766,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="combo-mini">
           <div class="combo-mini-label">En grupo</div>
           <div class="combo-mini-row">
-            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/YpXM7S" target="_blank" rel="noopener" data-track="buy_preventa2_x2_wompi">x2 &middot; $74K</a>
-            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/eaLaZm" target="_blank" rel="noopener" data-track="buy_preventa2_x3_wompi">x3 &middot; $111K</a>
+            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/85iw3a" target="_blank" rel="noopener" data-track="buy_preventa2_x2_wompi"><span class="combo-n">x2</span><span class="combo-p">$74K</span></a>
+            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/qWpj0d" target="_blank" rel="noopener" data-track="buy_preventa2_x3_wompi"><span class="combo-n">x3</span><span class="combo-p">$111K</span></a>
+            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/DbA4zj" target="_blank" rel="noopener" data-track="buy_preventa2_x4_wompi"><span class="combo-n">x4</span><span class="combo-p">$148K</span></a>
           </div>
         </div>
       </div>
