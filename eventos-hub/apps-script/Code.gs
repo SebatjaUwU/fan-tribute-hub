@@ -1927,7 +1927,8 @@ const PROMO_HALLOWEEN_FLYER_B64 = '/9j/4QBqRXhpZgAATU0AKgAAAAgABAEAAAQAAAABAAAEO
 // "Orden" si la agregas al sheet; si no, se usa el Numero de la primera
 // boleta de esa compra (ej. #004).
 //
-// Ventas por Wompi (Hall Stage, Trio VIP, Backstage; ver QR_HW_WOMPI_LINKS):
+// Ventas por Wompi (Preventa 2 y sus combos, Hall Stage, Trio VIP, Backstage;
+// ver QR_HW_WOMPI_LINKS):
 // entran solas a la hoja "Ventas Wompi" (mismo spreadsheet, se crea sola)
 // y se envian sus QR, con el mismo trigger
 // checkWompiSales y el mismo webhook de End of Summer. Las que se pagaron
@@ -1954,9 +1955,12 @@ const QR_HW_TIPOS = {
 // Links de Wompi de Halloween que entran solos al sheet (igual que el flujo
 // automatico de End of Summer: trigger de Gmail checkWompiSales + webhook).
 // payment_link_id -> tipo (llave de QR_HW_TIPOS) y cuantas boletas/QR
-// genera UNA compra de ese link. Para sumar Preventa 2 o General, agrega
-// su link_id aqui.
+// genera UNA compra de ese link (los combos de Preventa 2 generan 2 o 3).
+// Para sumar General, agrega su link_id aqui.
 const QR_HW_WOMPI_LINKS = {
+  'ATcIVU': { tipo: 'preventa 2', cantidad: 1 },   // $37K
+  'YpXM7S': { tipo: 'preventa 2', cantidad: 2 },   // combo x2, $74K
+  'eaLaZm': { tipo: 'preventa 2', cantidad: 3 },   // combo x3, $111K
   'jCazhj': { tipo: 'hall stage', cantidad: 1 },
   'vVVSym': { tipo: 'trio vip',   cantidad: 3 },
   'bqsf6u': { tipo: 'backstage',  cantidad: 5 }
@@ -2279,8 +2283,8 @@ function registrarVentaHalloween_(v) {
 }
 
 /**
- * Ejecutar a mano UNA vez: trae a la hoja "Ventas Wompi" las ventas de Hall Stage, Trio VIP
- * y Backstage que ya se pagaron por Wompi antes de activar esto (esos
+ * Ejecutar a mano UNA vez: trae a la hoja "Ventas Wompi" las ventas de los
+ * links de QR_HW_WOMPI_LINKS que ya se pagaron por Wompi antes de activar esto (esos
  * correos quedaron con la etiqueta QR-Revisar) y les manda los QR. Las que
  * ya esten en el sheet se saltan, asi que se puede volver a correr sin
  * duplicar nada.

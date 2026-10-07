@@ -39,7 +39,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "@context": "https://schema.org",
   "@type": "Event",
   "name": "BACK TO HALLOWEEN 2016 — Fan Tribute",
-  "description": "La fiesta de Halloween con los himnos del EDM y la música electrónica de 2016. Preventa 1, Hall Stage, Trío VIP y Backstage disponibles.",
+  "description": "La fiesta de Halloween con los himnos del EDM y la música electrónica de 2016. Preventa 1, Preventa 2, Hall Stage, Trío VIP y Backstage disponibles.",
   "startDate": "2026-10-31T20:00:00-05:00",
   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
   "eventStatus": "https://schema.org/EventScheduled",
@@ -69,6 +69,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "priceCurrency": "COP",
       "availability": "https://schema.org/InStock",
       "url": "https://wa.me/573161088178"
+    },
+    {
+      "@type": "Offer",
+      "name": "Preventa 2 — Pista a pie",
+      "price": "37000",
+      "priceCurrency": "COP",
+      "availability": "https://schema.org/InStock",
+      "url": "https://checkout.wompi.co/l/ATcIVU"
     },
     {
       "@type": "Offer",
@@ -459,6 +467,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .buy-btn--backstage{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--red-soft), var(--purple-glow)) border-box; }
   .buy-btn--backstage .buy-btn-orb{ background:linear-gradient(135deg, var(--red-soft), var(--purple-glow)); color:#1A0B00; }
   .buy-btn--backstage:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(224,89,107,0.28); }
+  .ticket--preventa2{ border-color:rgba(255,107,26,0.35); background:linear-gradient(165deg, rgba(255,107,26,0.08), rgba(106,47,217,0.05)); }
+  .ticket--preventa2 .ticket-kind{ color:var(--orange-soft); }
+  .ticket--preventa2 .ticket-tag{ border-color:rgba(255,107,26,0.45); color:var(--orange-soft); }
+  .ticket--preventa2 .ticket-feats li svg{ color:var(--orange-soft); }
+  .buy-btn--orange{ color:var(--white); background: linear-gradient(var(--black), var(--black)) padding-box, linear-gradient(90deg, var(--orange), var(--orange-soft)) border-box; }
+  .buy-btn--orange .buy-btn-orb{ background:linear-gradient(135deg, var(--orange), var(--orange-soft)); color:#1A0B00; }
+  .buy-btn--orange:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(255,107,26,0.28); }
+  .combo-mini{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); }
+  .combo-mini-label{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--white-dim); margin-bottom:10px; text-align:center; }
+  .combo-mini-row{ display:flex; gap:8px; }
+  .combo-mini-btn{ flex:1; text-align:center; padding:16px 10px; border-radius:12px; border:1px solid rgba(255,107,26,0.4); color:var(--orange-soft); text-decoration:none; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; transition: background 0.2s ease, transform 0.2s ease; }
+  .combo-mini-btn:hover{ background:rgba(255,107,26,0.12); transform:translateY(-2px); }
+  .combo-mini-btn:focus-visible{ outline:2px solid var(--orange-soft); outline-offset:2px; }
   .buy-btn--locked{ padding:14px 20px; justify-content:center; border-color:var(--line); background:rgba(237,234,230,0.05); color:var(--white-dim); pointer-events:none; cursor:not-allowed; }
 
   /* ================= Info ================= */
@@ -708,7 +729,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ================= LOCALIDADES ================= -->
 <section class="tickets-section" id="localidades">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Preventa 1 ya está disponible por WhatsApp, solo hasta agotar existencias. El precio va subiendo por etapas: al agotarse Preventa 1 se activa Preventa 2, y al agotarse esta, se activa General.</p></div>
+    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Últimas boletas de Preventa 1 por WhatsApp. Preventa 2 ya disponible por Wompi, también en combos x2 y x3. El precio va subiendo por etapas: al agotarse Preventa 2 se activa General.</p></div>
 
     <div class="preventa reveal">
       <div class="preventa-badge">Cupo limitado</div>
@@ -724,17 +745,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 
     <div class="ticket-grid">
-      <div class="ticket ticket--locked reveal">
-        <div class="ticket-top"><div class="ticket-kind">Preventa 2</div><div class="ticket-tag">Bloqueado</div></div>
+      <div class="ticket ticket--preventa2 reveal">
+        <div class="ticket-top"><div class="ticket-kind">Preventa 2</div><div class="ticket-tag">Disponible</div></div>
         <div class="ticket-price">$37K</div>
-        <div class="ticket-price-note">Se activa al agotarse Preventa 1</div>
+        <div class="ticket-price-note">Por persona · Pago por Wompi</div>
         <hr class="perforation">
         <ul class="ticket-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>2 bebidas personales (cerveza o hidratación)</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Acceso a Pista · Primer piso</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🎭 Acceso al concurso de disfraces</span></li>
         </ul>
-        <button class="buy-btn buy-btn--locked" type="button" disabled>Comprar</button>
+        <a class="buy-btn buy-btn--orange" href="https://checkout.wompi.co/l/ATcIVU" target="_blank" rel="noopener" data-track="buy_preventa2_wompi">
+          Comprar
+          <span class="buy-btn-orb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+        <div class="combo-mini">
+          <div class="combo-mini-label">En grupo</div>
+          <div class="combo-mini-row">
+            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/YpXM7S" target="_blank" rel="noopener" data-track="buy_preventa2_x2_wompi">x2 &middot; $74K</a>
+            <a class="combo-mini-btn" href="https://checkout.wompi.co/l/eaLaZm" target="_blank" rel="noopener" data-track="buy_preventa2_x3_wompi">x3 &middot; $111K</a>
+          </div>
+        </div>
       </div>
       <div class="ticket ticket--locked reveal">
         <div class="ticket-top"><div class="ticket-kind">General</div><div class="ticket-tag">Bloqueado</div></div>
