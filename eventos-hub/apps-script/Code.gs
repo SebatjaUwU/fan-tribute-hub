@@ -1958,12 +1958,13 @@ const QR_HW_TIPOS = {
 // genera UNA compra de ese link (los combos de Preventa 2 generan 2, 3 o 4).
 // Para sumar General, agrega su link_id aqui.
 const QR_HW_WOMPI_LINKS = {
-  'ATcIVU': { tipo: 'preventa 2', cantidad: 1 },   // $37K
+  'sjtaeG': { tipo: 'preventa 2', cantidad: 1 },   // $37K
   '85iw3a': { tipo: 'preventa 2', cantidad: 2 },   // combo x2, $74K
   'qWpj0d': { tipo: 'preventa 2', cantidad: 3 },   // combo x3, $111K
   'DbA4zj': { tipo: 'preventa 2', cantidad: 4 },   // combo x4, $148K
-  // Links anteriores de los combos x2/x3 (reemplazados en la pagina, pero
-  // se dejan por si alguien todavia paga con ellos).
+  // Links anteriores de Preventa 2 (reemplazados en la pagina, pero se
+  // dejan por si alguien todavia paga con ellos).
+  'ATcIVU': { tipo: 'preventa 2', cantidad: 1 },
   'YpXM7S': { tipo: 'preventa 2', cantidad: 2 },
   'eaLaZm': { tipo: 'preventa 2', cantidad: 3 },
   'jCazhj': { tipo: 'hall stage', cantidad: 1 },
