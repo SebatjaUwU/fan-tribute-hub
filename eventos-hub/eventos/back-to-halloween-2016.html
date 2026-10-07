@@ -39,7 +39,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "@context": "https://schema.org",
   "@type": "Event",
   "name": "BACK TO HALLOWEEN 2016 — Fan Tribute",
-  "description": "La fiesta de Halloween con los himnos del EDM y la música electrónica de 2016. Preventa 1, Preventa 2, Hall Stage, Trío VIP y Backstage disponibles.",
+  "description": "La fiesta de Halloween con los himnos del EDM y la música electrónica de 2016. Preventa 2, Hall Stage, Trío VIP y Backstage disponibles.",
   "startDate": "2026-10-31T20:00:00-05:00",
   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
   "eventStatus": "https://schema.org/EventScheduled",
@@ -67,7 +67,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "name": "Preventa 1 — Pista a pie",
       "price": "32000",
       "priceCurrency": "COP",
-      "availability": "https://schema.org/InStock",
+      "availability": "https://schema.org/SoldOut",
       "url": "https://wa.me/573161088178"
     },
     {
@@ -407,6 +407,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .preventa::after{ content:''; position:absolute; top:-10px; left:50%; width:20px; height:20px; background:var(--black); border-radius:50%; transform:translateX(-50%); }
   .preventa:hover{ transform:translateY(-6px); box-shadow:0 20px 50px rgba(255,107,26,0.2), 0 0 0 1px rgba(255,107,26,0.25); }
   .preventa-badge{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:6px 12px; border-radius:100px; background:rgba(255,107,26,0.14); border:1px solid rgba(255,107,26,0.35); color:var(--orange-soft); margin-bottom:18px; }
+  .preventa--soldout:hover{ transform:none; box-shadow:0 0 0 1px rgba(255,107,26,0.08); }
+  .preventa--soldout:hover .preventa-price{ transform:none; text-shadow:none; }
+  .preventa--soldout > :not(.soldout-banner){ opacity:0.5; filter:grayscale(0.7); }
+  .soldout-banner{
+    position:relative; margin:-34px -34px 24px; padding:16px 16px 14px; text-align:center;
+    font-family:'Bebas Neue',sans-serif; font-size:34px; line-height:1; letter-spacing:0.14em; text-transform:uppercase;
+    color:#1A0B00; background:linear-gradient(90deg, var(--orange), var(--orange-soft) 50%, var(--purple-glow));
+    box-shadow:0 8px 24px rgba(255,107,26,0.25);
+  }
+  .soldout-banner span{ letter-spacing:0; }
   .preventa-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
   .preventa-kind{ font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--orange-soft); }
   .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
@@ -731,19 +741,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ================= LOCALIDADES ================= -->
 <section class="tickets-section" id="localidades">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Últimas boletas de Preventa 1 por WhatsApp. Preventa 2 ya disponible por Wompi, también en combos x2, x3 y x4. El precio va subiendo por etapas: al agotarse Preventa 2 se activa General.</p></div>
+    <div class="section-head reveal"><div class="eyebrow">Localidades</div><h2>🎃 Lista de precios</h2><p>Preventa 1 agotada 🎃. Preventa 2 ya disponible por Wompi, también en combos x2, x3 y x4. El precio va subiendo por etapas: al agotarse Preventa 2 se activa General.</p></div>
 
-    <div class="preventa reveal">
-      <div class="preventa-badge">Cupo limitado</div>
-      <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price-wrap"><div class="preventa-price"><sup>$</sup>32K</div><div class="preventa-was"><em>Solo porque es mes de Halloween</em> · Después sube a <strong>$37K</strong></div></div></div>
-      <p class="preventa-desc">Incluye <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso. Incluye <strong>concurso de disfraces</strong> 🎭. <strong>Solo hasta agotar existencias</strong> — al agotarse sube a Preventa 2.</p>
+    <div class="preventa preventa--soldout reveal">
+      <div class="soldout-banner" role="status"><span aria-hidden="true">🎃</span> Sold out <span aria-hidden="true">🎃</span></div>
+      <div class="preventa-top"><div class="preventa-kind">🎟️ Pista a pie · Preventa 1</div><div class="preventa-price-wrap"><div class="preventa-price"><sup>$</sup>32K</div><div class="preventa-was">Ahora sigue <strong>Preventa 2</strong> a $37K</div></div></div>
+      <p class="preventa-desc">Incluía <strong>2 bebidas personales a elección</strong> (cerveza o hidratación) + acceso a Pista, primer piso y <strong>concurso de disfraces</strong> 🎭. <strong>Se agotó</strong> — gracias a todos los que la compraron.</p>
       <div class="stock-indicator" id="stockPreventa1"></div>
-      <a class="buy-btn buy-btn--whatsapp" href="https://wa.me/573161088178?text=Hola%2C%20quiero%20comprar%20una%20preventa%201%20para%20back%20to%20halloween%202016%2C%20%C2%BFComo%20puedo%20realizar%20el%20pago%3F%20" target="_blank" rel="noopener" data-track="buy_preventa1_whatsapp">
-        Comprar
-        <span class="buy-btn-orb">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.72-1.28a8.9 8.9 0 0 0 5.32 1.75h.02c4.93 0 8.94-4 8.94-8.94a8.86 8.86 0 0 0-3.4-6.21ZM12.05 20a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.8.97.94-2.74-.18-.28a7.44 7.44 0 1 1 13.83-3.86A7.45 7.45 0 0 1 12.05 20Z"/></svg>
-        </span>
-      </a>
+      <button class="buy-btn buy-btn--locked" type="button" disabled>Agotado</button>
     </div>
 
     <div class="ticket-grid">
@@ -1082,7 +1087,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   // ---------- Stock de boletas (edita "remaining" manualmente aqui) ----------
   var STOCK = {
-    preventa1: { total: 50, remaining: 5, lowThreshold: 10 },
+    preventa1: { total: 50, remaining: 0, lowThreshold: 10 },
     preventa2: { total: 50, remaining: 50, lowThreshold: 10 },
     hallstage: { total: 20, remaining: 4, lowThreshold: 5 },
     backstage: { total: 5, remaining: 4, lowThreshold: 2 }
