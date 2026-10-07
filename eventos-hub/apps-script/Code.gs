@@ -2078,7 +2078,61 @@ function validarHojaHalloween_(encabezados, nombreHoja) {
 }
 
 function enviarQRsHalloween() {
+  enviarQRsHalloween_(false);
+}
+
+// ---- Envio automatico de las ventas escritas a mano ----
+// activarEnvioAutomaticoQRHalloween() (ejecutar a mano UNA vez) crea un
+// activador que corre enviarQRsHalloweenAutomatico() cada 10 minutos. En
+// modo automatico solo se envian filas de la hoja manual que esten
+// completas (Nombre + correo valido + Estado APPROVED), para no mandar una
+// fila a medio escribir: llena la fila y pon APPROVED de ultimo. Las de
+// "Ventas Wompi" ya salen solas al momento de la compra.
+const QR_HW_AUTO_FUNCION = 'enviarQRsHalloweenAutomatico';
+
+function enviarQRsHalloweenAutomatico() {
+  enviarQRsHalloween_(true);
+}
+
+function activarEnvioAutomaticoQRHalloween() {
+  desactivarEnvioAutomaticoQRHalloween();
+  ScriptApp.newTrigger(QR_HW_AUTO_FUNCION).timeBased().everyMinutes(10).create();
+  Logger.log('Listo: las ventas escritas a mano en "Repositorio" se envian solas cada 10 minutos.');
+}
+
+function desactivarEnvioAutomaticoQRHalloween() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === QR_HW_AUTO_FUNCION) {
+      ScriptApp.deleteTrigger(t);
+      Logger.log('Activador automatico de QR Halloween eliminado.');
+    }
+  });
+}
+
+// Evita que dos envios (el automatico y uno a mano) corran al mismo tiempo
+// y manden el mismo QR dos veces. Usa el lock del documento, no el del
+// script, para no bloquear registrarVentaHalloween_ (ventas de Wompi).
+function enviarQRsHalloween_(automatico) {
+  const lock = LockService.getDocumentLock() || LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    Logger.log('Ya hay otro envio de QR de Halloween en curso; se salta esta vez.');
+    return;
+  }
+  try {
+    enviarQRsHalloweenSinLock_(automatico);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function enviarQRsHalloweenSinLock_(automatico) {
   const hojas = hojasHalloween_([getHalloweenQrSheet_(), getHalloweenWompiSheet_(false)]);
+  hojas.forEach(function (h) { h.esWompi = h.sheet.getName() === QR_HW_WOMPI_TAB; });
+  // En modo automatico solo se toca una fila manual si ya esta completa.
+  const completa = function (f) {
+    return String(f.v[7] || '').trim() !== '' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(f.v[8] || '').trim());
+  };
+  const saltarEnAutomatico = function (f) { return automatico && (f.h.esWompi || !completa(f)); };
   for (let h = 0; h < hojas.length; h++) {
     if (!validarHojaHalloween_(hojas[h].data[0], hojas[h].sheet.getName())) {
       Logger.log('No se envio nada.');
@@ -2114,6 +2168,12 @@ function enviarQRsHalloween() {
   filas.forEach(function (f) {
     if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
     if (String(f.v[4] || '').trim()) return;
+    if (saltarEnAutomatico(f)) {
+      if (!f.h.esWompi && !marcadoComoSi_(f.v[12])) {
+        Logger.log('La ' + donde(f) + ' esta en APPROVED pero le falta el Nombre o el correo no es valido; se envia cuando este completa.');
+      }
+      return;
+    }
     const cfg = tipoHalloween_(f.v[2]);
     if (!cfg) {
       tiposDesconocidos[f.v[2]] = true;
@@ -2148,9 +2208,14 @@ function enviarQRsHalloween() {
   filas.forEach(function (f) {
     const cfg = tipoHalloween_(f.v[2]);
     const email = String(f.v[8] || '').trim();
-    if (!cfg || !f.v[4] || email.indexOf('@') === -1) return;
+    if (!cfg || !f.v[4]) return;
     if (String(f.v[11]).trim().toUpperCase() !== 'APPROVED') return;
     if (marcadoComoSi_(f.v[12])) return;
+    if (saltarEnAutomatico(f)) return;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      Logger.log('La ' + donde(f) + ' tiene un correo invalido ("' + email + '"); corrigelo y vuelve a correr.');
+      return;
+    }
 
     const key = email.toLowerCase() + '|' + cfg.key;
     if (!grupos[key]) {
@@ -2166,7 +2231,8 @@ function enviarQRsHalloween() {
     const grupo = grupos[orden[g]];
 
     if (MailApp.getRemainingDailyQuota() <= 0) {
-      Logger.log('Cuota diaria de correo agotada — quedaron ' + (orden.length - g) + ' correos pendientes. Vuelve a correr enviarQRsHalloween() mañana.');
+      Logger.log('Cuota diaria de correo agotada — quedaron ' + (orden.length - g) + ' correos pendientes. ' +
+        (automatico ? 'Se envian solos cuando Gmail renueve la cuota.' : 'Vuelve a correr enviarQRsHalloween() mañana.'));
       break;
     }
 
@@ -2192,6 +2258,7 @@ function enviarQRsHalloween() {
     }
   }
 
+  if (automatico && orden.length === 0) return;   // pasada automatica sin nada pendiente
   Logger.log('--- QR Halloween: ' + enviados + ' correos enviados (' + boletas + ' boletas), de ' + orden.length + ' pendientes ---');
 }
 
