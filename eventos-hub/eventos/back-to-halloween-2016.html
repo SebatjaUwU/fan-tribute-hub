@@ -418,12 +418,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .soldout-banner span{ letter-spacing:0; }
   .soldout-banner small{ display:block; margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; }
-  .preventa-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
-  .preventa-kind{ font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--orange-soft); }
+  .preventa-top{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; margin-bottom:10px; }
+  .preventa-kind{ font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:0.04em; color:var(--orange-soft); width:100%; text-align:center; }
   .preventa-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; color:var(--white); transition: transform 0.25s ease, text-shadow 0.25s ease; }
   .preventa:hover .preventa-price{ transform:scale(1.06); text-shadow:0 0 20px rgba(255,163,97,0.6); }
   .preventa-price sup{ font-size:14px; font-weight:600; color:var(--white-dim); margin-right:2px; }
-  .preventa-price-wrap{ text-align:right; }
+  .preventa-price-wrap{ text-align:center; }
   .preventa-was{ margin-top:4px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--white-dim); }
   .preventa-was strong{ color:var(--red-soft); }
   .preventa-was em{ font-style:normal; color:var(--orange-soft); }
@@ -448,8 +448,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .ticket--premium{ background:linear-gradient(165deg, rgba(106,47,217,0.08), rgba(122,18,32,0.05)); border-color:rgba(106,47,217,0.25); }
   .ticket--backstage{ border-color:rgba(224,89,107,0.4); background:linear-gradient(165deg, rgba(224,89,107,0.1), rgba(106,47,217,0.08)); box-shadow:0 0 24px rgba(224,89,107,0.12); }
   .ticket--backstage:hover{ box-shadow:0 24px 54px rgba(224,89,107,0.25); border-color:rgba(224,89,107,0.6); }
-  .ticket-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; gap:12px; }
-  .ticket-kind{ font-family:'Bebas Neue',sans-serif; font-size:14px; }
+  .ticket-top{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; gap:8px; }
+  .ticket-kind{ font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.04em; line-height:1.1; }
   .ticket--premium .ticket-kind{ color:var(--purple-glow); }
   .ticket--backstage .ticket-kind{ color:var(--red-soft); }
   .ticket-tag{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; padding:5px 10px; border-radius:100px; border:1px solid var(--line); color:var(--white-dim); white-space:nowrap; }
@@ -564,9 +564,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   @media (max-width:680px){
     .chip{ white-space:normal; word-break:break-word; overflow-wrap:break-word; min-width:0; max-width:100%; }
-    .preventa-top{ flex-direction:column; align-items:flex-start; gap:6px; }
-    .preventa-price-wrap{ text-align:left; }
-    .ticket-top{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .preventa-top{ flex-direction:column; align-items:center; gap:6px; }
+    .preventa-price-wrap{ text-align:center; }
+    .soldout-banner{ font-size:26px; letter-spacing:0.12em; white-space:nowrap; }
+    .ticket-top{ flex-direction:column; align-items:center; gap:6px; }
     .preventa-price{ font-size:28px; }
     .ticket-price{ font-size:26px; }
     .countdown-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 12px; max-width:320px; margin:0 auto; }
