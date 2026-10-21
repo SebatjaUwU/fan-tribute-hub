@@ -603,7 +603,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ================= NAV ================= -->
 <nav class="nav" id="mainNav">
   <div class="wrap">
-    <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
+    <a class="nav-logo" href="#inicio"><img class="brand-logo-img brand-logo-img--nav" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.webp" alt="Back to Halloween 2016">BACK TO <span class="accent">HALLOWEEN</span> 2016</a>
     <div class="nav-links">
       <a href="#inicio">Inicio</a><a href="#evento">Evento</a><a href="#lineup">Lineup</a><a href="#canciones" class="nav-link--new" data-track="nav_playlist_night">Playlist Night</a><a href="#localidades">Localidades</a><a href="#faq">FAQ</a>
     </div>
@@ -618,9 +618,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="inicio">
-  <video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-    <source src="../../edc-preparty/ASSETS/hero-halloween-720.mp4" type="video/mp4">
-  </video>
+  <video class="hero-video" autoplay muted loop playsinline preload="none" poster="../../edc-preparty/ASSETS/hero-halloween-poster.webp" data-src="../../edc-preparty/ASSETS/hero-halloween-720.mp4" aria-hidden="true"></video>
   <div class="hero-video-overlay"></div>
   <svg class="hero-cobweb tl" viewBox="0 0 100 100" aria-hidden="true"><path d="M0 0 L100 100 M0 30 Q30 30 30 0 M0 60 Q60 60 60 0 M30 0 L0 30 M60 0 L0 60"/></svg>
   <svg class="hero-cobweb tr" viewBox="0 0 100 100" aria-hidden="true"><path d="M0 0 L100 100 M0 30 Q30 30 30 0 M0 60 Q60 60 60 0 M30 0 L0 30 M60 0 L0 60"/></svg>
@@ -638,8 +636,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div class="hero-content" id="heroContent">
     <div class="event-logo">
-      <img class="brand-logo-fan" src="../../edc-preparty/ASSETS/fan-tribute-logo-transparent.png" alt="Fan Tribute">
-      <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.png" alt="Back to Halloween 2016">
+      <img class="brand-logo-fan" src="../../edc-preparty/ASSETS/fan-tribute-logo-transparent.webp" alt="Fan Tribute">
+      <img class="brand-logo-img" src="../../edc-preparty/ASSETS/back_to_halloween_2016_logo.webp" alt="Back to Halloween 2016">
       <span class="l3">2016</span>
     </div>
     <p class="hero-sub">Una noche para volver al 2016.</p>
@@ -959,12 +957,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </footer>
 
-<div class="floating-controls">
-  <button class="fc-btn" id="audioToggle" type="button" aria-pressed="false" aria-label="Reproducir ambiente" title="Reproducir ambiente (agrega tu propio audio en /assets/halloween/audio/)">
-    <svg class="fc-icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5Z"/></svg>
-    <svg class="fc-icon-pause" viewBox="0 0 24 24" fill="currentColor" hidden><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-  </button>
-</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -1145,20 +1137,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   });
 
 
-  // ---------- Audio (placeholder -- agrega tu archivo real) ----------
-  // Coloca tu archivo en /assets/halloween/audio/ambiente.mp3 y descomenta:
-  // var nightAudio = new Audio('/assets/halloween/audio/ambiente.mp3'); nightAudio.loop = true;
-  var audioToggle = document.getElementById('audioToggle');
-  var iconPlay = audioToggle.querySelector('.fc-icon-play');
-  var iconPause = audioToggle.querySelector('.fc-icon-pause');
-  var playing = false;
-  audioToggle.addEventListener('click', function () {
-    playing = !playing;
-    iconPlay.hidden = playing;
-    iconPause.hidden = !playing;
-    audioToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
-    // if (nightAudio) { playing ? nightAudio.play() : nightAudio.pause(); }
-  });
+  // ---------- Video de fondo: solo en pantallas grandes y sin ahorro de datos ----------
+  (function () {
+    var v = document.querySelector('.hero-video');
+    if (!v || !v.dataset.src) return;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (window.matchMedia('(min-width: 768px)').matches && !saveData) {
+      v.src = v.dataset.src;
+      v.play && v.play().catch(function () {});
+    }
+  })();
 
   // ---------- Vota tu cancion (ranking en vivo con Firebase) ----------
   (function () {
