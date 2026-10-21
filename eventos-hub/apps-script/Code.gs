@@ -1788,7 +1788,7 @@ function buildPromoPreEdcHtml_() {
 
 const PROMO_HALLOWEEN_EVENTOS = ['End of Summer', 'Summer 2016'];
 const PROMO_HALLOWEEN_ENVIADOS_PROP = 'PROMO_HALLOWEEN_ENVIADOS';
-const PROMO_HALLOWEEN_URL = 'https://fan-tribute-co.netlify.app/eventos-hub/eventos/back-to-halloween-2016.html';
+const PROMO_HALLOWEEN_URL = 'https://fantributeco.netlify.app/eventos-hub/eventos/back-to-halloween-2016.html';
 
 // Tercera lista: spreadsheet "negocio_fantribute_segunda_fecha20082026",
 // hoja "Boletas", columna "Correo". Como comparte el registro de "ya
@@ -2014,7 +2014,7 @@ function buildPromoDescuentoHalloweenHtml_() {
 
 const QR_HW_SHEET_ID = '13tybmgGnPrFhQyBYkdR5EMWU1sfraOAGhMHOoc6WFl0';
 const QR_HW_SHEET_GID = 0;
-const QR_HW_ASSETS_URL = 'https://fan-tribute-co.netlify.app/edc-preparty/ASSETS/qr-halloween/';
+const QR_HW_ASSETS_URL = 'https://fantributeco.netlify.app/edc-preparty/ASSETS/qr-halloween/';
 // Llave = tipo de entrada normalizado (minusculas, sin tildes).
 const QR_HW_TIPOS = {
   'preventa 1': { key: 'p1',   tipo: 'Preventa 1', prefijo: 'BTH16-P1',   accent: '#ff9a3c', zona: 'Pista · Primer piso', sello: true },

@@ -28,4 +28,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://fan-tribute-co.netlify.app/sitemap.xml
+Sitemap: https://fantributeco.netlify.app/sitemap.xml
