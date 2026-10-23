@@ -83,7 +83,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "name": "Hall Stage",
       "price": "70000",
       "priceCurrency": "COP",
-      "availability": "https://schema.org/InStock",
+      "availability": "https://schema.org/SoldOut",
       "url": "https://checkout.wompi.co/l/jCazhj"
     },
     {
@@ -444,6 +444,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .ticket:hover .ticket-price{ transform:scale(1.05); }
   .ticket-price{ transition: transform 0.25s ease; }
   .ticket--locked{ filter:grayscale(0.5); opacity:0.75; }
+  .ticket .soldout-banner{ margin:-32px -28px 22px; font-size:30px; }
+  .ticket--soldout > :not(.soldout-banner){ opacity:0.5; filter:grayscale(0.7); }
   .ticket--locked:hover{ transform:none; box-shadow:none; }
   .ticket--premium{ background:linear-gradient(165deg, rgba(106,47,217,0.08), rgba(122,18,32,0.05)); border-color:rgba(106,47,217,0.25); }
   .ticket--backstage{ border-color:rgba(224,89,107,0.4); background:linear-gradient(165deg, rgba(224,89,107,0.1), rgba(106,47,217,0.08)); box-shadow:0 0 24px rgba(224,89,107,0.12); }
@@ -800,9 +802,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <section class="tickets-section">
   <div class="wrap">
-    <div class="section-head reveal"><div class="eyebrow">Segundo piso</div><h2>Balcón &amp; Backstage</h2><p>Hall Stage, Trío VIP y Backstage ya disponibles por Wompi.</p></div>
+    <div class="section-head reveal"><div class="eyebrow">Segundo piso</div><h2>Balcón &amp; Backstage</h2><p>Hall Stage agotado 🎃. Trío VIP y Backstage disponibles por Wompi.</p></div>
     <div class="ticket-grid ticket-grid--3">
-      <div class="ticket reveal">
+      <div class="ticket ticket--soldout reveal">
+        <div class="soldout-banner" role="status"><span aria-hidden="true">🎃</span> Agotado <span aria-hidden="true">🎃</span><small>Cupo de 20 personas · 20/20</small></div>
         <div class="ticket-top"><div class="ticket-kind">🟣 Hall Stage</div></div>
         <div class="ticket-price">$70K</div>
         <div class="ticket-price-note">Acceso exclusivo al balcón · Segundo piso — para ver la fiesta desde arriba</div>
@@ -814,12 +817,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>4 bebidas personales a elección</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>🎭 Acceso al concurso de disfraces</span></li>
         </ul>
-        <a class="buy-btn buy-btn--premium" href="https://checkout.wompi.co/l/jCazhj" target="_blank" rel="noopener" data-track="buy_hallstage_wompi">
-          Comprar
-          <span class="buy-btn-orb">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </span>
-        </a>
+        <button class="buy-btn buy-btn--locked" type="button" disabled>Agotado</button>
       </div>
       <div class="ticket ticket--premium reveal">
         <div class="ticket-top"><div class="ticket-kind">🟡 Trío VIP</div></div>
@@ -1088,8 +1086,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   // ---------- Stock de boletas (edita "remaining" manualmente aqui) ----------
   var STOCK = {
     preventa1: { total: 50, remaining: 0, lowThreshold: 10 },
-    preventa2: { total: 100, remaining: 40, lowThreshold: 10 },
-    hallstage: { total: 20, remaining: 2, lowThreshold: 5 },
+    preventa2: { total: 100, remaining: 20, lowThreshold: 10 },
+    hallstage: { total: 20, remaining: 0, lowThreshold: 5 },
     trio: { total: 5, remaining: 3, lowThreshold: 2 },
     backstage: { total: 5, remaining: 2, lowThreshold: 2 }
   };
