@@ -51,6 +51,34 @@ const LINK_MAP = {
   'H9xF4f': { evento: 'End of Summer', tipo: 'General',    prefijo: 'EOS-GEN', cantidad: 3 },
 };
 
+// ==== REMITENTE DE LOS CORREOS ====
+// El script corre en la cuenta de Fan Tribute (lee Wompi, arma los QR),
+// pero los correos salen DESDE esta direccion. Requisito: en el Gmail de la
+// cuenta dueña del script, Configuracion > Cuentas e importacion > "Enviar
+// correo como" > agregar esta direccion y verificarla. Si no esta agregada,
+// el correo sale igual desde la cuenta del script (no se pierde) y queda un
+// aviso en el registro de ejecucion.
+const CORREO_REMITENTE = 'sebatja1234@gmail.com';
+let aliasRemitenteOk_ = null;
+
+function enviarCorreo_(para, asunto, cuerpo, opciones) {
+  opciones = opciones || {};
+  if (aliasRemitenteOk_ === null) {
+    try {
+      aliasRemitenteOk_ = GmailApp.getAliases().map(function (a) { return a.toLowerCase(); })
+        .indexOf(CORREO_REMITENTE.toLowerCase()) !== -1;
+    } catch (e) {
+      aliasRemitenteOk_ = false;
+    }
+    if (!aliasRemitenteOk_) {
+      Logger.log('Aviso: ' + CORREO_REMITENTE + ' no esta en "Enviar correo como" de esta cuenta; los correos salen desde ' + Session.getEffectiveUser().getEmail() + '.');
+    }
+  }
+  if (aliasRemitenteOk_) opciones.from = CORREO_REMITENTE;
+  if (!opciones.replyTo) opciones.replyTo = CORREO_REMITENTE;
+  return GmailApp.sendEmail(para, asunto, cuerpo, opciones);
+}
+
 const SHEET_NAME = 'Repositorio QR';
 const HEADERS = [
   'Fecha', 'Evento', 'Tipo de entrada', 'Numero', 'Ticket ID',
@@ -724,7 +752,7 @@ function getOrCreateLabel_(name) {
  */
 function notifyReview_(message, motivo) {
   try {
-    GmailApp.sendEmail(
+    enviarCorreo_(
       Session.getEffectiveUser().getEmail(),
       'Revisar venta no procesada — Repositorio QR',
       'No se pudo generar el ticket automaticamente.\n\n' +
@@ -985,7 +1013,7 @@ function sendTicketEmail_(d) {
     tickets: ticketsConCid
   });
 
-  GmailApp.sendEmail(d.email, buildEmailSubject_(d), '', {
+  enviarCorreo_(d.email, buildEmailSubject_(d), '', {
     htmlBody: html,
     inlineImages: inlineImages,
     attachments: attachments,
@@ -1727,7 +1755,7 @@ function enviarPromoPreEdc_(destinatarios) {
     }
 
     try {
-      GmailApp.sendEmail(email, subject, '', {
+      enviarCorreo_(email, subject, '', {
         htmlBody: buildPromoPreEdcHtml_(),
         inlineImages: { flyer: flyerBlob, precios: preciosBlob },
         attachments: [flyerBlob, preciosBlob],
@@ -1854,7 +1882,7 @@ function enviarPromoHalloween_(destinatarios, registrar, opciones) {
     }
 
     try {
-      GmailApp.sendEmail(email, subject, '', {
+      enviarCorreo_(email, subject, '', {
         htmlBody: htmlBody,
         inlineImages: { flyer: flyerBlob },
         attachments: [flyerBlob],
@@ -2539,7 +2567,7 @@ function enviarQRHalloween_(d) {
     return { ticketId: ticketId, cid: 'qr' + i, entrada: entrada };
   });
 
-  GmailApp.sendEmail(d.email, 'Tu QR para Back to Halloween 2016 - ' + cfg.tipo, '', {
+  enviarCorreo_(d.email, 'Tu QR para Back to Halloween 2016 - ' + cfg.tipo, '', {
     htmlBody: buildQrHalloweenHtml_({ nombre: d.nombre, cfg: cfg, orden: d.orden, tickets: tickets }),
     inlineImages: inlineImages,
     attachments: attachments,
