@@ -2031,7 +2031,6 @@ const QR_HW_TIPOS = {
 // automatico de End of Summer: trigger de Gmail checkWompiSales + webhook).
 // payment_link_id -> tipo (llave de QR_HW_TIPOS) y cuantas boletas/QR
 // genera UNA compra de ese link (los combos de Preventa 2 generan 2, 3 o 4).
-// Para sumar General, agrega su link_id aqui.
 const QR_HW_WOMPI_LINKS = {
   'sjtaeG': { tipo: 'preventa 2', cantidad: 1 },   // $37K
   'YN10lE': { tipo: 'preventa 2', cantidad: 2 },   // combo x2, $74K
@@ -2043,6 +2042,12 @@ const QR_HW_WOMPI_LINKS = {
   '85iw3a': { tipo: 'preventa 2', cantidad: 2 },
   'YpXM7S': { tipo: 'preventa 2', cantidad: 2 },
   'eaLaZm': { tipo: 'preventa 2', cantidad: 3 },
+  // General (se activo al agotarse Preventa 2, 25 oct)
+  'GmmYDV': { tipo: 'general',    cantidad: 1 },   // $42K
+  'eUV5hu': { tipo: 'general',    cantidad: 2 },   // combo x2
+  '980yq6': { tipo: 'general',    cantidad: 3 },   // combo x3
+  'hzNHyf': { tipo: 'general',    cantidad: 4 },   // combo x4
+  'CIydOb': { tipo: 'general',    cantidad: 5 },   // combo x5
   'jCazhj': { tipo: 'hall stage', cantidad: 1 },
   'vVVSym': { tipo: 'trio vip',   cantidad: 3 },
   'bqsf6u': { tipo: 'backstage',  cantidad: 5 }
