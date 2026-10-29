@@ -1139,8 +1139,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     preventa1: { total: 50, remaining: 0, lowThreshold: 10 },
     preventa2: { total: 100, remaining: 0, lowThreshold: 10 },
     hallstage: { total: 20, remaining: 0, lowThreshold: 5 },
-    trio: { total: 5, remaining: 3, lowThreshold: 2 },
-    backstage: { total: 5, remaining: 2, lowThreshold: 2 }
+    trio: { total: 5, remaining: 1, lowThreshold: 2, label: '¡Última mesa VIP!' },
+    backstage: { total: 5, remaining: 2, lowThreshold: 2, label: '¡Últimas mesas Backstage!' }
   };
   function renderStock(key, elId) {
     var cfg = STOCK[key];
@@ -1150,6 +1150,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (r <= 0) {
       el.classList.add('is-soldout');
       el.innerHTML = '<span class="stock-dot"></span> Agotado';
+    } else if (cfg.label) {
+      el.classList.add('is-low');
+      el.innerHTML = '<span class="stock-dot"></span> ' + cfg.label;
     } else if (r <= cfg.lowThreshold) {
       el.classList.add('is-low');
       el.innerHTML = '<span class="stock-dot"></span> ¡Quedan pocas! · ' + r + ' / ' + cfg.total;
