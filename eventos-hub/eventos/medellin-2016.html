@@ -81,10 +81,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ================= HERO / AFICHE ================= */
   .hero{ position:relative; min-height:100vh; min-height:100svh; overflow:hidden; isolation:isolate; }
-  .hero-photo{ position:absolute; inset:0; z-index:-2; background:url(../../edc-preparty/ASSETS/eos-medellin-sky.webp) center top/cover no-repeat; }
+  .hero-photo{ position:absolute; inset:0; z-index:-2; background:var(--black) url(../../edc-preparty/ASSETS/eos-medellin-video-poster.webp) center/cover no-repeat; overflow:hidden; }
+  .hero-photo video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.65) brightness(.78) saturate(1.3); }
+  .hero-photo::after{ content:''; position:absolute; inset:0; background:linear-gradient(120deg, rgba(91,34,214,.35), rgba(35,70,255,.12) 50%, rgba(25,227,255,.10)); mix-blend-mode:multiply; }
   .hero::before{ content:''; position:absolute; inset:0; z-index:-1;
-    background:linear-gradient(180deg, rgba(7,6,11,.05) 0%, rgba(7,6,11,.45) 40%, rgba(7,6,11,.85) 70%, var(--black) 96%),
-               linear-gradient(90deg, rgba(7,6,11,.7) 0%, rgba(7,6,11,.15) 55%, rgba(7,6,11,.35) 100%); }
+    background:linear-gradient(180deg, rgba(7,6,11,.2) 0%, rgba(7,6,11,.25) 45%, rgba(7,6,11,.8) 78%, var(--black) 97%),
+               linear-gradient(90deg, rgba(7,6,11,.62) 0%, rgba(7,6,11,.12) 55%, rgba(7,6,11,.3) 100%); }
   .topline{ display:flex; justify-content:space-between; align-items:center; padding-top:22px; }
   .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--cream); }
   .brand img{ height:24px; width:auto; }
@@ -215,7 +217,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- ================= HERO / AFICHE ================= -->
 <header class="hero">
-  <div class="hero-photo" aria-hidden="true"></div>
+  <div class="hero-photo" aria-hidden="true"><video id="heroVideo" muted loop playsinline preload="metadata" poster="../../edc-preparty/ASSETS/eos-medellin-video-poster.webp" data-src="../../edc-preparty/ASSETS/eos-medellin-hero.mp4"></video></div>
   <div class="wrap">
     <div class="topline">
       <a class="brand" href="../../index.html" aria-label="Fan Tribute"><img src="../../edc-preparty/ASSETS/fan-tribute-logo-transparent.webp" alt="Fan Tribute" width="64" height="24"><span class="mono">presenta</span></a>
@@ -334,6 +336,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </footer>
 
 <script>
+  // Video de la portada: se carga solo si el visitante no tiene activado el ahorro de datos
+  (function () {
+    var v = document.getElementById('heroVideo');
+    if (!v) return;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (saveData || reduce) return;
+    v.src = v.dataset.src;
+    var p = v.play(); if (p && p.catch) p.catch(function () {});
+  })();
+
   // Aparicion suave al hacer scroll (una sola vez por bloque)
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
