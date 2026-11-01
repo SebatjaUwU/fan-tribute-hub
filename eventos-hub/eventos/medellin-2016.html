@@ -177,6 +177,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .row-val small{ display:block; font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--cream-dim); margin-top:6px; letter-spacing:0; }
   .row .link{ font-size:20px; justify-self:start; }
 
+  /* ================= MAPA ================= */
+  .mapa{ padding:90px 0; background:var(--ink); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); overflow:hidden; }
+  .mapa-grid{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
+  @media (min-width:960px){ .mapa-grid{ grid-template-columns:.9fr 1.1fr; gap:60px; } }
+  .mapa-label{ color:var(--cyan); }
+  .mapa-title{ margin-top:10px; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(56px, 13vw, 110px); line-height:.86; }
+  .mapa-title span{ display:block; color:transparent; -webkit-text-stroke:2px var(--cream); }
+  .zonas{ list-style:none; margin-top:30px; counter-reset:z; }
+  .zonas li{ counter-increment:z; display:grid; grid-template-columns:44px 130px 1fr; align-items:baseline; gap:8px; padding:14px 0; border-bottom:1px solid var(--rule); }
+  .zonas li:first-child{ border-top:1px solid var(--rule); }
+  .zonas li::before{ content:counter(z, decimal-leading-zero); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--violet); letter-spacing:.1em; }
+  .zonas b{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:28px; letter-spacing:.03em; }
+  .zonas span{ color:var(--cream-dim); font-size:15px; }
+  @media (max-width:520px){ .zonas li{ grid-template-columns:36px 1fr; } .zonas span{ grid-column:2; } }
+  .mapa-img{ position:relative; justify-self:center; width:min(500px, 94%); transform:rotate(-2deg); }
+  .mapa-img img{ width:100%; height:auto; box-shadow:0 30px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(243,235,221,.08); }
+  .mapa-img::before{ content:''; position:absolute; z-index:1; top:-14px; left:50%; width:120px; height:32px; margin-left:-60px; background:rgba(233,220,194,.85) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .25 0 0 0 0 .16 0 0 0 .28 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); transform:rotate(3deg); box-shadow:0 3px 8px rgba(0,0,0,.3); }
+  .mapa-img figcaption{ margin-top:16px; color:var(--cream-dim); text-align:center; }
+
   /* ================= FAQ ================= */
   .faq{ padding:20px 0 90px; }
   .faq-head{ font-family:'Bebas Neue',sans-serif; font-size:clamp(46px, 10vw, 84px); line-height:.9; margin-bottom:26px; }
@@ -297,6 +316,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
+<!-- ================= MAPA ================= -->
+<section class="mapa" id="mapa">
+  <div class="wrap mapa-grid">
+    <div class="mapa-copy reveal">
+      <span class="mono mapa-label">El lugar</span>
+      <h2 class="mapa-title">Así es <span>Xero Club</span></h2>
+      <ol class="zonas">
+        <li><b>Cover</b><span>Entrada y control de ingreso.</span></li>
+        <li><b>General</b><span>La pista, frente a la cabina del DJ.</span></li>
+        <li><b>Backstage</b><span>La tarima, detrás del DJ.</span></li>
+        <li><b>Barra</b><span>Al fondo, junto a la pista.</span></li>
+        <li><b>Baños</b><span>Hombres y mujeres, a cada lado.</span></li>
+      </ol>
+    </div>
+    <figure class="mapa-img reveal">
+      <a href="../../edc-preparty/ASSETS/eos-medellin-mapa.webp" target="_blank" rel="noopener" data-track="eosmde_mapa"><img src="../../edc-preparty/ASSETS/eos-medellin-mapa.webp" width="1080" height="1350" loading="lazy" decoding="async" alt="Mapa de Xero Club: entrada por el Cover, pista General frente a la cabina del DJ bajo la estructura de luces, Backstage en la tarima, barra al fondo y baños de hombres y mujeres a los lados."></a>
+      <figcaption class="mono">Toca para ver en grande</figcaption>
+    </figure>
+  </div>
+</section>
+
 <!-- ================= FAQ ================= -->
 <section class="faq" id="faq">
   <div class="wrap">
@@ -308,6 +348,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <details class="q reveal">
         <summary><span>¿Quién toca?</span><b aria-hidden="true">+</b></summary>
         <p>Es un evento tributo: suenan los himnos del EDM de 2016 de Avicii, Martin Garrix, David Guetta y los demás del cartel. Los artistas no se presentan.</p>
+      </details>
+      <details class="q reveal">
+        <summary><span>¿Cómo es el lugar por dentro?</span><b aria-hidden="true">+</b></summary>
+        <p>Entras por el <strong>Cover</strong>; la pista <strong>General</strong> queda frente a la cabina del DJ, bajo la estructura de luces, y el <strong>Backstage</strong> es la tarima detrás. Hay barra y baños de hombres y mujeres. <a href="#mapa">Ver el mapa de Xero Club</a>.</p>
       </details>
       <details class="q reveal">
         <summary><span>¿Hay edad mínima?</span><b aria-hidden="true">+</b></summary>
