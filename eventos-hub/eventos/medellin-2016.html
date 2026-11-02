@@ -365,11 +365,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="reveal">
       <span class="mono registro-label">Lista de interesados</span>
       <h2 class="registro-title">Anótate<span>primero</span></h2>
-      <p class="registro-copy">Déjanos tu nombre y tu correo y te avisamos primero cuando salgan las boletas.</p>
+      <p class="registro-copy">Déjanos tus datos y te avisamos primero cuando salgan las boletas.</p>
     </div>
     <form class="form reveal" id="registroForm" novalidate>
       <label class="field"><span class="mono">Nombre</span><input name="nombre" type="text" autocomplete="name" required maxlength="80"></label>
       <label class="field"><span class="mono">Correo</span><input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"></label>
+      <label class="field"><span class="mono">WhatsApp</span><input name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="300 000 0000"></label>
+      <fieldset class="field field--opts"><legend class="mono">Me interesa</legend>
+        <label><input type="radio" name="interes" value="Preventa 1" checked><span>Preventa 1</span></label>
+        <label><input type="radio" name="interes" value="General"><span>General</span></label>
+        <label><input type="radio" name="interes" value="Backstage"><span>Backstage</span></label>
+      </fieldset>
       <input class="hp" type="text" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn" type="submit" id="registroBtn">Registrarme</button>
       <p class="form-msg" id="registroMsg" role="status" aria-live="polite"></p>
@@ -470,6 +476,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       btn.disabled = true; btn.textContent = 'Enviando…'; say('');
       fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({
         action: 'registro', evento: 'End of Summer 2016 Medellín', nombre: nombre, email: email,
+        telefono: f.telefono.value.trim(), interes: (form.querySelector('input[name=interes]:checked') || {}).value || '',
         web: f.web.value, origen: location.href.split('#')[0]
       }) })
         .then(function (r) { return r.json(); })
