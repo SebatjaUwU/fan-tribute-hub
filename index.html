@@ -204,11 +204,12 @@
   .event-card--eos{ border-color:rgba(139,61,255,0.32); }
   .event-card--eos:hover{ box-shadow:0 20px 50px rgba(139,61,255,0.2); border-color:rgba(139,61,255,0.55); }
   .event-card--eos .event-tag{ background:rgba(139,61,255,0.16); border:1px solid rgba(139,61,255,0.45); color:#C9A8FF; }
-  .event-card--ls .event-banner{ background:#07060B url(edc-preparty/ASSETS/ls-bogota-wordmark.webp) center/auto 82% no-repeat; }
+  .event-card--ls .event-banner{ background:#07060B; display:flex; align-items:center; justify-content:center; }
+  .event-card--ls .event-banner::after{ content:'BOGOTÁ'; font-family:'Unbounded',sans-serif; font-weight:800; font-size:46px; letter-spacing:.04em; color:transparent; -webkit-text-stroke:1.5px rgba(255,154,31,.85); }
   .event-card--ls{ border-color:rgba(31,107,255,0.32); }
   .event-card--ls:hover{ box-shadow:0 20px 50px rgba(255,154,31,0.18); border-color:rgba(255,154,31,0.5); }
   .event-card--ls .event-tag{ background:rgba(255,154,31,0.14); border:1px solid rgba(255,154,31,0.45); color:#FFC27A; }
-  .event-tag--past, .event-card .event-tag--past{ background:rgba(185,198,222,0.1); border:1px solid var(--line); color:var(--dim); }
+  .event-tag--past, .event-card .event-tag.event-tag--past{ background:rgba(185,198,222,0.1); border:1px solid var(--line); color:var(--dim); }
 
   .event-tag{
     display:inline-block; align-self:flex-start; font-family:'JetBrains Mono', monospace; font-size:10.5px;
@@ -317,8 +318,8 @@
         <div class="event-banner"></div>
         <div class="event-body">
           <div class="event-tag">Próximo evento · Bogotá</div>
-          <div class="event-title">LAST SUMMER 2016</div>
-          <div class="event-date">Bogotá · Fecha y lugar muy pronto · Tributies / Creyentes $30.000</div>
+          <div class="event-title">PRÓXIMO EVENTO EN BOGOTÁ</div>
+          <div class="event-date">Nombre, fecha y lugar muy pronto · Tributies / Creyentes $30.000</div>
           <div class="event-cta">
             Ver evento
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
