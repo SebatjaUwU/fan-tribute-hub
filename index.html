@@ -200,7 +200,15 @@
   .event-card--halloween{ border-color:rgba(255,106,43,0.32); }
   .event-card--halloween:hover{ box-shadow:0 20px 50px rgba(255,106,43,0.2); border-color:rgba(255,106,43,0.55); }
   .event-card--halloween .event-tag{ background:rgba(255,106,43,0.16); border:1px solid rgba(255,106,43,0.45); color:var(--orange-soft); }
-  .event-tag--past{ background:rgba(185,198,222,0.1); border:1px solid var(--line); color:var(--dim); }
+  .event-card--eos .event-banner{ background:#0b0a18 url(edc-preparty/ASSETS/eos-medellin-wordmark.webp) center/auto 82% no-repeat; }
+  .event-card--eos{ border-color:rgba(139,61,255,0.32); }
+  .event-card--eos:hover{ box-shadow:0 20px 50px rgba(139,61,255,0.2); border-color:rgba(139,61,255,0.55); }
+  .event-card--eos .event-tag{ background:rgba(139,61,255,0.16); border:1px solid rgba(139,61,255,0.45); color:#C9A8FF; }
+  .event-card--ls .event-banner{ background:#07060B url(edc-preparty/ASSETS/ls-bogota-wordmark.webp) center/auto 82% no-repeat; }
+  .event-card--ls{ border-color:rgba(31,107,255,0.32); }
+  .event-card--ls:hover{ box-shadow:0 20px 50px rgba(255,154,31,0.18); border-color:rgba(255,154,31,0.5); }
+  .event-card--ls .event-tag{ background:rgba(255,154,31,0.14); border:1px solid rgba(255,154,31,0.45); color:#FFC27A; }
+  .event-tag--past, .event-card .event-tag--past{ background:rgba(185,198,222,0.1); border:1px solid var(--line); color:var(--dim); }
 
   .event-tag{
     display:inline-block; align-self:flex-start; font-family:'JetBrains Mono', monospace; font-size:10.5px;
@@ -292,10 +300,24 @@
     </div>
 
     <div class="events-grid">
+      <a class="event-card event-card--eos" href="eventos-hub/eventos/medellin-2016.html">
+        <div class="event-banner"></div>
+        <div class="event-body">
+          <div class="event-tag">Próximo evento · Medellín</div>
+          <div class="event-title">END OF SUMMER 2016</div>
+          <div class="event-date">Sábado 12 de diciembre · Xero Club, Medellín</div>
+          <div class="event-cta">
+            Ver evento
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!--BOGOTA-->
       <a class="event-card event-card--halloween" href="eventos-hub/eventos/back-to-halloween-2016.html">
         <div class="event-banner"></div>
         <div class="event-body">
-          <div class="event-tag">Próximo evento</div>
+          <div class="event-tag event-tag--past">Evento finalizado</div>
           <div class="event-title">BACK TO HALLOWEEN 2016</div>
           <div class="event-date">31 de octubre de 2026 · Capital Live Concerts, Bogotá</div>
           <div class="event-cta">
@@ -308,7 +330,7 @@
       <a class="event-card event-card--edc" href="edc-preparty/index.html">
         <div class="event-banner"></div>
         <div class="event-body">
-          <div class="event-tag">Fan Tribute presenta</div>
+          <div class="event-tag event-tag--past">Evento finalizado</div>
           <div class="event-title">PRE-EDC Bogotá</div>
           <div class="event-date">Sábado 3 de octubre de 2026 · La previa antes del EDC Colombia</div>
           <div class="event-cta">
