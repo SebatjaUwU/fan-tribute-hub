@@ -51,6 +51,71 @@ const LINK_MAP = {
   'H9xF4f': { evento: 'End of Summer', tipo: 'General',    prefijo: 'EOS-GEN', cantidad: 3 },
 };
 
+
+// ==== REGISTRO DE INTERESADOS (formulario de las paginas de eventos) ====
+// La pagina manda { action:'registro', evento, nombre, email, telefono, interes, web }.
+// "web" es un campo oculto anti-spam: si viene lleno, se ignora en silencio.
+// Cada registro queda en la pestaña "Interesados" de esta misma Google Sheet
+// (se crea sola) y se avisa por correo a REGISTRO_AVISO_EMAIL. Si la misma
+// persona se registra dos veces al mismo evento, no se duplica ni se avisa.
+// Despues de pegar este codigo hay que hacer Implementar > Administrar
+// implementaciones > lapiz > Nueva version, para que la pagina lo use.
+const REGISTRO_TAB = 'Interesados';
+const REGISTRO_HEADERS = ['Fecha', 'Evento', 'Nombre', 'Email', 'WhatsApp', 'Interes', 'Origen'];
+const REGISTRO_AVISO_EMAIL = 'fantributeco@gmail.com';
+
+function registrarInteresado_(b) {
+  if (String(b.web || '').trim()) return jsonResponse_({ ok: true, status: 'registrado' });
+
+  const limpia = function (v, max) { return String(v || '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max); };
+  const evento = limpia(b.evento, 80) || 'Sin evento';
+  const nombre = limpia(b.nombre, 80);
+  const email = limpia(b.email, 120).toLowerCase();
+  const telefono = limpia(b.telefono, 30);
+  const interes = limpia(b.interes, 40);
+  const origen = limpia(b.origen, 120);
+
+  if (!nombre) return jsonResponse_({ ok: false, status: 'falta_nombre' });
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return jsonResponse_({ ok: false, status: 'email_invalido' });
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  let nuevo = false;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(REGISTRO_TAB);
+    if (!sheet) {
+      sheet = ss.insertSheet(REGISTRO_TAB);
+      sheet.appendRow(REGISTRO_HEADERS);
+      sheet.setFrozenRows(1);
+    }
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]) === evento && String(data[i][3]).toLowerCase() === email) {
+        return jsonResponse_({ ok: true, status: 'ya_registrado' });
+      }
+    }
+    sheet.appendRow([new Date(), evento, nombre, email, telefono, interes, origen]);
+    nuevo = true;
+  } finally {
+    lock.releaseLock();
+  }
+
+  if (nuevo) {
+    try {
+      const wa = telefono ? 'https://wa.me/' + telefono.replace(/\D/g, '').replace(/^(?!57)(\d{10})$/, '57$1') : '';
+      GmailApp.sendEmail(REGISTRO_AVISO_EMAIL, 'Nuevo registro: ' + nombre + ' — ' + evento,
+        'Nombre: ' + nombre + '\nCorreo: ' + email + '\nWhatsApp: ' + (telefono || '-') +
+        (wa ? ' (' + wa + ')' : '') + '\nLe interesa: ' + (interes || '-') + '\nEvento: ' + evento +
+        '\n\nQueda guardado en la pestaña "' + REGISTRO_TAB + '" de la Google Sheet.',
+        { name: 'Fan Tribute · Registros' });
+    } catch (err) {
+      Logger.log('Registro guardado pero no se pudo enviar el aviso: ' + err);
+    }
+  }
+  return jsonResponse_({ ok: true, status: 'registrado' });
+}
+
 // ==== REMITENTE DE LOS CORREOS ====
 // El script corre en la cuenta de Fan Tribute (lee Wompi, arma los QR),
 // pero los correos salen DESDE esta direccion. Requisito: en el Gmail de la
@@ -179,6 +244,11 @@ function doPost(e) {
 
   if (body.event && body.signature && body.data) {
     return manejarWebhookWompi_(body);
+  }
+
+  // Formulario "Registrate" de las paginas de eventos (ej. medellin-2016.html)
+  if (body.action === 'registro') {
+    return registrarInteresado_(body);
   }
 
   if (body.action !== 'scan') {
