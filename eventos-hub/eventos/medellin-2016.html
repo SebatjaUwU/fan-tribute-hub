@@ -49,7 +49,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     "name": "Xero Club",
     "address": { "@type": "PostalAddress", "streetAddress": "Cl. 25 #43G-29", "addressLocality": "Medellín", "addressRegion": "Antioquia", "addressCountry": "CO" }
   },
-  "organizer": { "@type": "Organization", "name": "Fan Tribute", "url": "https://fantributeco.netlify.app/" }
+  "organizer": { "@type": "Organization", "name": "Fan Tribute", "url": "https://fantributeco.netlify.app/" },
+  "offers": [
+    { "@type": "Offer", "name": "Preventa 1 (incluye $20.000 en consumible)", "price": "35000", "priceCurrency": "COP", "availability": "https://schema.org/InStock", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "Preventa 2 (incluye $20.000 en consumible)", "price": "40000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "General (incluye $20.000 en consumible)", "price": "45000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "Backstage (incluye $40.000 en consumible, shot de bienvenida, ingreso preferente y acceso a la tarima)", "price": "80000", "priceCurrency": "COP", "availability": "https://schema.org/InStock", "url": "https://wa.me/573161088178" }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -300,8 +306,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="where-note mono">Evento tributo +18 — artista no presente</div>
         </div>
         <div class="actions">
-          <a class="btn" href="#registro" data-track="eosmde_hero_registro">Quiero estar en la lista</a>
-          <a class="link" href="#tributo">Ver el cartel ↓</a>
+          <a class="btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_hero_whatsapp">Quiero mi boleta</a>
+          <a class="link" href="#boletas">Ver precios ↓</a>
         </div>
       </div>
 
@@ -327,8 +333,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ================= BOLETAS ================= -->
-<!-- Boletas ocultas por ahora: para mostrarlas, quitar el atributo hidden -->
-<section class="boletas" id="boletas" hidden>
+<section class="boletas" id="boletas">
   <div class="wrap boletas-grid">
     <h2 class="big reveal">Boletas<span class="o">a la</span><span class="c">venta</span></h2>
     <div class="stub reveal">
@@ -354,32 +359,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="wrap">
     <div class="row reveal"><span class="mono">Cuándo</span><div class="row-val">Sábado 12 de diciembre</div><span></span></div>
     <div class="row reveal"><span class="mono">Dónde</span><div class="row-val">Xero Club<small>Cl. 25 #43G-29, Medellín</small></div><a class="link" href="https://www.google.com/maps/search/?api=1&query=Xero%20Club%2C%20Cl.%2025%20%2343G-29%2C%20Medell%C3%ADn" target="_blank" rel="noopener" data-track="eosmde_maps">Cómo llegar ↗</a></div>
+    <div class="row reveal"><span class="mono">Boletas</span><div class="row-val">Desde $35.000<small>Preventa 1 con $20.000 en consumible incluidos.</small></div><a class="link" href="#boletas">Ver precios ↑</a></div>
     <div class="row reveal"><span class="mono">Edad</span><div class="row-val">+18</div><span></span></div>
     <div class="row reveal"><span class="mono">Formato</span><div class="row-val">Evento tributo<small>Los himnos del EDM de 2016. Artistas no presentes.</small></div><span></span></div>
-  </div>
-</section>
-
-<!-- ================= REGISTRO ================= -->
-<section class="registro" id="registro">
-  <div class="wrap registro-grid">
-    <div class="reveal">
-      <span class="mono registro-label">Lista de interesados</span>
-      <h2 class="registro-title">Anótate<span>primero</span></h2>
-      <p class="registro-copy">Déjanos tus datos y te avisamos primero cuando salgan las boletas.</p>
-    </div>
-    <form class="form reveal" id="registroForm" novalidate>
-      <label class="field"><span class="mono">Nombre</span><input name="nombre" type="text" autocomplete="name" required maxlength="80"></label>
-      <label class="field"><span class="mono">Correo</span><input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"></label>
-      <label class="field"><span class="mono">WhatsApp</span><input name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="300 000 0000"></label>
-      <fieldset class="field field--opts"><legend class="mono">Me interesa</legend>
-        <label><input type="radio" name="interes" value="Preventa 1" checked><span>Preventa 1</span></label>
-        <label><input type="radio" name="interes" value="General"><span>General</span></label>
-        <label><input type="radio" name="interes" value="Backstage"><span>Backstage</span></label>
-      </fieldset>
-      <input class="hp" type="text" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button class="btn" type="submit" id="registroBtn">Registrarme</button>
-      <p class="form-msg" id="registroMsg" role="status" aria-live="polite"></p>
-    </form>
   </div>
 </section>
 
@@ -425,8 +407,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <p>Sí, es un evento +18.</p>
       </details>
       <details class="q reveal">
-        <summary><span>¿Cuándo salen las boletas?</span><b aria-hidden="true">+</b></summary>
-        <p>Muy pronto. <a href="#registro">Regístrate</a> y te avisamos primero por correo.</p>
+        <summary><span>¿Cómo consigo boleta y cuánto vale?</span><b aria-hidden="true">+</b></summary>
+        <p>Por <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>. Preventa 1: <strong>$35.000</strong>, Preventa 2: <strong>$40.000</strong> y General: <strong>$45.000</strong>, todas con <strong>$20.000 en consumible</strong> incluidos. Backstage: <strong>$80.000</strong>, con <strong>$40.000 en consumible</strong>, shot de bienvenida, ingreso preferente y acceso a la tarima. El precio sube por etapas a medida que se agota cada una.</p>
       </details>
   </div>
 </section>
@@ -438,6 +420,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="foot-links mono">
         <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.tiktok.com/@fantribute_col" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>
         <a href="../../index.html">Otros eventos</a>
       </div>
     </div>
@@ -455,42 +438,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (saveData || reduce) return;
     v.src = v.dataset.src;
     var p = v.play(); if (p && p.catch) p.catch(function () {});
-  })();
-
-  // Formulario de registro: guarda en la Google Sheet y avisa a fantributeco@gmail.com (Apps Script)
-  (function () {
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5tjwnHhsRuPyCdjquenMTuElelrQIeluqazjySvb5Iou87YZCVnxmQpMSS0pG4_kV/exec';
-    var form = document.getElementById('registroForm');
-    if (!form) return;
-    var btn = document.getElementById('registroBtn');
-    var msg = document.getElementById('registroMsg');
-    function say(t, cls) { msg.className = 'form-msg ' + (cls || ''); msg.innerHTML = t; }
-    form.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      var f = form.elements;
-      var nombre = f.nombre.value.trim(), email = f.email.value.trim();
-      f.nombre.classList.toggle('bad', !nombre);
-      var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-      f.email.classList.toggle('bad', !emailOk);
-      if (!nombre || !emailOk) { say('Revisa tu nombre y tu correo.', 'err'); return; }
-      btn.disabled = true; btn.textContent = 'Enviando…'; say('');
-      fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({
-        action: 'registro', evento: 'End of Summer 2016 Medellín', nombre: nombre, email: email,
-        telefono: f.telefono.value.trim(), interes: (form.querySelector('input[name=interes]:checked') || {}).value || '',
-        web: f.web.value, origen: location.href.split('#')[0]
-      }) })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (d && d.ok) {
-            form.reset(); trackEvent('eosmde_registro_ok');
-            say(d.status === 'ya_registrado' ? 'Ya estabas en la lista. Te escribimos pronto.' : '¡Listo! Quedaste en la lista. Te escribimos pronto.', 'ok');
-          } else { throw new Error(d && d.status); }
-        })
-        .catch(function () {
-          say('No pudimos registrarte en este momento. Intenta de nuevo en unos minutos o escríbenos por Instagram <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener">@fantribute_col</a>.', 'err');
-        })
-        .finally(function () { btn.disabled = false; btn.textContent = 'Registrarme'; });
-    });
   })();
 
   // Aparicion suave al hacer scroll (una sola vez por bloque)
