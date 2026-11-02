@@ -19,14 +19,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LAST SUMMER 2016 — Bogotá | Fan Tribute</title>
-<meta name="description" content="LAST SUMMER 2016 llega a Bogotá. Evento tributo +18. Fecha y lugar muy pronto. Boletas desde $30.000 por WhatsApp.">
+<meta name="description" content="LAST SUMMER 2016 llega a Bogotá. Evento tributo +18. Fecha y lugar muy pronto. Tributies / Creyentes: $30.000.">
 <meta name="theme-color" content="#07060B">
 <link rel="canonical" href="https://fantributeco.netlify.app/eventos-hub/eventos/bogota-2016.html">
 <link rel="icon" href="../../ASSETS/fan-tribute-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Fan Tribute">
 <meta property="og:title" content="LAST SUMMER 2016 — Bogotá">
-<meta property="og:description" content="Evento tributo +18 en Bogotá. Boletas desde $30.000.">
+<meta property="og:description" content="Evento tributo +18 en Bogotá. Tributies / Creyentes: $30.000.">
 <meta property="og:image" content="https://fantributeco.netlify.app/edc-preparty/ASSETS/ls-bogota-wordmark.webp">
 <meta property="og:url" content="https://fantributeco.netlify.app/eventos-hub/eventos/bogota-2016.html">
 <meta property="og:locale" content="es_CO">
@@ -44,10 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "location": { "@type": "Place", "name": "Lugar por confirmar", "address": { "@type": "PostalAddress", "addressLocality": "Bogotá", "addressCountry": "CO" } },
   "organizer": { "@type": "Organization", "name": "Fan Tribute", "url": "https://fantributeco.netlify.app/" },
   "offers": [
-    { "@type": "Offer", "name": "Tributies / Creyentes", "price": "30000", "priceCurrency": "COP", "availability": "https://schema.org/LimitedAvailability", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "Preventa 1", "price": "35000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "Preventa 2", "price": "40000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "General", "price": "45000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" }
+    { "@type": "Offer", "name": "Tributies / Creyentes", "price": "30000", "priceCurrency": "COP", "availability": "https://schema.org/LimitedAvailability", "url": "https://wa.me/573161088178" }
   ]
 }
 </script>
@@ -126,8 +123,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .barcode{ position:absolute; right:14px; bottom:18px; width:40px; height:60px; background:repeating-linear-gradient(90deg, #17121F 0 2px, transparent 2px 4px, #17121F 4px 5px, transparent 5px 8px); opacity:.75; }
   @media (max-width:600px){ .stub{ grid-template-columns:1fr 44px; } .stub-main{ padding:22px 16px 22px 22px; } .barcode{ right:8px; width:28px; } }
 
+  /* REGISTRO */
+  .registro{ padding:90px 0; }
+  .registro-grid{ display:grid; grid-template-columns:1fr; gap:40px; }
+  @media (min-width:960px){ .registro-grid{ grid-template-columns:1fr 1fr; gap:70px; align-items:start; } }
+  .registro-label{ color:var(--orange); }
+  .registro-title{ margin-top:26px; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(72px, 18vw, 150px); line-height:.82; }
+  .registro-title span{ display:block; font-family:'Caveat Brush',cursive; font-size:.5em; color:var(--violet); transform:rotate(-3deg); margin:8px 0 22px 6px; }
+  .registro-copy{ margin-top:18px; max-width:420px; color:var(--cream-dim); font-size:17px; line-height:1.6; }
+  .form{ display:grid; gap:22px; }
+  .field{ display:grid; gap:8px; border:0; }
+  .field .mono{ color:var(--cream-dim); }
+  .field input[type=text], .field input[type=email], .field input[type=tel]{ width:100%; background:transparent; border:0; border-bottom:2px solid var(--rule); color:var(--cream);
+      font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:22px; padding:6px 0 8px; border-radius:0; outline:none; transition:border-color .2s; }
+  .field input::placeholder{ color:rgba(243,235,221,.25); }
+  .field input:focus{ border-bottom-color:var(--orange); }
+  .field input.bad{ border-bottom-color:#FF5A6E; }
+  .field--opts{ display:flex; flex-wrap:wrap; gap:10px; padding:0; }
+  .field--opts legend{ width:100%; margin-bottom:8px; }
+  .field--opts label{ cursor:pointer; }
+  .field--opts input{ position:absolute; opacity:0; pointer-events:none; }
+  .field--opts span{ display:inline-block; padding:9px 14px 7px; border:1.5px solid var(--rule); font-family:'Bebas Neue',sans-serif; font-size:21px; letter-spacing:.05em; transition:all .15s; }
+  .field--opts input:checked + span{ background:var(--cream); color:var(--black); border-color:var(--cream); box-shadow:4px 4px 0 var(--violet); }
+  .field--opts input:focus-visible + span{ outline:2px solid var(--orange); outline-offset:2px; }
+  .hp{ position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+  .form .btn{ justify-self:start; border:0; cursor:pointer; }
+  .form .btn[disabled]{ opacity:.6; cursor:wait; }
+  .form-msg{ min-height:24px; font-size:15px; line-height:1.5; color:var(--cream-dim); }
+  .form-msg.ok{ color:var(--orange); }
+  .form-msg.err{ color:#FF8A98; }
+  .form-msg a{ color:var(--cream); }
+
   /* DATOS */
   .datos{ padding:90px 0; border-top:1px solid var(--rule); }
+  .registro{ border-top:1px solid var(--rule); }
   .row{ display:grid; grid-template-columns:1fr; gap:6px; padding:22px 0; border-bottom:1px solid var(--rule); }
   .row:first-of-type{ border-top:1px solid var(--rule); }
   @media (min-width:760px){ .row{ grid-template-columns:200px 1fr auto; gap:24px; align-items:baseline; } }
@@ -186,7 +215,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
         <div class="actions">
           <a class="btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20LAST%20SUMMER%202016%20Bogot%C3%A1.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="lsbog_hero_whatsapp">Quiero mi boleta</a>
-          <a class="link" href="#boletas">Ver precios ↓</a>
+          <a class="link" href="#registro">Anótate ↓</a>
         </div>
       </div>
 
@@ -196,9 +225,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="stub-title">Last Summer 2016<span>Bogotá</span></div>
           <ul class="prices">
             <li class="price is-on"><span class="p-name">Tributies / Creyentes</span><span class="p-val">$30.000</span><small>Solo 35 boletas <em>Disponible</em></small></li>
-            <li class="price"><span class="p-name">Preventa 1</span><span class="p-val">$35.000</span><small>50 boletas · siguiente etapa</small></li>
-            <li class="price"><span class="p-name">Preventa 2</span><span class="p-val">$40.000</span><small>80 boletas</small></li>
-            <li class="price"><span class="p-name">General</span><span class="p-val">$45.000</span><small>Hasta agotar</small></li>
           </ul>
           <a class="btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20LAST%20SUMMER%202016%20Bogot%C3%A1.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="lsbog_stub_whatsapp">Comprar por WhatsApp</a>
         </div>
@@ -209,11 +235,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </header>
 
+<section class="registro" id="registro">
+  <div class="wrap registro-grid">
+    <div class="reveal">
+      <span class="mono registro-label">Lista de interesados</span>
+      <h2 class="registro-title">Anótate<span>primero</span></h2>
+      <p class="registro-copy">Déjanos tus datos y te avisamos primero la fecha, el lugar y las siguientes etapas de boletas.</p>
+    </div>
+    <form class="form reveal" id="registroForm" novalidate>
+      <label class="field"><span class="mono">Nombre</span><input name="nombre" type="text" autocomplete="name" required maxlength="80"></label>
+      <label class="field"><span class="mono">Correo</span><input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"></label>
+      <label class="field"><span class="mono">WhatsApp</span><input name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="300 000 0000"></label>
+      <input class="hp" type="text" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn" type="submit" id="registroBtn">Registrarme</button>
+      <p class="form-msg" id="registroMsg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <section class="datos" id="datos">
   <div class="wrap">
     <div class="row reveal"><span class="mono">Cuándo</span><div class="row-val">Muy pronto<small>Anunciamos la fecha en nuestras redes y por WhatsApp.</small></div><span></span></div>
     <div class="row reveal"><span class="mono">Dónde</span><div class="row-val">Bogotá<small>El lugar se anuncia muy pronto.</small></div><span></span></div>
-    <div class="row reveal"><span class="mono">Boletas</span><div class="row-val">Desde $30.000<small>Tributies / Creyentes: solo 35 boletas.</small></div><a class="link" href="#boletas">Ver precios ↑</a></div>
+    <div class="row reveal"><span class="mono">Boletas</span><div class="row-val">$30.000<small>Tributies / Creyentes · solo 35 boletas.</small></div><a class="link" href="#boletas">Ver precios ↑</a></div>
     <div class="row reveal"><span class="mono">Edad</span><div class="row-val">+18</div><span></span></div>
   </div>
 </section>
@@ -227,7 +271,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </details>
     <details class="q reveal">
       <summary><span>¿Cómo consigo boleta y cuánto vale?</span><b aria-hidden="true">+</b></summary>
-      <p>Por <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20LAST%20SUMMER%202016%20Bogot%C3%A1.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>. Tributies / Creyentes: <strong>$30.000</strong> (solo 35). Preventa 1: <strong>$35.000</strong> (50), Preventa 2: <strong>$40.000</strong> (80) y General: <strong>$45.000</strong> hasta agotar. El precio sube cuando se agota cada etapa.</p>
+      <p>Por <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20LAST%20SUMMER%202016%20Bogot%C3%A1.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>. Tributies / Creyentes: <strong>$30.000</strong>, solo 35 boletas.</p>
     </details>
     <details class="q reveal">
       <summary><span>¿Hay edad mínima?</span><b aria-hidden="true">+</b></summary>
@@ -252,6 +296,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </footer>
 
 <script>
+  (function () {
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5tjwnHhsRuPyCdjquenMTuElelrQIeluqazjySvb5Iou87YZCVnxmQpMSS0pG4_kV/exec';
+    var form = document.getElementById('registroForm');
+    if (!form) return;
+    var btn = document.getElementById('registroBtn');
+    var msg = document.getElementById('registroMsg');
+    function say(t, cls) { msg.className = 'form-msg ' + (cls || ''); msg.innerHTML = t; }
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var f = form.elements;
+      var nombre = f.nombre.value.trim(), email = f.email.value.trim();
+      f.nombre.classList.toggle('bad', !nombre);
+      var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      f.email.classList.toggle('bad', !emailOk);
+      if (!nombre || !emailOk) { say('Revisa tu nombre y tu correo.', 'err'); return; }
+      btn.disabled = true; btn.textContent = 'Enviando…'; say('');
+      fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({
+        action: 'registro', evento: 'Last Summer 2016 Bogotá', nombre: nombre, email: email,
+        telefono: f.telefono.value.trim(), interes: 'Tributies / Creyentes',
+        web: f.web.value, origen: location.href.split('#')[0]
+      }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.ok) {
+            form.reset(); trackEvent('lsbog_registro_ok');
+            say(d.status === 'ya_registrado' ? 'Ya estabas en la lista. Te escribimos pronto.' : '¡Listo! Quedaste en la lista. Te escribimos pronto.', 'ok');
+          } else { throw new Error(d && d.status); }
+        })
+        .catch(function () {
+          say('No pudimos registrarte en este momento. Intenta de nuevo en unos minutos o escríbenos por Instagram <a href="https://instagram.com/fantribute_col" target="_blank" rel="noopener">@fantribute_col</a>.', 'err');
+        })
+        .finally(function () { btn.disabled = false; btn.textContent = 'Registrarme'; });
+    });
+  })();
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.15 });
