@@ -5,10 +5,11 @@
  * Sheet nueva (Extensiones > Apps Script desde esa hoja).
  *
  * Qué hace:
- *   1. VIP y Backstage se pagan por Wompi desde la página (1 a 5 boletas por
- *      pago). Cuando el pago se aprueba, se crean las boletas en la hoja
- *      "Repositorio QR" y se le manda al comprador un correo con un QR por
- *      cada boleta.
+ *   1. VIP y Backstage se pagan con los links de Wompi (x1 a x4). Igual que en
+ *      Halloween, el script lee cada 5 minutos los correos "APROBADA" que Wompi
+ *      manda a Gmail: si el link es de Medellín, crea las boletas en la hoja
+ *      "Repositorio QR" y le manda al comprador un correo con un QR por boleta.
+ *      No hay que configurar nada en Wompi.
  *   2. Las ventas por WhatsApp (Preventa 1, Preventa 2, General o cualquier
  *      tipo) se registran desde el formulario del staff
  *      (herramientas-qr/venta-medellin.html): misma hoja, mismo correo con QR.
@@ -19,25 +20,21 @@
  *   4. Escáner de la puerta (eventos/escanear-medellin.html): marca cada QR
  *      como usado en la misma hoja.
  *
- * Propiedades de secuencia de comandos (Configuración del proyecto ⚙ >
- * Propiedades de secuencia de comandos). Las llaves las pegas tú; nunca van
- * en la página:
- *   WOMPI_PUBLIC_KEY        pub_prod_...   (Wompi > Desarrolladores)
- *   WOMPI_INTEGRITY_SECRET  prod_integrity_...  (Wompi > Desarrolladores > Secretos)
- *   WOMPI_EVENTS_SECRET     prod_events_...     (Wompi > Desarrolladores > Secretos)
- *   STAFF_PIN               el PIN del formulario de WhatsApp y del escáner
- *   WOMPI_PRIVATE_KEY       (opcional) prv_prod_...: deja que el revisor
- *                           automático confirme pagos aunque el comprador
- *                           cierre la pestaña antes de volver a la página.
- *   REENVIAR_WEBHOOK_URL    (opcional) URL del Apps Script anterior: los
- *                           avisos de Wompi que no son de Medellín se le
- *                           reenvían tal cual, para no perder nada.
+ * IMPORTANTE: la Sheet y este Apps Script deben estar en la cuenta de Gmail
+ * donde llegan los correos de Wompi (o en una cuenta a la que se reenvíen).
  *
- * Después de pegar el código: Implementar > Nueva implementación > Aplicación
- * web (Ejecutar como: Yo · Quién tiene acceso: Cualquier persona). Esa URL va
- * en la página, en el formulario del staff, en el escáner y como URL de
- * eventos en Wompi. Luego ejecuta una vez instalarRevisorDePagos() desde el
- * editor.
+ * Propiedades de secuencia de comandos (Configuración del proyecto ⚙ >
+ * Propiedades de secuencia de comandos):
+ *   STAFF_PIN   el PIN del formulario de WhatsApp y del escáner (obligatorio)
+ *   Opcionales, solo si algún día se quiere el aviso directo de Wompi (webhook)
+ *   o el checkout con cantidad libre: WOMPI_EVENTS_SECRET, WOMPI_PUBLIC_KEY,
+ *   WOMPI_INTEGRITY_SECRET, WOMPI_PRIVATE_KEY, REENVIAR_WEBHOOK_URL.
+ *
+ * Después de pegar el código: ejecuta una vez instalarRevisores() desde el
+ * editor (acepta los permisos de Gmail y Sheets). Luego Implementar > Nueva
+ * implementación > Aplicación web (Ejecutar como: Yo · Quién tiene acceso:
+ * Cualquier persona). Esa URL va en la página, en el formulario del staff y
+ * en el escáner.
  */
 
 const EVENTO = 'End of Summer 2016 Medellín';
@@ -336,15 +333,104 @@ function revisarPagosPendientes() {
   }
 }
 
-/** Ejecutar UNA vez desde el editor: revisa pagos pendientes cada 10 minutos. */
-function instalarRevisorDePagos() {
+/**
+ * Ejecutar UNA vez desde el editor: lee los correos de Wompi cada 5 minutos
+ * (y revisa checkouts pendientes cada 10 si hay WOMPI_PRIVATE_KEY).
+ */
+function instalarRevisores() {
   ScriptApp.getProjectTriggers().forEach(function (tr) {
-    if (tr.getHandlerFunction() === 'revisarPagosPendientes') ScriptApp.deleteTrigger(tr);
+    const f = tr.getHandlerFunction();
+    if (f === 'revisarPagosPendientes' || f === 'revisarCorreosWompi') ScriptApp.deleteTrigger(tr);
   });
+  ScriptApp.newTrigger('revisarCorreosWompi').timeBased().everyMinutes(5).create();
   ScriptApp.newTrigger('revisarPagosPendientes').timeBased().everyMinutes(10).create();
   hoja_(); hojaCheckouts_();
-  Logger.log('Listo: revisor cada 10 minutos y hojas creadas.');
+  [LABEL_OK, LABEL_REVISAR, LABEL_OTRO].forEach(etiqueta_);
+  revisarCorreosWompi();
+  Logger.log('Listo: lector de correos de Wompi cada 5 minutos y hojas creadas.');
 }
+function instalarRevisorDePagos() { instalarRevisores(); }
+
+// ---------------------------------------------------------------- correos de Wompi (como Halloween)
+
+const LABEL_OK = 'MDE-QR-Procesado';
+const LABEL_REVISAR = 'MDE-QR-Revisar';
+const LABEL_OTRO = 'MDE-No-es-Medellin';
+// Ventas de antes de esta fecha no se tocan.
+const CORREOS_DESDE = '2026/11/01';
+const BUSQUEDA_WOMPI = '"APROBADA" "ref." after:' + CORREOS_DESDE +
+  ' -subject:"Revisar pago de Medellín" -label:' + LABEL_OK + ' -label:' + LABEL_REVISAR + ' -label:' + LABEL_OTRO;
+
+/** Disparador cada 5 min: procesa los correos "APROBADA" de Wompi de los links de Medellín. */
+function revisarCorreosWompi() {
+  const ok = etiqueta_(LABEL_OK), revisar = etiqueta_(LABEL_REVISAR), otro = etiqueta_(LABEL_OTRO);
+  const hilos = GmailApp.search(BUSQUEDA_WOMPI, 0, 30);
+  hilos.forEach(function (hilo) {
+    let esMedellin = false, problema = false;
+    hilo.getMessages().forEach(function (msg) {
+      const p = leerCorreoWompi_(msg);
+      if (!p || !LINKS_FIJOS[p.linkId]) return;
+      esMedellin = true;
+      try {
+        const info = LINKS_FIJOS[p.linkId];
+        if (!p.email) {
+          problema = true;
+          avisar_('Revisar pago de Medellín: sin correo del comprador',
+            'No se encontró el correo del comprador en el aviso de Wompi.\nAsunto: ' + msg.getSubject() + '\nFecha: ' + msg.getDate() +
+            '\nRegístralo a mano desde el formulario de ventas.');
+          return;
+        }
+        const r = registrarBoletas_({
+          key: info.key, cantidad: info.cantidad, txId: p.txId || p.referencia, referencia: p.referencia,
+          nombre: p.nombre || 'Sin nombre', email: p.email, telefono: p.telefono,
+          montoTotal: p.monto || TIPOS[info.key].precio * info.cantidad, estado: 'APPROVED'
+        });
+        if (r.status === 'procesada') {
+          avisar_('Venta Wompi Medellín: ' + info.cantidad + ' x ' + TIPOS[info.key].tipo,
+            r.nombre + ' (' + p.email + ') compró ' + info.cantidad + ' x ' + TIPOS[info.key].tipo + ' por $' + formato_(r.montoTotal) +
+            '.\nBoletas: ' + r.ticketIds.join(', ') + '\nCorreo con QR enviado: ' + (r.enviado ? 'sí' : 'NO, revisar'));
+        }
+      } catch (err) {
+        problema = true;
+        Logger.log('Error con el correo "' + msg.getSubject() + '": ' + err);
+      }
+    });
+    hilo.addLabel(!esMedellin ? otro : (problema ? revisar : ok));
+  });
+}
+
+/** Lee del correo de Wompi: link, referencia, monto, comprador, transacción, correo y teléfono. */
+function leerCorreoWompi_(msg) {
+  const m = (msg.getSubject() || '').match(/ref\.\s*(\S+)/i);
+  if (!m) return null;
+  const cuerpo = msg.getPlainBody() || '';
+  const correo = cuerpo.match(/escribiendo a\s*([^\s@]+@[^\s]+?)\s+o llamando al/i);
+  const tel = cuerpo.match(/o llamando al\s*(\+?\d[\d ]*)/i);
+  const monto = cuerpo.match(/COP\s*\$\s*([\d.,]+)/);
+  return {
+    referencia: m[1], linkId: m[1].split('_')[0],
+    monto: monto ? Math.round(parseFloat(monto[1].replace(/\./g, '').replace(/,/g, ''))) : 0,
+    nombre: valorTabla_(cuerpo, 'Comprador'),
+    txId: valorTabla_(cuerpo, 'Transacción #') || valorTabla_(cuerpo, 'Transaccion #'),
+    email: correo ? correo[1].trim() : '',
+    telefono: tel ? tel[1].trim() : ''
+  };
+}
+
+function valorTabla_(cuerpo, etiqueta) {
+  const esc = etiqueta.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const misma = cuerpo.match(new RegExp(esc + '[ \\t]+([^\\r\\n]+)'));
+  if (misma && misma[1].trim()) return misma[1].trim();
+  const lineas = cuerpo.split('\n');
+  for (let i = 0; i < lineas.length; i++) {
+    if (lineas[i].trim() === etiqueta) {
+      for (let j = i + 1; j < Math.min(i + 4, lineas.length); j++) if (lineas[j].trim()) return lineas[j].trim();
+    }
+  }
+  return '';
+}
+
+function etiqueta_(nombre) { return GmailApp.getUserLabelByName(nombre) || GmailApp.createLabel(nombre); }
 
 function marcarCheckout_(referencia, estado, txId) {
   const sh = hojaCheckouts_();
