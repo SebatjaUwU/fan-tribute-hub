@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Confirmación de pago · End of Summer 2016 Medellín | Fan Tribute</title>
+<link rel="icon" href="../../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat+Brush&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --black:#07060B; --ink:#0E0C15; --cream:#F3EBDD; --cream-dim:#A9A2B6; --violet:#8B3DFF; --cyan:#19E3FF; --rule:rgba(243,235,221,.18); }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ min-height:100vh; background:var(--black); color:var(--cream); font-family:'Space Grotesk',sans-serif; display:flex; flex-direction:column; }
+  a{ color:inherit; }
+  .wrap{ width:100%; max-width:640px; margin:0 auto; padding:0 20px; }
+  .mono{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; }
+  header{ padding:22px 0; }
+  header .wrap{ display:flex; justify-content:space-between; align-items:center; }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .brand img{ height:22px; width:auto; }
+  .brand b{ font-size:15px; letter-spacing:.06em; }
+  main{ flex:1; display:flex; align-items:center; padding:30px 0 60px; }
+  .k{ color:var(--cyan); }
+  h1{ margin-top:14px; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(60px, 16vw, 110px); line-height:.86; }
+  h1 span{ display:block; font-family:'Caveat Brush',cursive; font-size:.42em; color:var(--violet); margin-top:8px; }
+  p.msg{ margin-top:22px; font-size:18px; line-height:1.6; color:var(--cream-dim); max-width:520px; }
+  p.msg strong{ color:var(--cream); }
+  .bar{ margin-top:26px; height:3px; background:var(--rule); overflow:hidden; }
+  .bar i{ display:block; height:100%; width:30%; background:var(--cyan); animation:carga 1.2s ease-in-out infinite; }
+  @keyframes carga{ from{ transform:translateX(-100%); } to{ transform:translateX(340%); } }
+  .acts{ margin-top:30px; display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; }
+  .btn{ display:inline-block; padding:14px 20px 11px; background:var(--cream); color:var(--black); text-decoration:none; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.06em; line-height:1; box-shadow:6px 6px 0 var(--violet); }
+  .link{ font-family:'Bebas Neue',sans-serif; font-size:21px; letter-spacing:.06em; text-decoration:none; border-bottom:2px solid var(--cyan); padding-bottom:2px; }
+  .hidden{ display:none !important; }
+  footer{ padding:24px 0 30px; color:var(--cream-dim); border-top:1px solid var(--rule); }
+  @media (prefers-reduced-motion: reduce){ .bar i{ animation:none; width:100%; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="medellin-2016.html"><img src="../../ASSETS/fan-tribute-icon.png" alt="" width="66" height="22"><b>FAN TRIBUTE</b></a>
+  <span class="mono">Medellín · +18</span>
+</div></header>
+<main><div class="wrap">
+  <span class="mono k">End of Summer 2016 · Medellín</span>
+  <h1 id="titulo">Confirmando<span>tu pago…</span></h1>
+  <p class="msg" id="msg">Estamos revisando tu pago con Wompi. No cierres esta página.</p>
+  <div class="bar" id="bar"><i></i></div>
+  <div class="acts hidden" id="acts">
+    <a class="btn" href="medellin-2016.html">Volver al evento</a>
+    <a class="link" id="wa" href="https://wa.me/573161088178?text=Hola%21%20Acabo%20de%20pagar%20en%20Wompi%20mi%20boleta%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn." target="_blank" rel="noopener">Escríbenos por WhatsApp ↗</a>
+  </div>
+</div></main>
+<footer><div class="wrap mono">Sábado 12 de diciembre · Xero Club · Medellín</div></footer>
+<script>
+  // Misma URL que en medellin-2016.html
+  var MDE_API = '';
+  (function () {
+    var id = new URLSearchParams(location.search).get('id') || '';
+    var titulo = document.getElementById('titulo'), msg = document.getElementById('msg');
+    var bar = document.getElementById('bar'), acts = document.getElementById('acts');
+    var intentos = 0;
+    function fin(t, sub, texto) {
+      titulo.innerHTML = t + '<span>' + sub + '</span>';
+      msg.innerHTML = texto; bar.classList.add('hidden'); acts.classList.remove('hidden');
+    }
+    var ok = function (d) {
+      var n = d.cantidad || 1;
+      fin('¡Pago aprobado!', 'nos vemos en la pista',
+        'Te enviamos <strong>' + n + (n === 1 ? ' boleta' : ' boletas') + (d.tipo ? ' ' + d.tipo : '') + '</strong> con su código QR a tu correo. ' +
+        'Si en unos minutos no lo ves, revisa spam o promociones.');
+    };
+    if (!id) { fin('Listo', 'revisa tu correo', 'Si tu pago se aprobó, en unos minutos te llega el correo con tus QR. Si tienes dudas, escríbenos por WhatsApp.'); return; }
+    if (!MDE_API) { fin('Pago recibido', 'revisa tu correo', 'Si tu pago se aprobó, en unos minutos te llega el correo con tus QR. Referencia Wompi: <strong>' + id.replace(/[^\w-]/g, '') + '</strong>.'); return; }
+    function consultar() {
+      intentos++;
+      fetch(MDE_API, { method: 'POST', body: JSON.stringify({ action: 'confirmar', id: id }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.status === 'procesada' || d.status === 'ya_procesada') return ok(d);
+          if (d.status === 'rechazada') return fin('Pago no aprobado', 'no se hizo ningún cobro',
+            'Wompi no aprobó el pago (' + (d.estado || 'rechazado').toLowerCase() + '). Puedes intentarlo de nuevo desde la página del evento.');
+          if (d.status === 'pendiente' && intentos < 20) return setTimeout(consultar, 4000);
+          if (d.status === 'pendiente') return fin('Pago en proceso', 'te avisamos por correo',
+            'Wompi todavía está procesando tu pago. Cuando se apruebe te llega el correo con tus QR; no tienes que hacer nada más.');
+          if (intentos < 4) return setTimeout(consultar, 3000);
+          fin('Revisa tu correo', 'ya casi', 'No pudimos confirmar el pago desde aquí. Si se aprobó, el correo con tus QR llega en unos minutos. Referencia Wompi: <strong>' + id.replace(/[^\w-]/g, '') + '</strong>.');
+        })
+        .catch(function () {
+          if (intentos < 4) return setTimeout(consultar, 3000);
+          fin('Revisa tu correo', 'ya casi', 'No pudimos confirmar el pago desde aquí. Si se aprobó, el correo con tus QR llega en unos minutos.');
+        });
+    }
+    consultar();
+  })();
+</script>
+</body>
+</html>

@@ -51,10 +51,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   },
   "organizer": { "@type": "Organization", "name": "Fan Tribute", "url": "https://fantributeco.netlify.app/" },
   "offers": [
-    { "@type": "Offer", "name": "Preventa 1 (incluye $20.000 en consumible)", "price": "35000", "priceCurrency": "COP", "availability": "https://schema.org/InStock", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "Preventa 2 (incluye $20.000 en consumible)", "price": "40000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "General (incluye $20.000 en consumible)", "price": "45000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
-    { "@type": "Offer", "name": "Backstage (incluye $30.000 en consumible, shot de bienvenida, ingreso preferente y acceso a la tarima)", "price": "80000", "priceCurrency": "COP", "availability": "https://schema.org/InStock", "url": "https://wa.me/573161088178" }
+    { "@type": "Offer", "name": "Preventa 1 (General, $15.000 en consumo)", "price": "35000", "priceCurrency": "COP", "availability": "https://schema.org/LimitedAvailability", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "Preventa 2 (General, $15.000 en consumo)", "price": "40000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "General ($15.000 en consumo)", "price": "45000", "priceCurrency": "COP", "availability": "https://schema.org/PreOrder", "url": "https://wa.me/573161088178" },
+    { "@type": "Offer", "name": "VIP (tarima VIP, $20.000 en consumo + shot de bienvenida)", "price": "85000", "priceCurrency": "COP", "availability": "https://schema.org/LimitedAvailability", "url": "https://checkout.wompi.co/l/kj5Nkr" },
+    { "@type": "Offer", "name": "Backstage (junto al DJ, $20.000 en consumo + shot de bienvenida)", "price": "95000", "priceCurrency": "COP", "availability": "https://schema.org/LimitedAvailability", "url": "https://checkout.wompi.co/l/8EDAxF" }
   ]
 }
 </script>
@@ -151,36 +152,52 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .ln-3 em{ font-family:'Caveat Brush',cursive; font-style:normal; text-transform:none; color:var(--cyan); font-size:1.15em; }
   .tributo-note{ margin-top:30px; color:var(--cream-dim); }
 
-  /* ================= BOLETAS ================= */
+  /* ================= MAPA DE PRECIOS ================= */
   .boletas{ padding:90px 0; background:var(--ink); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); overflow:hidden; }
-  .boletas-grid{ display:grid; grid-template-columns:1fr; gap:40px; align-items:center; }
-  @media (min-width:960px){ .boletas-grid{ grid-template-columns:1fr 1fr; } }
-  .big{ font-family:'Bebas Neue',sans-serif; font-size:clamp(84px, 22vw, 190px); line-height:.82; }
-  .big .o{ display:block; color:transparent; -webkit-text-stroke:2px var(--cream); }
-  .big .c{ color:var(--cyan); }
-  .stub{ position:relative; display:grid; grid-template-columns:1fr 92px; background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .25 0 0 0 0 .16 0 0 0 .28 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); color:#17121F; transform:rotate(-2deg);
-          box-shadow:0 24px 50px rgba(0,0,0,.55); max-width:560px; justify-self:center; width:100%;
-          -webkit-mask:radial-gradient(circle 9px at 0 50%, transparent 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, transparent 98%, #000) right/51% 100% no-repeat;
-                  mask:radial-gradient(circle 9px at 0 50%, transparent 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, transparent 98%, #000) right/51% 100% no-repeat; }
-  .stub-main{ padding:26px 22px 24px 28px; border-right:2px dashed rgba(23,18,31,.35); }
-  .stub-main .mono{ color:#5B22D6; font-size:10.5px; }
-  .stub-title{ margin-top:8px; font-family:'Bebas Neue',sans-serif; font-size:44px; line-height:.9; }
-  .stub-title span{ font-family:'Caveat Brush',cursive; font-size:28px; color:#5B22D6; display:block; margin-top:4px; }
-  .prices{ list-style:none; margin-top:16px; }
-  .price{ display:grid; grid-template-columns:1fr auto; align-items:baseline; column-gap:12px; padding:11px 0; border-top:1.5px dashed rgba(23,18,31,.3); opacity:.62; }
-  .price:last-child{ border-bottom:1.5px dashed rgba(23,18,31,.3); }
-  .price.is-on, .price--back{ opacity:1; }
-  .p-name{ font-family:'Bebas Neue',sans-serif; font-size:27px; line-height:1; letter-spacing:.02em; }
-  .p-val{ font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; }
-  .price.is-on .p-val{ color:#5B22D6; }
-  .price small{ grid-column:1 / -1; margin-top:3px; font-size:12.5px; color:#3B3346; }
-  .price small em{ font-style:normal; margin-left:6px; padding:2px 7px 1px; background:#5B22D6; color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
-  .stub .btn{ margin-top:20px; background:#17121F; color:var(--paper); box-shadow:5px 5px 0 var(--violet); font-size:21px; }
-  .stub-side{ display:flex; align-items:flex-start; justify-content:center; padding:24px 0 90px; }
-  .stub-side .mono{ writing-mode:vertical-rl; color:#17121F; font-size:10px; letter-spacing:.3em; }
-  .barcode{ position:absolute; right:22px; bottom:18px; width:48px; height:60px; background:repeating-linear-gradient(90deg, #17121F 0 2px, transparent 2px 4px, #17121F 4px 5px, transparent 5px 8px); opacity:.75; }
-
-  @media (max-width:600px){ .stub{ grid-template-columns:1fr 46px; } .stub-main{ padding:22px 16px 22px 22px; } .barcode{ right:9px; width:28px; } }
+  .pm-head{ display:grid; gap:14px; margin-bottom:34px; }
+  @media (min-width:960px){ .pm-head{ grid-template-columns:1fr auto; align-items:end; } }
+  .pm-head .mono{ color:var(--cyan); }
+  .pm-title{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:clamp(64px, 15vw, 140px); line-height:.84; }
+  .pm-title span{ color:transparent; -webkit-text-stroke:2px var(--cream); }
+  .pm-meta{ color:var(--cream-dim); border:1.5px solid var(--rule); padding:10px 14px 9px; justify-self:start; }
+  .pm{ list-style:none; display:grid; gap:10px; }
+  .pm-row{ position:relative; display:grid; grid-template-columns:62px 1fr; gap:6px 16px; padding:20px 18px 18px 22px; background:#14111D; border:1px solid var(--rule); }
+  .pm-row::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c, var(--violet)); }
+  @media (min-width:860px){ .pm-row{ grid-template-columns:76px 1fr auto 250px; align-items:center; padding:22px 24px 20px 28px; } }
+  .pm-n{ font-family:'Bebas Neue',sans-serif; font-size:52px; line-height:.9; color:var(--c, var(--violet)); grid-row:span 2; }
+  @media (min-width:860px){ .pm-n{ grid-row:auto; font-size:60px; } }
+  .pm-info b{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:34px; line-height:1; letter-spacing:.02em; margin-right:10px; }
+  .pm-tag{ display:inline-block; vertical-align:5px; padding:3px 8px 2px; border:1.5px solid var(--c, var(--violet)); color:var(--c, var(--violet)); font-family:'JetBrains Mono',monospace; font-style:normal; font-size:9.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+  .pm-row.is-on .pm-tag{ background:var(--c); color:var(--black); }
+  .pm-info small{ display:block; margin-top:6px; color:var(--cream-dim); font-size:14.5px; line-height:1.45; }
+  .pm-left{ display:block; margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#FFB627; }
+  .pm-left:empty{ display:none; }
+  .pm-price{ font-family:'Bebas Neue',sans-serif; font-size:46px; line-height:.9; grid-column:2; }
+  .pm-price small{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.2em; margin-left:6px; color:var(--cream-dim); }
+  @media (min-width:860px){ .pm-price{ grid-column:auto; text-align:right; font-size:52px; } .pm-price small{ display:block; margin:4px 0 0; } }
+  .pm-act{ grid-column:1 / -1; display:flex; align-items:center; gap:10px; margin-top:8px; }
+  @media (min-width:860px){ .pm-act{ grid-column:auto; margin-top:0; justify-content:flex-end; } }
+  .pm-btn{ display:inline-block; padding:12px 16px 10px; border:0; cursor:pointer; text-decoration:none; text-align:center; background:var(--cream); color:var(--black); font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:.06em; line-height:1; box-shadow:4px 4px 0 var(--c, var(--violet)); transition:transform .2s, box-shadow .2s; }
+  .pm-btn:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--c, var(--violet)); }
+  .pm-btn[disabled], .pm-btn.off{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; pointer-events:none; }
+  .qty{ display:inline-flex; align-items:stretch; border:1.5px solid var(--rule); }
+  .qty button{ width:34px; background:transparent; border:0; color:var(--cream); font-size:20px; cursor:pointer; }
+  .qty output{ min-width:30px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:24px; }
+  .pm-row.is-later .pm-act, .pm-row.is-gone .pm-act{ display:none; }
+  .pm-row.is-gone{ opacity:.5; }
+  .pm-row.is-gone .pm-price{ text-decoration:line-through; text-decoration-thickness:2px; }
+  .pm-row.is-gone .pm-tag{ border-color:var(--cream-dim); color:var(--cream-dim); background:transparent; }
+  .pm-row--gold{ background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .25 0 0 0 0 .16 0 0 0 .28 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); color:#17121F; border-color:transparent; }
+  .pm-row--gold .pm-info small, .pm-row--gold .pm-price small{ color:#3B3346; }
+  .pm-row--gold .pm-tag{ border-color:#17121F; color:#17121F; }
+  .pm-row--gold .pm-btn{ background:#17121F; color:var(--paper); }
+  .pm-row--gold .qty{ border-color:rgba(23,18,31,.35); } .pm-row--gold .qty button{ color:#17121F; }
+  .pm-row--gold .pm-left{ color:#B4410A; }
+  .pm-msg{ grid-column:1 / -1; font-size:13.5px; color:#FF8A98; }
+  .pm-msg:empty{ display:none; }
+  .pm-note{ margin-top:26px; display:grid; gap:8px; color:var(--cream-dim); }
+  .pm-note strong{ color:var(--cream); font-weight:500; }
+  .pm-note .mono{ color:var(--cream-dim); }
 
   /* ================= DATOS ================= */
   .datos{ padding:90px 0; }
@@ -222,6 +239,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .form-msg.ok{ color:var(--cyan); }
   .form-msg.err{ color:#FF8A98; }
   .form-msg a{ color:var(--cream); }
+
+  /* ================= XERO VIDEO ================= */
+  .xero{ padding:90px 0; overflow:hidden; }
+  .xero-grid{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
+  @media (min-width:960px){ .xero-grid{ grid-template-columns:.8fr 1.2fr; gap:70px; } }
+  .xero-copy p{ margin-top:18px; max-width:460px; color:var(--cream-dim); font-size:17px; line-height:1.6; }
+  .xero-copy .link{ display:inline-block; margin-top:22px; }
+  .clip{ position:relative; justify-self:center; width:min(330px, 82%); }
+  .clip video{ display:block; width:100%; aspect-ratio:478/850; object-fit:cover; background:#000; box-shadow:0 30px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(243,235,221,.1); }
+  .clip::before{ content:''; position:absolute; z-index:1; top:-14px; left:50%; width:120px; height:32px; margin-left:-60px; background:rgba(233,220,194,.85); transform:rotate(-3deg); box-shadow:0 3px 8px rgba(0,0,0,.3); }
+  .clip figcaption{ margin-top:16px; text-align:center; color:var(--cream-dim); }
 
   /* ================= MAPA ================= */
   .mapa{ padding:90px 0; background:var(--ink); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); overflow:hidden; }
@@ -306,8 +334,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="where-note mono">Evento tributo +18 — artista no presente</div>
         </div>
         <div class="actions">
-          <a class="btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_hero_whatsapp">Quiero mi boleta</a>
-          <a class="link" href="#boletas">Ver precios ↓</a>
+          <a class="btn" href="#boletas" data-track="eosmde_hero_boletas">Quiero mi boleta</a>
+          <a class="link" href="#xero">Ver el lugar ↓</a>
         </div>
       </div>
 
@@ -332,24 +360,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
-<!-- ================= BOLETAS ================= -->
+<!-- ================= MAPA DE PRECIOS ================= -->
 <section class="boletas" id="boletas">
-  <div class="wrap boletas-grid">
-    <h2 class="big reveal">Boletas<span class="o">a la</span><span class="c">venta</span></h2>
-    <div class="stub reveal">
-      <div class="stub-main">
-        <div class="mono">Lista de precios · Sáb. 12 dic · Xero Club</div>
-        <div class="stub-title">End of Summer 2016<span>Medellín</span></div>
-        <ul class="prices">
-          <li class="price is-on"><span class="p-name">Preventa 1</span><span class="p-val">$35.000</span><small>Incluye $20.000 en consumible <em>Disponible</em></small></li>
-          <li class="price"><span class="p-name">Preventa 2</span><span class="p-val">$40.000</span><small>Incluye $20.000 en consumible · siguiente etapa</small></li>
-          <li class="price"><span class="p-name">General</span><span class="p-val">$45.000</span><small>Incluye $20.000 en consumible · al agotarse la preventa</small></li>
-          <li class="price price--back"><span class="p-name">Backstage</span><span class="p-val">$80.000</span><small>$30.000 en consumible + shot de bienvenida + ingreso preferente + acceso a la tarima</small></li>
-        </ul>
-        <a class="btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_stub_whatsapp">Comprar por WhatsApp</a>
-      </div>
-      <div class="stub-side"><span class="mono">Admit one · +18</span></div>
-      <div class="barcode" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="pm-head reveal">
+      <div><span class="mono">Boletería</span><h2 class="pm-title">Mapa de <span>precios</span></h2></div>
+      <div class="pm-meta mono">Sáb 12 dic · Xero Club · Medellín</div>
+    </div>
+    <ol class="pm">
+      <li class="pm-row reveal" data-key="P1" style="--c:#19E3FF">
+        <span class="pm-n">01</span>
+        <div class="pm-info"><b>Preventa 1</b><em class="pm-tag">Disponible</em><small>General · A pie · Muy limitadas · $15K en consumo</small><span class="pm-left"></span></div>
+        <div class="pm-price">$35.000<small>COP</small></div>
+        <div class="pm-act"><a class="pm-btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_p1_whatsapp">Comprar por WhatsApp</a></div>
+        <p class="pm-msg" role="status"></p>
+      </li>
+      <li class="pm-row reveal" data-key="P2" style="--c:#4C7BFF">
+        <span class="pm-n">02</span>
+        <div class="pm-info"><b>Preventa 2</b><em class="pm-tag">Siguiente</em><small>General · A pie · Muy limitadas · $15K en consumo</small><span class="pm-left"></span></div>
+        <div class="pm-price">$40.000<small>COP</small></div>
+        <div class="pm-act"><a class="pm-btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_p2_whatsapp">Comprar por WhatsApp</a></div>
+        <p class="pm-msg" role="status"></p>
+      </li>
+      <li class="pm-row reveal" data-key="GEN" style="--c:#8B3DFF">
+        <span class="pm-n">03</span>
+        <div class="pm-info"><b>General</b><em class="pm-tag">Al agotar preventa</em><small>A pie · Hasta agotar · $15K en consumo</small><span class="pm-left"></span></div>
+        <div class="pm-price">$45.000<small>COP</small></div>
+        <div class="pm-act"><a class="pm-btn" href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener" data-track="eosmde_gen_whatsapp">Comprar por WhatsApp</a></div>
+        <p class="pm-msg" role="status"></p>
+      </li>
+      <li class="pm-row reveal" data-key="VIP" style="--c:#A45BFF">
+        <span class="pm-n">04</span>
+        <div class="pm-info"><b>VIP</b><em class="pm-tag">Zona VIP</em><small>A pie · Tarima VIP · $20K en consumo + shot de bienvenida</small><span class="pm-left"></span></div>
+        <div class="pm-price">$85.000<small>COP</small></div>
+        <div class="pm-act"><span class="qty" aria-label="Cantidad"><button type="button" data-q="-1" aria-label="Menos">−</button><output>1</output><button type="button" data-q="1" aria-label="Más">+</button></span><a class="pm-btn pm-pay" href="https://checkout.wompi.co/l/kj5Nkr" target="_blank" rel="noopener" data-track="eosmde_vip_wompi">Pagar con Wompi</a></div>
+        <p class="pm-msg" role="status"></p>
+      </li>
+      <li class="pm-row pm-row--gold reveal" data-key="BKS" style="--c:#7A3BE0">
+        <span class="pm-n">05</span>
+        <div class="pm-info"><b>Backstage</b><em class="pm-tag">Experiencia</em><small>A pie · Junto al DJ · $20K en consumo + shot de bienvenida</small><span class="pm-left"></span></div>
+        <div class="pm-price">$95.000<small>COP</small></div>
+        <div class="pm-act"><span class="qty" aria-label="Cantidad"><button type="button" data-q="-1" aria-label="Menos">−</button><output>1</output><button type="button" data-q="1" aria-label="Más">+</button></span><a class="pm-btn pm-pay" href="https://checkout.wompi.co/l/8EDAxF" target="_blank" rel="noopener" data-track="eosmde_bks_wompi">Pagar con Wompi</a></div>
+        <p class="pm-msg" role="status"></p>
+      </li>
+    </ol>
+    <div class="pm-note reveal">
+      <p>Todas las boletas son <strong>a pie</strong> · General: <strong>$15K de consumo</strong> · VIP y Backstage: <strong>$20K de consumo + shot de bienvenida</strong>.</p>
+      <p class="mono">Preventas y General por WhatsApp 316 108 8178 · VIP y Backstage en línea con Wompi, hasta 5 por compra · el QR llega a tu correo</p>
     </div>
   </div>
 </section>
@@ -359,9 +416,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="wrap">
     <div class="row reveal"><span class="mono">Cuándo</span><div class="row-val">Sábado 12 de diciembre</div><span></span></div>
     <div class="row reveal"><span class="mono">Dónde</span><div class="row-val">Xero Club<small>Cl. 25 #43G-29, Medellín</small></div><a class="link" href="https://www.google.com/maps/search/?api=1&query=Xero%20Club%2C%20Cl.%2025%20%2343G-29%2C%20Medell%C3%ADn" target="_blank" rel="noopener" data-track="eosmde_maps">Cómo llegar ↗</a></div>
-    <div class="row reveal"><span class="mono">Boletas</span><div class="row-val">Desde $35.000<small>Preventa 1 con $20.000 en consumible incluidos.</small></div><a class="link" href="#boletas">Ver precios ↑</a></div>
+    <div class="row reveal"><span class="mono">Boletas</span><div class="row-val">Desde $35.000<small>Preventa 1 con $15.000 en consumo · VIP y Backstage con $20.000 + shot.</small></div><a class="link" href="#boletas">Ver precios ↑</a></div>
     <div class="row reveal"><span class="mono">Edad</span><div class="row-val">+18</div><span></span></div>
     <div class="row reveal"><span class="mono">Formato</span><div class="row-val">Evento tributo<small>Los himnos del EDM de 2016. Artistas no presentes.</small></div><span></span></div>
+  </div>
+</section>
+
+<!-- ================= XERO CLUB EN VIDEO ================= -->
+<section class="xero" id="xero">
+  <div class="wrap xero-grid">
+    <figure class="clip reveal">
+      <video id="xeroVideo" muted loop playsinline preload="none" poster="../../edc-preparty/ASSETS/eos-xero-club-poster.webp" data-src="../../edc-preparty/ASSETS/eos-xero-club.mp4" aria-label="Video del interior de Xero Club: pista con luces verdes, estructura de luces sobre la tarima y cabina del DJ."></video>
+      <figcaption class="mono">Xero Club por dentro</figcaption>
+    </figure>
+    <div class="xero-copy reveal">
+      <span class="mono mapa-label">El lugar</span>
+      <h2 class="mapa-title">Xero <span>Club</span></h2>
+      <p>Pista amplia, estructura de luces sobre la tarima y sonido para que los himnos de 2016 suenen como se deben. Todas las boletas son a pie.</p>
+      <a class="link" href="https://www.google.com/maps/search/?api=1&query=Xero%20Club%2C%20Cl.%2025%20%2343G-29%2C%20Medell%C3%ADn" target="_blank" rel="noopener" data-track="eosmde_xero_maps">Cómo llegar ↗</a>
+    </div>
   </div>
 </section>
 
@@ -374,7 +447,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <ol class="zonas">
         <li><b>Cover</b><span>Entrada y control de ingreso.</span></li>
         <li><b>General</b><span>La pista, frente a la cabina del DJ.</span></li>
-        <li><b>Backstage</b><span>La tarima, detrás del DJ (con ingreso preferente).</span></li>
+        <li><b>VIP</b><span>Tarima VIP, con $20K en consumo y shot de bienvenida.</span></li>
+        <li><b>Backstage</b><span>Junto al DJ, con $20K en consumo y shot de bienvenida.</span></li>
         <li><b>Barra</b><span>Al fondo, junto a la pista.</span></li>
         <li><b>Baños</b><span>Hombres y mujeres, a cada lado.</span></li>
       </ol>
@@ -408,7 +482,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </details>
       <details class="q reveal">
         <summary><span>¿Cómo consigo boleta y cuánto vale?</span><b aria-hidden="true">+</b></summary>
-        <p>Por <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>. Preventa 1: <strong>$35.000</strong>, Preventa 2: <strong>$40.000</strong> y General: <strong>$45.000</strong>, todas con <strong>$20.000 en consumible</strong> incluidos. Backstage: <strong>$80.000</strong>, con <strong>$30.000 en consumible</strong>, shot de bienvenida, ingreso preferente y acceso a la tarima. El precio sube por etapas a medida que se agota cada una.</p>
+        <p>Preventa 1 <strong>$35.000</strong>, Preventa 2 <strong>$40.000</strong> y General <strong>$45.000</strong>, con <strong>$15.000 en consumo</strong>: se compran por <a href="https://wa.me/573161088178?text=Hola%21%20Quiero%20comprar%20boletas%20para%20END%20OF%20SUMMER%202016%20Medell%C3%ADn%20%2812%20de%20diciembre%2C%20Xero%20Club%29.%20%C2%BFC%C3%B3mo%20pago%3F" target="_blank" rel="noopener">WhatsApp</a>. VIP <strong>$85.000</strong> (tarima VIP) y Backstage <strong>$95.000</strong> (junto al DJ), con <strong>$20.000 en consumo y shot de bienvenida</strong>: se pagan en línea con Wompi desde esta página, hasta 5 por compra. Todas son a pie y el QR llega a tu correo.</p>
       </details>
   </div>
 </section>
@@ -438,6 +512,102 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (saveData || reduce) return;
     v.src = v.dataset.src;
     var p = v.play(); if (p && p.catch) p.catch(function () {});
+  })();
+
+  // ===== Boletería: cupos automáticos y pago en línea (Apps Script de Medellín) =====
+  // Pega aquí la URL de la implementación del Apps Script de Medellín. Mientras esté
+  // vacía, la página muestra Preventa 1 como disponible y VIP/Backstage usan los
+  // links fijos de Wompi (1 boleta por pago).
+  var MDE_API = '';
+  (function () {
+    var rows = {};
+    document.querySelectorAll('.pm-row').forEach(function (r) { rows[r.dataset.key] = r; });
+    var ORDEN = ['P1', 'P2', 'GEN'], TAG_LATER = { P2: 'Siguiente', GEN: 'Al agotar preventa' }, max = 5;
+
+    function setTag(r, t) { r.querySelector('.pm-tag').textContent = t; }
+    function etapa(actual) {
+      var pos = ORDEN.indexOf(actual);
+      ORDEN.forEach(function (k, i) {
+        var r = rows[k]; r.classList.remove('is-on', 'is-later', 'is-gone');
+        if (i < pos) { r.classList.add('is-gone'); setTag(r, 'Agotado'); }
+        else if (i === pos) { r.classList.add('is-on'); setTag(r, 'Disponible'); }
+        else { r.classList.add('is-later'); setTag(r, TAG_LATER[k]); }
+      });
+    }
+    etapa('P1');
+
+    // Selector de cantidad (VIP y Backstage)
+    document.querySelectorAll('.qty').forEach(function (q) {
+      var out = q.querySelector('output');
+      q.addEventListener('click', function (ev) {
+        var b = ev.target.closest('button'); if (!b) return;
+        var row = q.closest('.pm-row'), lim = Math.min(max, Number(row.dataset.left || max));
+        out.textContent = Math.max(1, Math.min(lim, Number(out.textContent) + Number(b.dataset.q)));
+      });
+    });
+
+    if (!MDE_API) {
+      // Sin Apps Script: los links fijos son de 1 boleta, se oculta el selector.
+      document.querySelectorAll('.qty').forEach(function (q) { q.style.display = 'none'; });
+      return;
+    }
+
+    fetch(MDE_API + '?action=cupos', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) return;
+        max = d.max || max;
+        etapa(d.etapa);
+        Object.keys(d.tipos).forEach(function (k) {
+          var t = d.tipos[k], r = rows[k]; if (!r) return;
+          var left = r.querySelector('.pm-left');
+          if (t.agotado) {
+            r.classList.add('is-gone'); r.classList.remove('is-on'); setTag(r, 'Agotado'); left.textContent = '';
+          } else if (t.disponibles != null) {
+            r.dataset.left = t.disponibles;
+            left.textContent = t.disponibles <= 15 ? (t.disponibles === 1 ? '¡Queda 1!' : 'Quedan ' + t.disponibles) : '';
+          }
+        });
+      })
+      .catch(function () {});
+
+    document.querySelectorAll('.pm-pay').forEach(function (a) {
+      a.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var row = a.closest('.pm-row'), msg = row.querySelector('.pm-msg');
+        var cantidad = Number(row.querySelector('.qty output').textContent) || 1;
+        var label = a.textContent;
+        a.classList.add('off'); a.textContent = 'Abriendo Wompi…'; msg.textContent = '';
+        fetch(MDE_API, { method: 'POST', body: JSON.stringify({ action: 'checkout', tipo: row.dataset.key, cantidad: cantidad,
+          volver: location.origin + location.pathname.replace(/[^/]*$/, '') + 'confirmacion-medellin.html' }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d.ok && d.url) { location.href = d.url; return; }
+            if (d.status === 'agotado') msg.textContent = 'Se agotaron. Escríbenos por WhatsApp para ver otras opciones.';
+            else if (d.status === 'sin_cupo') msg.textContent = 'Solo quedan ' + d.disponibles + '. Baja la cantidad e intenta de nuevo.';
+            else if (cantidad === 1) { location.href = a.href; return; }
+            else msg.textContent = 'No pudimos abrir el pago. Intenta de nuevo o escríbenos por WhatsApp.';
+            a.classList.remove('off'); a.textContent = label;
+          })
+          .catch(function () {
+            if (cantidad === 1) { location.href = a.href; return; }
+            msg.textContent = 'No pudimos abrir el pago. Intenta de nuevo o escríbenos por WhatsApp.';
+            a.classList.remove('off'); a.textContent = label;
+          });
+      });
+    });
+  })();
+
+  // Video de Xero Club: se carga solo al llegar a esa parte y sin ahorro de datos
+  (function () {
+    var v = document.getElementById('xeroVideo');
+    if (!v) return;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (saveData || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.controls = true; v.src = v.dataset.src; return; }
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) { if (!v.getAttribute('src')) v.src = v.dataset.src; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (v.getAttribute('src')) v.pause();
+    }, { rootMargin: '200px' }).observe(v);
   })();
 
   // Aparicion suave al hacer scroll (una sola vez por bloque)

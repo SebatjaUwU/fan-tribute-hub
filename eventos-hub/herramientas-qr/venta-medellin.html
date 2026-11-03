@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Venta WhatsApp · Medellín | Fan Tribute staff</title>
+<link rel="icon" href="../../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --black:#07060B; --ink:#0E0C15; --panel:#14111D; --cream:#F3EBDD; --dim:#A9A2B6; --violet:#8B3DFF; --cyan:#19E3FF; --ok:#3DDC97; --bad:#FF6B7D; --rule:rgba(243,235,221,.16); }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:var(--black); color:var(--cream); font-family:'Space Grotesk',sans-serif; }
+  .wrap{ max-width:640px; margin:0 auto; padding:24px 18px 60px; }
+  .mono{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
+  h1{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:52px; line-height:.9; margin:8px 0 4px; }
+  .sub{ color:var(--dim); font-size:14px; }
+  .cupos{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin:22px 0 26px; }
+  .cupo{ background:var(--panel); border:1px solid var(--rule); padding:10px 8px; text-align:center; }
+  .cupo b{ display:block; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:28px; line-height:1; }
+  .cupo small{ display:block; font-size:10.5px; color:var(--dim); margin-top:4px; }
+  .cupo.gone{ border-color:var(--bad); } .cupo.gone b{ color:var(--bad); }
+  .cupo.on{ border-color:var(--cyan); }
+  form{ display:grid; gap:16px; }
+  label{ display:grid; gap:6px; }
+  label .mono{ color:var(--dim); }
+  input, select{ width:100%; background:var(--panel); border:1px solid var(--rule); color:var(--cream); font:500 18px 'Space Grotesk',sans-serif; padding:11px 12px; border-radius:0; outline:none; }
+  input:focus, select:focus{ border-color:var(--cyan); }
+  .two{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .two:first-child{ grid-template-columns:1.5fr 1fr; }
+  select{ font-size:16px; }
+  .check{ display:flex; align-items:center; gap:10px; font-size:15px; color:var(--dim); }
+  .check input{ width:20px; height:20px; }
+  .btn{ padding:15px 18px 12px; background:var(--cream); color:var(--black); border:0; cursor:pointer; font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.06em; box-shadow:5px 5px 0 var(--violet); }
+  .btn[disabled]{ opacity:.55; cursor:wait; }
+  .res{ margin-top:22px; padding:16px; border:1px solid var(--rule); background:var(--panel); display:none; }
+  .res.ok{ display:block; border-color:var(--ok); } .res.err{ display:block; border-color:var(--bad); }
+  .res h2{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:30px; }
+  .res ul{ list-style:none; margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:14px; line-height:1.8; }
+  .res p{ color:var(--dim); font-size:14px; margin-top:6px; }
+  #pin{ position:fixed; inset:0; background:var(--black); display:flex; align-items:center; justify-content:center; padding:20px; z-index:5; }
+  #pin .box{ width:100%; max-width:320px; display:grid; gap:14px; text-align:center; }
+  #pin input{ text-align:center; font-size:28px; letter-spacing:.4em; }
+  .hidden{ display:none !important; }
+  .top{ display:flex; justify-content:space-between; align-items:center; }
+  .top button{ background:none; border:0; color:var(--dim); cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="pin">
+  <div class="box">
+    <span class="mono">Staff · Fan Tribute</span>
+    <h1>PIN</h1>
+    <input type="password" inputmode="numeric" id="pinInput" maxlength="12" autocomplete="off">
+    <button class="btn" id="pinBtn">Entrar</button>
+    <p class="sub" id="pinMsg"></p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="top"><span class="mono" style="color:var(--cyan)">End of Summer 2016 · Medellín</span><button class="mono" id="salir">Salir</button></div>
+  <h1>Venta por WhatsApp</h1>
+  <p class="sub">Registra la venta y el comprador recibe sus QR por correo. Se guarda en la hoja "Repositorio QR" y cuenta para los cupos.</p>
+
+  <div class="cupos" id="cupos"></div>
+
+  <form id="venta" novalidate>
+    <div class="two">
+      <label><span class="mono">Tipo de entrada</span>
+        <select name="tipo">
+          <option value="P1">Preventa 1 · 35K</option>
+          <option value="P2">Preventa 2 · 40K</option>
+          <option value="GEN">General · 45K</option>
+          <option value="VIP">VIP · 85K</option>
+          <option value="BKS">Backstage · 95K</option>
+        </select>
+      </label>
+      <label><span class="mono">Cantidad</span><input name="cantidad" type="number" min="1" max="20" value="1" inputmode="numeric"></label>
+    </div>
+    <label><span class="mono">Nombre</span><input name="nombre" required maxlength="80" autocomplete="off"></label>
+    <label><span class="mono">Email</span><input name="email" type="email" required maxlength="120" inputmode="email" autocomplete="off"></label>
+    <div class="two">
+      <label><span class="mono">Teléfono</span><input name="telefono" type="tel" maxlength="30" inputmode="tel" autocomplete="off"></label>
+      <label><span class="mono">Monto COP (total)</span><input name="monto" inputmode="numeric" autocomplete="off"></label>
+    </div>
+    <label><span class="mono">Referencia del pago</span><input name="referencia" maxlength="80" placeholder="Nequi, transferencia, efectivo…" autocomplete="off"></label>
+    <label class="check"><input type="checkbox" name="enviar" checked> Enviar los QR al correo del comprador</label>
+    <button class="btn" type="submit" id="enviarBtn">Registrar venta</button>
+  </form>
+
+  <div class="res" id="res"></div>
+</div>
+
+<script>
+  // URL de la implementación del Apps Script de Medellín
+  var MDE_API = '';
+  var PIN_KEY = 'ft_staff_pin_mde';
+  var PRECIOS = { P1: 35000, P2: 40000, GEN: 45000, VIP: 85000, BKS: 95000 };
+  var NOMBRES = { P1: 'Preventa 1', P2: 'Preventa 2', GEN: 'General', VIP: 'VIP', BKS: 'Backstage' };
+  var f = document.getElementById('venta'), res = document.getElementById('res'), btn = document.getElementById('enviarBtn');
+  var pinBox = document.getElementById('pin'), pinInput = document.getElementById('pinInput'), pinMsg = document.getElementById('pinMsg');
+
+  function pin() { try { return sessionStorage.getItem(PIN_KEY) || ''; } catch (e) { return window._pin || ''; } }
+  function guardarPin(v) { try { sessionStorage.setItem(PIN_KEY, v); } catch (e) { window._pin = v; } }
+  function pedirPin(texto) { pinMsg.textContent = texto || ''; pinBox.classList.remove('hidden'); pinInput.value = ''; pinInput.focus(); }
+  function fmt(n) { return '$' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  document.getElementById('pinBtn').addEventListener('click', function () {
+    guardarPin(pinInput.value.trim()); pinBox.classList.add('hidden');
+  });
+  pinInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('pinBtn').click(); });
+  document.getElementById('salir').addEventListener('click', function () { guardarPin(''); pedirPin(); });
+  if (pin()) pinBox.classList.add('hidden'); else pedirPin(MDE_API ? '' : 'Falta pegar la URL del Apps Script en esta página.');
+
+  function montoAuto() { f.monto.value = (PRECIOS[f.tipo.value] || 0) * (Number(f.cantidad.value) || 1); }
+  f.tipo.addEventListener('change', montoAuto); f.cantidad.addEventListener('input', montoAuto); montoAuto();
+
+  function pintarCupos(d) {
+    if (!d || !d.tipos) return;
+    document.getElementById('cupos').innerHTML = Object.keys(NOMBRES).map(function (k) {
+      var t = d.tipos[k] || {};
+      var cls = t.agotado ? 'gone' : (k === d.etapa ? 'on' : '');
+      var num = t.disponibles == null ? '∞' : t.disponibles;
+      return '<div class="cupo ' + cls + '"><b>' + num + '</b><small>' + NOMBRES[k] + (t.agotado ? ' · agotado' : '') + '</small></div>';
+    }).join('');
+  }
+  function cargarCupos() {
+    if (!MDE_API) return;
+    fetch(MDE_API + '?action=cupos', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(pintarCupos).catch(function () {});
+  }
+  cargarCupos();
+
+  function mostrar(cls, html) { res.className = 'res ' + cls; res.innerHTML = html; res.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+
+  function enviar(forzar) {
+    var datos = {
+      action: 'manual', pin: pin(), tipo: f.tipo.value, cantidad: Number(f.cantidad.value) || 1,
+      nombre: f.nombre.value.trim(), email: f.email.value.trim(), telefono: f.telefono.value.trim(),
+      monto: f.monto.value, referencia: f.referencia.value.trim(), enviar: f.enviar.checked, forzar: !!forzar
+    };
+    if (!datos.nombre || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.email)) return mostrar('err', '<h2>Revisa los datos</h2><p>Falta el nombre o el correo no es válido.</p>');
+    btn.disabled = true; btn.textContent = 'Registrando…';
+    fetch(MDE_API, { method: 'POST', body: JSON.stringify(datos) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.status === 'pin_invalido' || d.status === 'pin_sin_configurar') { guardarPin(''); return pedirPin(d.status === 'pin_invalido' ? 'PIN incorrecto.' : 'Falta configurar STAFF_PIN en el Apps Script.'); }
+        if (d.status === 'sin_cupo') {
+          if (confirm('Solo quedan ' + d.disponibles + ' de ' + NOMBRES[datos.tipo] + '. ¿Registrar la venta de todas formas?')) return enviar(true);
+          return mostrar('err', '<h2>Sin cupo</h2><p>Quedan ' + d.disponibles + ' de ' + NOMBRES[datos.tipo] + '. No se registró nada.</p>');
+        }
+        if (!d.ok) return mostrar('err', '<h2>No se registró</h2><p>Motivo: ' + esc(d.status || 'error') + '.</p>');
+        pintarCupos(d.cupos);
+        mostrar('ok', '<h2>Venta registrada</h2><p>' + datos.cantidad + ' x ' + NOMBRES[datos.tipo] + ' · ' + esc(datos.nombre) + ' · ' + fmt(Number(String(datos.monto).replace(/\D/g, '')) || 0) + '</p>' +
+          '<ul>' + d.ticketIds.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
+          '<p>' + (d.enviado ? 'QR enviados a ' + esc(datos.email) + '.' : (datos.enviar ? 'Ojo: el correo no salió. Se reintenta con reenviarCorreosPendientes().' : 'No se envió correo (lo desmarcaste).')) + '</p>');
+        f.nombre.value = ''; f.email.value = ''; f.telefono.value = ''; f.referencia.value = ''; f.cantidad.value = 1; montoAuto();
+      })
+      .catch(function () { mostrar('err', '<h2>Sin conexión</h2><p>No se pudo contactar el Apps Script. Revisa internet e intenta de nuevo; antes mira en la hoja que la venta no haya quedado registrada.</p>'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Registrar venta'; });
+  }
+  f.addEventListener('submit', function (e) { e.preventDefault(); enviar(false); });
+</script>
+</body>
+</html>
