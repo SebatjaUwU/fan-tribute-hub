@@ -47,7 +47,7 @@ const LUGAR_EVENTO = 'Xero Club · Cl. 25 #43G-29, Medellín';
 const SITIO = 'https://end-of-summer-2016-medellin.netlify.app';
 const AVISO_EMAIL = 'fantributeco@gmail.com';   // recibe un aviso por cada venta
 const PREFIJO_REF = 'EOSMDE';                   // referencias del checkout: EOSMDE-VIP-2-xxxx
-const MAX_POR_COMPRA = 5;
+const MAX_POR_COMPRA = 4;
 const RESERVA_MIN = 20;   // minutos que un checkout sin pagar aparta cupo
 
 // Tipos de boleta. "online": se puede pagar por Wompi desde la página.
@@ -60,11 +60,18 @@ const TIPOS = {
 };
 const ORDEN_ETAPAS = ['P1', 'P2', 'GEN'];
 
-// Links de pago fijos de Wompi (1 boleta). La página los usa solo si el
-// checkout no responde; si alguien paga con ellos igual se procesa.
+// Links de pago de Wompi (uno por cantidad). La página abre el que corresponde
+// a la cantidad elegida; cuando el pago se aprueba se generan esa cantidad de QR.
+// El precio lo fija cada link en Wompi, por eso no se exige un monto exacto.
 const LINKS_FIJOS = {
-  kj5Nkr: { key: 'VIP', cantidad: 1 },
-  '8EDAxF': { key: 'BKS', cantidad: 1 }
+  kj5Nkr:   { key: 'VIP', cantidad: 1 },
+  py5Cbe:   { key: 'VIP', cantidad: 2 },
+  YH90PE:   { key: 'VIP', cantidad: 3 },
+  KxCEFE:   { key: 'VIP', cantidad: 4 },
+  '8EDAxF': { key: 'BKS', cantidad: 1 },
+  hfFUoF:   { key: 'BKS', cantidad: 2 },
+  pv9Uxf:   { key: 'BKS', cantidad: 3 },
+  BtXI7L:   { key: 'BKS', cantidad: 4 }
 };
 
 const SHEET_NAME = 'Repositorio QR';
@@ -216,7 +223,7 @@ function leerReferencia_(ref) {
   const m = ref.match(/^EOSMDE-([A-Z0-9]+)-(\d+)-[A-Z0-9]+$/);
   if (m && TIPOS[m[1]]) return { key: m[1], cantidad: parseInt(m[2], 10) };
   const fijo = LINKS_FIJOS[ref.split('_')[0]];
-  return fijo ? { key: fijo.key, cantidad: fijo.cantidad } : null;
+  return fijo ? { key: fijo.key, cantidad: fijo.cantidad, link: true } : null;
 }
 
 // ---------------------------------------------------------------- pagos aprobados
@@ -279,7 +286,7 @@ function procesarTransaccion_(tx) {
   if (tx.status !== 'APPROVED') return { status: 'no_aprobada' };
   const t = TIPOS[info.key];
   const esperado = t.precio * info.cantidad * 100;
-  if (Number(tx.amount_in_cents) < esperado) {
+  if (!info.link && Number(tx.amount_in_cents) < esperado) {
     avisar_('Revisar pago de Medellín: monto no coincide',
       'La transacción ' + tx.id + ' (ref. ' + tx.reference + ') pagó ' + (tx.amount_in_cents / 100) +
       ' COP pero ' + info.cantidad + ' x ' + t.tipo + ' cuesta ' + (esperado / 100) + ' COP. No se generaron boletas.');

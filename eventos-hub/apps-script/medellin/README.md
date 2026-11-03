@@ -4,7 +4,7 @@ Proyecto de Apps Script **aparte** (no toca el de Halloween ni el de los formula
 
 ## Archivos
 - `Code.gs`: el código del Apps Script.
-- `eventos-hub/eventos/medellin-2016.html`: página con mapa de precios, cupos automáticos y pago Wompi (VIP/Backstage, 1 a 5 por compra).
+- `eventos-hub/eventos/medellin-2016.html`: página con mapa de precios, cupos automáticos y pago Wompi (VIP/Backstage con links de Wompi x1 a x4).
 - `eventos-hub/eventos/confirmacion-medellin.html`: adonde vuelve el comprador después de pagar.
 - `eventos-hub/herramientas-qr/venta-medellin.html`: formulario del staff para ventas por WhatsApp (con PIN).
 - `eventos-hub/eventos/escanear-medellin.html`: escáner de la puerta (con PIN).
