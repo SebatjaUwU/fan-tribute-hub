@@ -345,6 +345,7 @@ function instalarRevisores() {
   ScriptApp.newTrigger('revisarCorreosWompi').timeBased().everyMinutes(5).create();
   ScriptApp.newTrigger('revisarPagosPendientes').timeBased().everyMinutes(10).create();
   hoja_(); hojaCheckouts_();
+  try { prepararHojaVentas_(); } catch (err) { Logger.log('No se pudo preparar la hoja: ' + err); }
   [LABEL_OK, LABEL_REVISAR, LABEL_OTRO].forEach(etiqueta_);
   revisarCorreosWompi();
   Logger.log('Listo: lector de correos de Wompi cada 5 minutos y hojas creadas.');
@@ -542,7 +543,7 @@ function registrarBoletas_(v) {
       filas.push([new Date(), EVENTO, t.tipo, numero, ticketId, v.txId, v.referencia, v.nombre, v.email, v.telefono, montoUnidad, v.estado, false, false, '']);
       ids.push(ticketId);
     }
-    inicio = sh.getLastRow() + 1;
+    inicio = ultimaFilaConDatos_(data) + 1;
     sh.getRange(inicio, 1, filas.length, HEADERS.length).setValues(filas);
     SpreadsheetApp.flush();
   } finally {
@@ -562,13 +563,114 @@ function registrarBoletas_(v) {
   return { status: 'procesada', ticketIds: ids, enviado: enviado, nombre: v.nombre, montoTotal: v.montoTotal };
 }
 
+// ---------------------------------------------------------------- ventas escritas en la hoja (como Halloween)
+
+/** Menú "Boletería" en la Google Sheet. */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('🎟️ Boletería')
+    .addItem('Enviar QR de las ventas nuevas', 'enviarQRPendientes')
+    .addItem('Reenviar correos que fallaron', 'reenviarCorreosPendientes')
+    .addSeparator()
+    .addItem('Enviarme un correo de prueba', 'enviarPrueba')
+    .addItem('Preparar la hoja (listas y casillas)', 'prepararHojaVentas_')
+    .addToUi();
+}
+
+/** Lista desplegable de tipos y casillas en "Repositorio QR". */
+function prepararHojaVentas_() {
+  const sh = hoja_();
+  const filas = Math.max(sh.getMaxRows() - 1, 999);
+  const tipos = Object.keys(TIPOS).map(function (k) { return TIPOS[k].tipo; });
+  sh.getRange(2, 3, filas, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(tipos, true).setAllowInvalid(false).build());
+  sh.getRange(2, 13, filas, 2).insertCheckboxes();
+  sh.getRange(1, 3).setNote('Elige el tipo de la lista. Una fila = una boleta.');
+  sh.getRange(1, 8).setNote('Nombre completo: de aquí salen las iniciales del código (Juan Sebastián Parra → JSP).');
+  sh.getRange(1, 9).setNote('Correo del comprador: ahí le llegan los QR.');
+  sh.getRange(1, 11).setNote('Si lo dejas vacío se pone el precio del tipo.');
+  sh.getRange(1, 5).setNote('NO lo escribas: se llena solo al enviar los QR.');
+  sh.getRange(1, 1, 1, HEADERS.length).setBackground('#17121F').setFontColor('#F3EBDD');
+  [3, 8, 9, 10, 11, 7].forEach(function (c) { sh.getRange(1, c).setBackground('#5B22D6'); });
+}
+
+/**
+ * Menú "Enviar QR de las ventas nuevas": busca las filas que tú escribiste a
+ * mano (con Tipo de entrada, Nombre y Email, pero sin Ticket ID), les pone
+ * número y código con las iniciales, y manda el correo con los QR. Si el
+ * mismo comprador tiene varias filas del mismo tipo, le llega un solo correo
+ * con todas sus boletas.
+ */
+function enviarQRPendientes() {
+  const sh = hoja_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  const grupos = {}, orden = [], errores = [];
+  try {
+    const data = sh.getDataRange().getValues();
+    const maxNum = {};
+    for (let i = 1; i < data.length; i++) {
+      const k = keyDeTipo_(data[i][2]), n = parseInt(data[i][3], 10);
+      if (k && data[i][4] && !isNaN(n)) maxNum[k] = Math.max(maxNum[k] || 0, n);
+    }
+    for (let i = 1; i < data.length; i++) {
+      const f = data[i];
+      if (f[4] || (!f[2] && !f[7] && !f[8])) continue;          // ya tiene código o fila vacía
+      const key = keyDeTipo_(f[2]);
+      const nombre = limpiar_(f[7], 80), email = limpiar_(f[8], 120).toLowerCase();
+      if (!key || !nombre || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        errores.push('Fila ' + (i + 1) + ': revisa ' + (!key ? 'el tipo de entrada' : !nombre ? 'el nombre' : 'el correo'));
+        continue;
+      }
+      const g = key + '|' + email + '|' + nombre.toLowerCase();
+      if (!grupos[g]) { grupos[g] = { key: key, nombre: nombre, email: email, filas: [], ids: [], tx: 'WA-' + Date.now().toString(36).toUpperCase() + orden.length }; orden.push(g); }
+      const numero = (maxNum[key] = (maxNum[key] || 0) + 1);
+      const id = codigoBoleta_(key, numero, nombre, email);
+      const t = TIPOS[key];
+      sh.getRange(i + 1, 1, 1, 12).setValues([[
+        f[0] || new Date(), EVENTO, t.tipo, numero, id, grupos[g].tx, f[6] || 'WhatsApp',
+        nombre, email, f[9], f[10] === '' || f[10] == null ? t.precio : f[10], 'MANUAL'
+      ]]);
+      grupos[g].filas.push(i + 1); grupos[g].ids.push(id);
+    }
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+
+  let enviados = 0, fallidos = 0;
+  orden.forEach(function (g) {
+    const x = grupos[g];
+    try {
+      enviarQR_({ email: x.email, nombre: x.nombre, key: x.key, ticketIds: x.ids });
+      x.filas.forEach(function (r) { sh.getRange(r, 13).setValue(true); });
+      enviados += x.ids.length;
+    } catch (err) {
+      fallidos += x.ids.length;
+      Logger.log('No salió el correo de ' + x.email + ': ' + err);
+    }
+  });
+
+  const msg = (enviados ? '✅ ' + enviados + (enviados === 1 ? ' boleta enviada' : ' boletas enviadas') + '. ' : 'No había ventas nuevas para enviar. ') +
+    (fallidos ? '⚠️ ' + fallidos + ' no salieron (usa "Reenviar correos que fallaron"). ' : '') +
+    (errores.length ? '\n\nFilas sin enviar:\n' + errores.join('\n') : '');
+  try { SpreadsheetApp.getUi().alert('Boletería Medellín', msg, SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { Logger.log(msg); }
+  return msg;
+}
+
+/** Última fila (1 = encabezados) con algo escrito en las columnas A a L; ignora las casillas vacías. */
+function ultimaFilaConDatos_(data) {
+  for (let i = data.length - 1; i >= 1; i--) {
+    for (let c = 0; c < 12; c++) if (data[i][c] !== '' && data[i][c] != null) return i + 1;
+  }
+  return 1;
+}
+
 /** Ejecutar a mano si algún correo falló: reenvía los QR con "Email enviado" en FALSE. */
 function reenviarCorreosPendientes() {
   const sh = hoja_();
   const data = sh.getDataRange().getValues();
   const grupos = {};
   for (let i = 1; i < data.length; i++) {
-    if (data[i][12] === true || !data[i][8]) continue;
+    if (data[i][12] === true || !data[i][8] || !data[i][4]) continue;
     const g = data[i][5] + '|' + data[i][8];
     (grupos[g] = grupos[g] || { filas: [], email: data[i][8], nombre: data[i][7], key: keyDeTipo_(data[i][2]), ids: [] });
     grupos[g].filas.push(i + 1); grupos[g].ids.push(data[i][4]);
