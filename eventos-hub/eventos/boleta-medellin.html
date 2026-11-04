@@ -59,14 +59,14 @@
 
   var params = new URLSearchParams(location.search);
   var codigo = (params.get('c') || '').trim().toUpperCase();
-  var key = (params.get('t') || (codigo.split('-')[1] || '')).toUpperCase();
+  var key = (params.get('t') || (codigo.split('-')[2] || '')).toUpperCase();
   var tipo = TIPOS[key];
   var nombre = (params.get('n') || '').trim().slice(0, 60);
   var entrada = (params.get('e') || '1 de 1').trim().slice(0, 12);
   var statusEl = document.getElementById('status');
   function error(msg) { statusEl.textContent = msg; statusEl.classList.add('error'); }
 
-  if (!tipo || !/^MDE-(P1|P2|GEN|VIP|BKS)-\d{3}-[A-Z0-9]{4}$/.test(codigo)) {
+  if (!tipo || !/^MDE-[A-Z]{3}-(P1|P2|GEN|VIP|BKS)-\d{4}$/.test(codigo)) {
     error('Este link está incompleto. Abre el botón "Descargar boleta completa" desde el correo que te llegó con tu QR.');
     return;
   }

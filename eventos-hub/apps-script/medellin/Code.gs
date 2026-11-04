@@ -498,6 +498,25 @@ function ventaManual_(b) {
 
 // ---------------------------------------------------------------- boletas + correo
 
+/** Iniciales del comprador: "Juan Sebastián Parra" -> "JSP" (3 letras, como en Halloween). */
+function iniciales_(nombre, email) {
+  const sinTildes = function (x) { return String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); };
+  let limpio = sinTildes(nombre).replace(/[^a-z ]/g, ' ');
+  if (limpio.trim() === 'sin nombre') limpio = '';
+  const PARTICULAS = ['de', 'del', 'la', 'las', 'los', 'y', 'da', 'do'];
+  const palabras = limpio.split(' ').filter(function (w) { return w && PARTICULAS.indexOf(w) === -1; });
+  let ini = palabras.slice(0, 3).map(function (w) { return w.charAt(0); }).join('');
+  if (ini.length < 3 && palabras.length) ini = (ini + palabras[palabras.length - 1].slice(1)).slice(0, 3);
+  if (ini.length < 3) ini = (ini + sinTildes(email).split('@')[0].replace(/[^a-z]/g, '')).slice(0, 3);
+  while (ini.length < 3) ini += 'X';
+  return ini.toUpperCase();
+}
+
+/** Código de la boleta: MDE-<iniciales>-<tipo>-<número>, ej. MDE-JSP-VIP-0007. */
+function codigoBoleta_(key, numero, nombre, email) {
+  return 'MDE-' + iniciales_(nombre, email) + '-' + key + '-' + ('000' + numero).slice(-4);
+}
+
 function registrarBoletas_(v) {
   const t = TIPOS[v.key];
   const sh = hoja_();
@@ -519,7 +538,7 @@ function registrarBoletas_(v) {
     const filas = [];
     for (let k = 0; k < v.cantidad; k++) {
       const numero = maxNumero + 1 + k;
-      const ticketId = 'MDE-' + v.key + '-' + ('00' + numero).slice(-3) + '-' + Utilities.getUuid().replace(/-/g, '').slice(0, 4).toUpperCase();
+      const ticketId = codigoBoleta_(v.key, numero, v.nombre, v.email);
       filas.push([new Date(), EVENTO, t.tipo, numero, ticketId, v.txId, v.referencia, v.nombre, v.email, v.telefono, montoUnidad, v.estado, false, false, '']);
       ids.push(ticketId);
     }
@@ -601,7 +620,12 @@ function enviarQR_(d) {
     const qr = UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=10&data=' + encodeURIComponent(id))
       .getBlob().setName(id + '.png');
     inline['qr' + i] = qr;
-    adjuntos.push(qr.copyBlob().setName('QR-' + id + '.png'));
+    try {
+      adjuntos.push(boletaPng_({ key: d.key, id: id, nombre: d.nombre, entrada: (i + 1) + ' de ' + d.ticketIds.length, qr: qr.copyBlob() }));
+    } catch (err) {
+      Logger.log('No se pudo armar la imagen de la boleta ' + id + ' (' + err + '); se adjunta solo el QR.');
+      adjuntos.push(qr.copyBlob().setName('QR-' + id + '.png'));
+    }
     return '<tr><td style="padding:0 0 14px;">' +
       '<table role="presentation" width="100%" style="border-collapse:collapse;background:#F3EBDD;border-left:6px solid ' + color + ';">' +
       '<tr><td style="padding:18px 20px 6px;' + F + 'font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#5B22D6;">' +
@@ -610,10 +634,7 @@ function enviarQR_(d) {
       '<tr><td colspan="2" style="padding:8px 20px 4px;text-align:center;">' +
       '<img src="cid:qr' + i + '" width="230" height="230" alt="QR ' + id + '" style="display:block;margin:0 auto;background:#ffffff;border:8px solid #ffffff;"></td></tr>' +
       '<tr><td colspan="2" style="padding:6px 20px 4px;text-align:center;font-family:\'Roboto Mono\',Menlo,Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:#17121F;">' + id + '</td></tr>' +
-      '<tr><td colspan="2" style="padding:2px 20px 14px;text-align:center;' + F + 'font-size:12px;color:#5c546b;">' + esc_(d.nombre) + ' · ' + esc_(t.detalle) + '</td></tr>' +
-      '<tr><td colspan="2" style="padding:0 20px 20px;text-align:center;">' +
-      '<a href="' + linkBoleta_(id, d.key, d.nombre, (i + 1) + ' de ' + d.ticketIds.length) + '" style="display:inline-block;padding:13px 22px;background:#17121F;color:#F3EBDD;text-decoration:none;' + F +
-      'font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Descargar boleta completa</a></td></tr>' +
+      '<tr><td colspan="2" style="padding:2px 20px 18px;text-align:center;' + F + 'font-size:12px;color:#5c546b;">' + esc_(d.nombre) + ' · ' + esc_(t.detalle) + '</td></tr>' +
       '</table></td></tr>';
   }).join('');
 
@@ -650,7 +671,7 @@ function enviarQR_(d) {
     '<table role="presentation" width="100%" style="border-collapse:collapse;">' + bloques + '</table>' +
     '<table role="presentation" width="100%" style="border-collapse:collapse;margin:6px 0 18px;"><tr><td style="padding:14px 16px;background:#14111D;border:1px solid #241f33;' + F + 'font-size:13px;line-height:1.7;color:#A9A2B6;">' +
     '• Cada QR sirve para <strong style="color:#F3EBDD;">una sola entrada</strong>; no lo compartas.<br>' +
-    '• Con el botón <strong style="color:#F3EBDD;">Descargar boleta completa</strong> guardas la boleta con el flyer en tu celular. Los QR también van adjuntos.<br>' +
+    '• Cada boleta también va <strong style="color:#F3EBDD;">adjunta como imagen</strong> para que la guardes en tu celular.<br>' +
     '• ¿Dudas? WhatsApp <strong style="color:#F3EBDD;">316 108 8178</strong> · Instagram <strong style="color:#F3EBDD;">@fantribute_col</strong></td></tr></table>' +
     '</td></tr>' +
     '<tr><td style="padding:24px 0 6px;">' + logos + '</td></tr>' +
@@ -664,6 +685,83 @@ function enviarQR_(d) {
   });
 }
 
+/**
+ * Arma la boleta (igual a la tarjeta del correo) como diapositiva de Google
+ * Slides y la exporta como PNG, para adjuntarla. Como en End of Summer y
+ * Halloween: se crea una presentación temporal y se manda a la papelera.
+ */
+function boletaPng_(b) {
+  const t = TIPOS[b.key];
+  const color = COLOR_TIPO[b.key] || '#8B3DFF';
+  const CREAM = '#F3EBDD', INK = '#17121F', DIM = '#5c546b', NOCHE = '#07060B';
+  const pres = SlidesApp.create('tmp-boleta-' + b.id);
+  const presId = pres.getId();
+  try {
+    const W = pres.getPageWidth(), H = pres.getPageHeight();   // 720 x 405 (horizontal)
+    const slide = pres.getSlides()[0];
+    slide.getPageElements().forEach(function (e) { try { e.remove(); } catch (x) {} });
+    slide.getBackground().setSolidFill(NOCHE);
+
+    function caja(x, y, w, h, fondo) {
+      const r = slide.insertShape(SlidesApp.ShapeType.RECTANGLE, x, y, w, h);
+      r.getFill().setSolidFill(fondo); r.getBorder().setTransparent(); return r;
+    }
+    function texto(txt, x, y, w, h, size, colorTxt, opts) {
+      opts = opts || {};
+      const tb = slide.insertTextBox(txt, x, y, w, h);
+      tb.getFill().setTransparent(); tb.getBorder().setTransparent();
+      const st = tb.getText().getTextStyle();
+      st.setFontFamily(opts.font || 'Roboto').setFontSize(size).setForegroundColor(colorTxt).setBold(!!opts.bold);
+      tb.getText().getParagraphStyle().setParagraphAlignment(opts.align || SlidesApp.ParagraphAlignment.START);
+      if (opts.esp) try { st.setLetterSpacing(opts.esp); } catch (x) {}
+      return tb;
+    }
+
+    // Tarjeta clara con borde de color, como en el correo
+    const M = 22;
+    caja(M, M, W - M * 2, H - M * 2, CREAM);
+    caja(M, M, 10, H - M * 2, color);
+
+    // QR a la derecha
+    const qs = H - M * 2 - 70, qx = W - M - qs - 30, qy = M + 26;
+    caja(qx - 8, qy - 8, qs + 16, qs + 16, '#FFFFFF');
+    slide.insertImage(b.qr, qx, qy, qs, qs);
+    texto(b.id, qx - 30, qy + qs + 14, qs + 60, 24, 13, INK, { font: 'Roboto Mono', bold: true, align: SlidesApp.ParagraphAlignment.CENTER });
+
+    // Columna izquierda
+    const lx = M + 34, lw = qx - lx - 30;
+    const logo = imgCorreo_('eos-logo.png');
+    let y = M + 18;
+    caja(M + 10, M, qx - 26 - (M + 10), 118, NOCHE);   // franja oscura con el logo
+    if (logo) { slide.insertImage(logo.copyBlob(), lx - 4, y - 6, 100, 97); }
+    texto('ENTRADA ' + b.entrada.toUpperCase(), lx + 108, y + 18, lw - 108, 18, 10, color, { bold: true });
+    texto('SÁB 12 DIC · XERO CLUB', lx + 108, y + 40, lw - 108, 18, 9, '#A9A2B6', { bold: true });
+    y += 112;
+    texto(t.tipo.toUpperCase(), lx, y, lw, 52, 40, INK, { font: 'Bebas Neue' });
+    y += 54;
+    texto(b.nombre, lx, y, lw, 28, 17, INK, { bold: true });
+    y += 30;
+    const extras = '$' + formato_(t.consumo) + ' en consumo' + (t.shot ? ' + shot de bienvenida' : '');
+    texto(t.detalle + ' · ' + extras, lx, y, lw, 34, 10.5, DIM);
+    y += 40;
+    texto('Xero Club · Cl. 25 #43G-29, Medellín · +18 · Presenta tu documento', lx, y, lw, 30, 9, DIM);
+
+    // Logos abajo
+    const ft = imgCorreo_('fantribute-logo.png'), xero = imgCorreo_('xero-logo.png');
+    caja(M + 10, H - M - 48, qx - 26 - (M + 10), 48, NOCHE);   // franja oscura con los logos
+    if (ft) slide.insertImage(ft.copyBlob(), lx, H - M - 38, 96, 28.8);
+    if (xero) slide.insertImage(xero.copyBlob(), qx - 26 - 46, H - M - 42, 36, 36);
+
+    pres.saveAndClose();
+    const url = 'https://docs.google.com/presentation/d/' + presId + '/export/png?id=' + presId + '&pageid=' + slide.getObjectId();
+    const res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) throw new Error('Slides devolvió ' + res.getResponseCode());
+    return res.getBlob().setName('Boleta-' + b.id + '.png');
+  } finally {
+    try { DriveApp.getFileById(presId).setTrashed(true); } catch (x) {}
+  }
+}
+
 /** Link a la página que arma la boleta completa (flyer + QR) para descargar. */
 function linkBoleta_(id, key, nombre, entrada) {
   return SITIO + '/eventos-hub/eventos/boleta-medellin.html?c=' + encodeURIComponent(id) + '&t=' + key +
@@ -672,7 +770,7 @@ function linkBoleta_(id, key, nombre, entrada) {
 
 /** Ejecutar desde el editor para ver el diseño: manda un correo de prueba a tu cuenta (no guarda nada). */
 function enviarPrueba() {
-  enviarQR_({ email: Session.getActiveUser().getEmail(), nombre: 'Prueba Fan Tribute', key: 'VIP', ticketIds: ['MDE-VIP-000-TEST', 'MDE-VIP-000-PRB2'] });
+  enviarQR_({ email: Session.getActiveUser().getEmail(), nombre: 'Prueba Fan Tribute', key: 'VIP', ticketIds: ['MDE-PFT-VIP-0000', 'MDE-PFT-VIP-0001'] });
 }
 
 function fila_(k, v) {
