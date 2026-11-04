@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Tu boleta — END OF SUMMER 2016 Medellín</title>
+<link rel="icon" href="../../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root{ --bg:#07060B; --text:#F3EBDD; --dim:#A9A2B6; --line:#2a2638; --accent:#8B3DFF; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--text); font-family:Roboto,'Helvetica Neue',Arial,sans-serif; min-height:100vh; padding:28px 16px 44px; }
+  main{ max-width:420px; margin:0 auto; text-align:center; }
+  h1{ font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:42px; line-height:1; letter-spacing:.02em; }
+  .sub{ font-size:13px; color:var(--dim); margin:6px 0 20px; letter-spacing:.04em; }
+  .status{ font-size:14px; color:var(--dim); padding:40px 0; }
+  .status.error{ color:#FF8A98; }
+  #boleta{ display:none; width:100%; height:auto; margin:0 auto 18px; box-shadow:0 20px 50px rgba(0,0,0,.6); }
+  .acciones{ display:none; flex-direction:column; gap:10px; }
+  .btn{ display:block; padding:15px 20px 13px; text-decoration:none; text-align:center; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.06em; }
+  .btn-primary{ background:var(--text); color:var(--bg); box-shadow:5px 5px 0 var(--accent); }
+  .btn-secondary{ color:var(--text); border:1.5px solid var(--line); }
+  .tip{ font-size:12.5px; line-height:1.6; color:var(--dim); margin-top:18px; }
+  .tip strong{ color:var(--text); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tu boleta</h1>
+  <p class="sub" id="sub">End of Summer 2016 · Medellín</p>
+  <p class="status" id="status">Generando tu boleta…</p>
+  <img id="boleta" alt="Boleta End of Summer 2016 Medellín">
+  <div class="acciones" id="acciones">
+    <a class="btn btn-primary" id="dlBoleta" href="#">Descargar boleta completa</a>
+    <a class="btn btn-secondary" id="dlQr" href="#">Descargar solo el QR</a>
+  </div>
+  <p class="tip" id="tip" hidden>En iPhone también puedes <strong>mantener presionada la imagen</strong> y elegir "Guardar en Fotos". Presenta el QR en la entrada junto a tu documento.</p>
+</main>
+
+<script>
+(function () {
+  // Mismos tipos que TIPOS en apps-script/medellin/Code.gs
+  var TIPOS = {
+    P1:  { nombre: 'Preventa 1', color: '#19E3FF', detalle: 'General · A pie', incluye: '$15K en consumo' },
+    P2:  { nombre: 'Preventa 2', color: '#4C7BFF', detalle: 'General · A pie', incluye: '$15K en consumo' },
+    GEN: { nombre: 'General',    color: '#8B3DFF', detalle: 'A pie',            incluye: '$15K en consumo' },
+    VIP: { nombre: 'VIP',        color: '#A45BFF', detalle: 'A pie · Tarima VIP', incluye: '$20K en consumo + shot de bienvenida' },
+    BKS: { nombre: 'Backstage',  color: '#D9B26B', detalle: 'A pie · Junto al DJ', incluye: '$20K en consumo + shot de bienvenida' }
+  };
+  var ASSETS = '../../edc-preparty/ASSETS/';
+  var CREAM = '#F3EBDD', INK = '#17121F', BG = '#07060B', DIM = '#A9A2B6';
+  var ROBOTO = "Roboto, 'Helvetica Neue', Arial, sans-serif";
+  var MONO = "'Roboto Mono', Menlo, Consolas, monospace";
+  var BEBAS = "'Bebas Neue', Impact, sans-serif";
+
+  var params = new URLSearchParams(location.search);
+  var codigo = (params.get('c') || '').trim().toUpperCase();
+  var key = (params.get('t') || (codigo.split('-')[1] || '')).toUpperCase();
+  var tipo = TIPOS[key];
+  var nombre = (params.get('n') || '').trim().slice(0, 60);
+  var entrada = (params.get('e') || '1 de 1').trim().slice(0, 12);
+  var statusEl = document.getElementById('status');
+  function error(msg) { statusEl.textContent = msg; statusEl.classList.add('error'); }
+
+  if (!tipo || !/^MDE-(P1|P2|GEN|VIP|BKS)-\d{3}-[A-Z0-9]{4}$/.test(codigo)) {
+    error('Este link está incompleto. Abre el botón "Descargar boleta completa" desde el correo que te llegó con tu QR.');
+    return;
+  }
+  document.getElementById('sub').textContent = tipo.nombre + ' · ' + codigo;
+  document.documentElement.style.setProperty('--accent', tipo.color);
+
+  function cargar(src) {
+    return new Promise(function (ok, mal) {
+      var img = new Image();
+      img.onload = function () { ok(img); };
+      img.onerror = function () { mal(new Error('No se pudo cargar ' + src)); };
+      img.src = src;
+    });
+  }
+  var fuentes = ['400 40px "Bebas Neue"', '400 20px Roboto', '700 20px Roboto', '900 20px Roboto', '700 20px "Roboto Mono"'];
+
+  Promise.all([
+    cargar(ASSETS + 'eos-medellin-flyer.webp'),
+    cargar(ASSETS + 'qr-medellin/fantribute-logo.png').catch(function () { return null; }),
+    cargar(ASSETS + 'qr-medellin/xero-logo.png').catch(function () { return null; }),
+    Promise.all(fuentes.map(function (f) { return document.fonts.load(f); })).catch(function () {})
+  ]).then(function (r) {
+    mostrar(dibujarBoleta(r[0], r[1], r[2]), dibujarSoloQr());
+  }).catch(function (err) {
+    error('No se pudo generar la boleta. Recarga la página o escríbenos por WhatsApp al 316 108 8178.');
+    console.error(err);
+  });
+
+  function espaciado(ctx, texto, x, y, esp, align) {
+    var ancho = 0, i;
+    for (i = 0; i < texto.length; i++) ancho += ctx.measureText(texto[i]).width + (i < texto.length - 1 ? esp : 0);
+    var cx = align === 'center' ? x - ancho / 2 : align === 'right' ? x - ancho : x;
+    var prev = ctx.textAlign; ctx.textAlign = 'left';
+    for (i = 0; i < texto.length; i++) { ctx.fillText(texto[i], cx, y); cx += ctx.measureText(texto[i]).width + esp; }
+    ctx.textAlign = prev;
+  }
+  function ajustar(ctx, texto, maxW, size, peso, familia) {
+    var s = size;
+    do { ctx.font = peso + ' ' + s + 'px ' + familia; s -= 2; } while (ctx.measureText(texto).width > maxW && s > 20);
+  }
+  function qrMatriz() { var q = qrcode(0, 'M'); q.addData(codigo); q.make(); return q; }
+  function pintarQr(ctx, x, y, size) {
+    var q = qrMatriz(), n = q.getModuleCount(), m = size / n;
+    ctx.fillStyle = INK;
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) ctx.fillRect(Math.floor(x + c * m), Math.floor(y + r * m), Math.ceil(m), Math.ceil(m));
+  }
+
+  function dibujarBoleta(flyer, ft, xero) {
+    var W = 1080, FH = Math.round(flyer.height * W / flyer.width), TH = 1180, H = FH + TH;
+    var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+
+    // 1) El flyer oficial completo
+    ctx.drawImage(flyer, 0, 0, W, FH);
+
+    // 2) Talón de la boleta
+    var y0 = FH;
+    ctx.fillStyle = BG; ctx.fillRect(0, y0, W, TH);
+    ctx.fillStyle = tipo.color; ctx.fillRect(0, y0, W, 12);
+    // perforación
+    ctx.fillStyle = '#2a2638';
+    for (var px = 30; px < W - 20; px += 34) ctx.fillRect(px, y0 + 40, 18, 4);
+    ctx.fillStyle = BG;
+    ctx.beginPath(); ctx.arc(0, y0 + 42, 26, 0, Math.PI * 2); ctx.arc(W, y0 + 42, 26, 0, Math.PI * 2); ctx.fill();
+
+    ctx.textBaseline = 'alphabetic';
+    // tipo + entrada
+    ctx.fillStyle = tipo.color; ctx.font = '700 26px ' + ROBOTO;
+    espaciado(ctx, 'ENTRADA ' + entrada.toUpperCase(), 70, y0 + 128, 6, 'left');
+    ctx.fillStyle = DIM; ctx.font = '700 26px ' + ROBOTO;
+    espaciado(ctx, 'SÁB 12 DIC · XERO CLUB', W - 70, y0 + 128, 5, 'right');
+    ctx.fillStyle = CREAM; ajustar(ctx, tipo.nombre.toUpperCase(), W - 140, 150, '400', BEBAS);
+    ctx.textAlign = 'left'; ctx.fillText(tipo.nombre.toUpperCase(), 66, y0 + 262);
+    ctx.fillStyle = DIM; ctx.font = '400 30px ' + ROBOTO;
+    ctx.fillText(tipo.detalle + ' · ' + tipo.incluye, 70, y0 + 312);
+
+    // QR en tarjeta clara
+    var qs = 460, qx = (W - qs) / 2, qy = y0 + 370, pad = 34;
+    ctx.fillStyle = CREAM; ctx.fillRect(qx - pad, qy - pad, qs + pad * 2, qs + pad * 2 + 86);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(qx - 14, qy - 14, qs + 28, qs + 28);
+    pintarQr(ctx, qx, qy, qs);
+    ctx.fillStyle = INK; ctx.font = '700 34px ' + MONO; ctx.textAlign = 'center';
+    espaciado(ctx, codigo, W / 2, qy + qs + 78, 3, 'center');
+
+    // nombre
+    if (nombre) {
+      ctx.fillStyle = CREAM; ajustar(ctx, nombre, W - 160, 44, '700', ROBOTO); ctx.textAlign = 'center';
+      ctx.fillText(nombre, W / 2, y0 + 1000);
+    }
+    ctx.fillStyle = DIM; ctx.font = '400 24px ' + ROBOTO; ctx.textAlign = 'center';
+    ctx.fillText('Cl. 25 #43G-29, Medellín · +18 · Presenta tu documento', W / 2, y0 + 1046);
+
+    // logos
+    var ly = y0 + 1090;
+    if (ft) { var fw = 210, fh = fw * ft.height / ft.width; ctx.drawImage(ft, 70, ly + (64 - fh) / 2, fw, fh); }
+    if (xero) { var xw = 64; ctx.drawImage(xero, W - 70 - xw, ly, xw, xw * xero.height / xero.width); }
+    ctx.fillStyle = '#6f6880'; ctx.font = '700 18px ' + ROBOTO;
+    espaciado(ctx, 'EVENTO TRIBUTO · ARTISTAS NO PRESENTES', W / 2, ly + 40, 3, 'center');
+    return cv;
+  }
+
+  function dibujarSoloQr() {
+    var cv = document.createElement('canvas'); cv.width = 700; cv.height = 820;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, cv.width, cv.height);
+    pintarQr(ctx, 70, 70, 560);
+    ctx.fillStyle = INK; ctx.font = '700 34px ' + MONO;
+    espaciado(ctx, codigo, 350, 720, 3, 'center');
+    ctx.font = '500 22px ' + ROBOTO; ctx.fillStyle = '#5c546b'; ctx.textAlign = 'center';
+    ctx.fillText('End of Summer 2016 · Medellín · ' + tipo.nombre, 350, 770);
+    return cv;
+  }
+
+  function mostrar(boleta, qr) {
+    boleta.toBlob(function (b1) {
+      qr.toBlob(function (b2) {
+        var u1 = URL.createObjectURL(b1), u2 = URL.createObjectURL(b2);
+        var img = document.getElementById('boleta'); img.src = u1; img.style.display = 'block';
+        var a1 = document.getElementById('dlBoleta'); a1.href = u1; a1.download = 'Boleta-' + codigo + '.png';
+        var a2 = document.getElementById('dlQr'); a2.href = u2; a2.download = codigo + '-QR.png';
+        statusEl.style.display = 'none';
+        document.getElementById('acciones').style.display = 'flex';
+        document.getElementById('tip').hidden = false;
+      }, 'image/png');
+    }, 'image/png');
+  }
+})();
+</script>
+</body>
+</html>

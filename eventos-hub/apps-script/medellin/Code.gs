@@ -610,7 +610,10 @@ function enviarQR_(d) {
       '<tr><td colspan="2" style="padding:8px 20px 4px;text-align:center;">' +
       '<img src="cid:qr' + i + '" width="230" height="230" alt="QR ' + id + '" style="display:block;margin:0 auto;background:#ffffff;border:8px solid #ffffff;"></td></tr>' +
       '<tr><td colspan="2" style="padding:6px 20px 4px;text-align:center;font-family:\'Roboto Mono\',Menlo,Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:#17121F;">' + id + '</td></tr>' +
-      '<tr><td colspan="2" style="padding:2px 20px 18px;text-align:center;' + F + 'font-size:12px;color:#5c546b;">' + esc_(d.nombre) + ' · ' + esc_(t.detalle) + '</td></tr>' +
+      '<tr><td colspan="2" style="padding:2px 20px 14px;text-align:center;' + F + 'font-size:12px;color:#5c546b;">' + esc_(d.nombre) + ' · ' + esc_(t.detalle) + '</td></tr>' +
+      '<tr><td colspan="2" style="padding:0 20px 20px;text-align:center;">' +
+      '<a href="' + linkBoleta_(id, d.key, d.nombre, (i + 1) + ' de ' + d.ticketIds.length) + '" style="display:inline-block;padding:13px 22px;background:#17121F;color:#F3EBDD;text-decoration:none;' + F +
+      'font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Descargar boleta completa</a></td></tr>' +
       '</table></td></tr>';
   }).join('');
 
@@ -647,7 +650,7 @@ function enviarQR_(d) {
     '<table role="presentation" width="100%" style="border-collapse:collapse;">' + bloques + '</table>' +
     '<table role="presentation" width="100%" style="border-collapse:collapse;margin:6px 0 18px;"><tr><td style="padding:14px 16px;background:#14111D;border:1px solid #241f33;' + F + 'font-size:13px;line-height:1.7;color:#A9A2B6;">' +
     '• Cada QR sirve para <strong style="color:#F3EBDD;">una sola entrada</strong>; no lo compartas.<br>' +
-    '• Los QR también van adjuntos en este correo.<br>' +
+    '• Con el botón <strong style="color:#F3EBDD;">Descargar boleta completa</strong> guardas la boleta con el flyer en tu celular. Los QR también van adjuntos.<br>' +
     '• ¿Dudas? WhatsApp <strong style="color:#F3EBDD;">316 108 8178</strong> · Instagram <strong style="color:#F3EBDD;">@fantribute_col</strong></td></tr></table>' +
     '</td></tr>' +
     '<tr><td style="padding:24px 0 6px;">' + logos + '</td></tr>' +
@@ -659,6 +662,12 @@ function enviarQR_(d) {
   GmailApp.sendEmail(d.email, 'Tus boletas · ' + EVENTO + ' · ' + t.tipo, texto, {
     htmlBody: html, inlineImages: inline, attachments: adjuntos, name: 'Fan Tribute', replyTo: AVISO_EMAIL
   });
+}
+
+/** Link a la página que arma la boleta completa (flyer + QR) para descargar. */
+function linkBoleta_(id, key, nombre, entrada) {
+  return SITIO + '/eventos-hub/eventos/boleta-medellin.html?c=' + encodeURIComponent(id) + '&t=' + key +
+    '&n=' + encodeURIComponent(nombre || '') + '&e=' + encodeURIComponent(entrada);
 }
 
 /** Ejecutar desde el editor para ver el diseño: manda un correo de prueba a tu cuenta (no guarda nada). */
