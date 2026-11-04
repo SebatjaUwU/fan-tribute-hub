@@ -566,40 +566,93 @@ function reenviarCorreosPendientes() {
   });
 }
 
+// Imágenes del correo (logos). Se descargan del repo público en GitHub, así
+// no dependen de que Netlify esté publicando.
+const IMG_CORREO = 'https://raw.githubusercontent.com/SebatjaUwU/fan-tribute-hub/master/edc-preparty/ASSETS/qr-medellin/';
+const COLOR_TIPO = { P1: '#19E3FF', P2: '#4C7BFF', GEN: '#8B3DFF', VIP: '#A45BFF', BKS: '#D9B26B' };
+var IMG_CACHE_ = {};
+function imgCorreo_(nombre) {
+  if (!(nombre in IMG_CACHE_)) {
+    try {
+      const r = UrlFetchApp.fetch(IMG_CORREO + nombre, { muteHttpExceptions: true });
+      IMG_CACHE_[nombre] = r.getResponseCode() === 200 ? r.getBlob().setName(nombre) : null;
+    } catch (err) {
+      IMG_CACHE_[nombre] = null;
+    }
+  }
+  return IMG_CACHE_[nombre];
+}
+
 function enviarQR_(d) {
   const t = TIPOS[d.key];
+  const color = COLOR_TIPO[d.key] || '#8B3DFF';
+  const F = "font-family:Roboto,'Helvetica Neue',Arial,sans-serif;";
   const inline = {};
   const adjuntos = [];
+
+  const logo = imgCorreo_('eos-logo.png');
+  const ft = imgCorreo_('fantribute-logo.png');
+  const xero = imgCorreo_('xero-logo.png');
+  if (logo) inline.logo = logo;
+  if (ft) inline.ft = ft;
+  if (xero) inline.xero = xero;
+
   const bloques = d.ticketIds.map(function (id, i) {
-    const qr = UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=12&data=' + encodeURIComponent(id))
+    const qr = UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=10&data=' + encodeURIComponent(id))
       .getBlob().setName(id + '.png');
     inline['qr' + i] = qr;
     adjuntos.push(qr.copyBlob().setName('QR-' + id + '.png'));
-    return '<tr><td style="padding:22px 0 26px;border-top:1px dashed #3a3550;text-align:center;">' +
-      '<div style="font:700 11px/1 monospace;letter-spacing:3px;color:#8B3DFF;text-transform:uppercase;">Entrada ' + (i + 1) + ' de ' + d.ticketIds.length + '</div>' +
-      '<img src="cid:qr' + i + '" width="220" height="220" alt="QR ' + id + '" style="display:block;margin:14px auto;background:#fff;">' +
-      '<div style="font:700 15px/1.2 monospace;letter-spacing:2px;color:#F3EBDD;">' + id + '</div></td></tr>';
+    return '<tr><td style="padding:0 0 14px;">' +
+      '<table role="presentation" width="100%" style="border-collapse:collapse;background:#F3EBDD;border-left:6px solid ' + color + ';">' +
+      '<tr><td style="padding:18px 20px 6px;' + F + 'font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#5B22D6;">' +
+      'Entrada ' + (i + 1) + ' de ' + d.ticketIds.length + '</td>' +
+      '<td style="padding:18px 20px 6px;text-align:right;' + F + 'font-size:20px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#17121F;">' + esc_(t.tipo) + '</td></tr>' +
+      '<tr><td colspan="2" style="padding:8px 20px 4px;text-align:center;">' +
+      '<img src="cid:qr' + i + '" width="230" height="230" alt="QR ' + id + '" style="display:block;margin:0 auto;background:#ffffff;border:8px solid #ffffff;"></td></tr>' +
+      '<tr><td colspan="2" style="padding:6px 20px 4px;text-align:center;font-family:\'Roboto Mono\',Menlo,Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:#17121F;">' + id + '</td></tr>' +
+      '<tr><td colspan="2" style="padding:2px 20px 18px;text-align:center;' + F + 'font-size:12px;color:#5c546b;">' + esc_(d.nombre) + ' · ' + esc_(t.detalle) + '</td></tr>' +
+      '</table></td></tr>';
   }).join('');
 
   const extras = ['$' + formato_(t.consumo) + ' en consumo'];
   if (t.shot) extras.push('shot de bienvenida');
+  const cabecera = logo
+    ? '<img src="cid:logo" width="250" alt="End of Summer 2016 · Medellín · + EDM Party" style="display:block;margin:0 auto;width:250px;max-width:70%;height:auto;">'
+    : '<div style="' + F + 'font-size:34px;font-weight:900;color:#F3EBDD;">END OF SUMMER <span style="color:#8B3DFF;">2016</span></div>';
+  const logos = (ft || xero)
+    ? '<table role="presentation" width="100%" style="border-collapse:collapse;"><tr>' +
+      (ft ? '<td style="text-align:center;padding:6px 10px;vertical-align:middle;"><div style="' + F + 'font-size:9px;font-weight:700;letter-spacing:2px;color:#6f6880;text-transform:uppercase;margin-bottom:8px;">Organiza</div><img src="cid:ft" width="130" alt="Fan Tribute" style="display:inline-block;width:130px;height:auto;"></td>' : '') +
+      (xero ? '<td style="text-align:center;padding:6px 10px;vertical-align:middle;"><div style="' + F + 'font-size:9px;font-weight:700;letter-spacing:2px;color:#6f6880;text-transform:uppercase;margin-bottom:8px;">Lugar</div><img src="cid:xero" width="74" alt="Xero Club" style="display:inline-block;width:74px;height:auto;"></td>' : '') +
+      '</tr></table>'
+    : '';
+
   const html =
-    '<div style="background:#07060B;padding:28px 12px;font-family:Arial,Helvetica,sans-serif;color:#F3EBDD;">' +
-    '<table role="presentation" width="100%" style="max-width:520px;margin:0 auto;border-collapse:collapse;">' +
-    '<tr><td style="text-align:center;padding-bottom:18px;">' +
-    '<div style="font:900 34px/1 Arial Black,Arial,sans-serif;letter-spacing:1px;color:#F3EBDD;">END OF SUMMER <span style="color:#8B3DFF;">2016</span></div>' +
-    '<div style="height:10px;"></div>' +
-    '<div style="font:700 11px/1.4 monospace;letter-spacing:3px;color:#19E3FF;">' + EVENTO_CORTO + '</div></td></tr>' +
-    '<tr><td style="background:#0E0C15;border:1px solid #2a2638;padding:24px 22px;">' +
-    '<p style="margin:0 0 6px;font-size:15px;color:#F3EBDD;">Hola <strong>' + esc_(d.nombre) + '</strong>,</p>' +
-    '<p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#C9C2D6;">Aquí están tus boletas. Muestra cada QR en la entrada (desde el celular o impreso). Cada código sirve <strong>una sola vez</strong>.</p>' +
-    '<table role="presentation" width="100%" style="border-collapse:collapse;margin-bottom:6px;">' +
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">' +
+    '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet"></head>' +
+    '<body style="margin:0;padding:0;background:#07060B;">' +
+    '<div style="background:#07060B;padding:30px 12px;' + F + 'color:#F3EBDD;">' +
+    '<table role="presentation" width="100%" style="max-width:540px;margin:0 auto;border-collapse:collapse;">' +
+    '<tr><td style="text-align:center;padding:0 0 18px;">' + cabecera + '</td></tr>' +
+    '<tr><td style="text-align:center;padding:0 0 24px;"><span style="display:inline-block;padding:9px 16px;border:1px solid #2f2a40;' + F +
+    'font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F3EBDD;">Sáb 12 dic · Xero Club · Medellín</span></td></tr>' +
+    '<tr><td style="background:#0E0C15;border:1px solid #241f33;padding:26px 24px 10px;">' +
+    '<p style="margin:0 0 4px;' + F + 'font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:' + color + ';">Tus boletas están listas</p>' +
+    '<p style="margin:0 0 10px;' + F + 'font-size:24px;font-weight:900;color:#F3EBDD;">¡Hola, ' + esc_(d.nombre) + '!</p>' +
+    '<p style="margin:0 0 20px;' + F + 'font-size:15px;line-height:1.6;color:#C9C2D6;">Gracias por estar en <strong style="color:#F3EBDD;">End of Summer 2016</strong>. ' +
+    'Aquí tienes ' + (d.ticketIds.length === 1 ? 'tu boleta' : 'tus ' + d.ticketIds.length + ' boletas') + '. Muestra cada QR en la entrada desde el celular o impreso.</p>' +
+    '<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 22px;">' +
     fila_('Boleta', d.ticketIds.length + ' x ' + t.tipo) + fila_('Incluye', t.detalle + ' · ' + extras.join(' + ')) +
-    fila_('Cuándo', FECHA_EVENTO) + fila_('Dónde', LUGAR_EVENTO) + fila_('Edad', '+18 · documento de identidad') +
-    '</table><table role="presentation" width="100%" style="border-collapse:collapse;">' + bloques + '</table>' +
-    '<p style="margin:10px 0 0;font-size:13px;line-height:1.6;color:#A9A2B6;">Los QR también van adjuntos. ¿Dudas? Escríbenos por WhatsApp al 316 108 8178 o en Instagram @fantribute_col.</p>' +
-    '</td></tr><tr><td style="text-align:center;padding-top:16px;font:11px/1.6 monospace;letter-spacing:2px;color:#6f6880;">FAN TRIBUTE · EVENTO TRIBUTO +18 · ARTISTAS NO PRESENTES</td></tr>' +
-    '</table></div>';
+    fila_('Cuándo', FECHA_EVENTO) + fila_('Dónde', LUGAR_EVENTO) + fila_('Edad', '+18 · trae tu documento de identidad') +
+    '</table>' +
+    '<table role="presentation" width="100%" style="border-collapse:collapse;">' + bloques + '</table>' +
+    '<table role="presentation" width="100%" style="border-collapse:collapse;margin:6px 0 18px;"><tr><td style="padding:14px 16px;background:#14111D;border:1px solid #241f33;' + F + 'font-size:13px;line-height:1.7;color:#A9A2B6;">' +
+    '• Cada QR sirve para <strong style="color:#F3EBDD;">una sola entrada</strong>; no lo compartas.<br>' +
+    '• Los QR también van adjuntos en este correo.<br>' +
+    '• ¿Dudas? WhatsApp <strong style="color:#F3EBDD;">316 108 8178</strong> · Instagram <strong style="color:#F3EBDD;">@fantribute_col</strong></td></tr></table>' +
+    '</td></tr>' +
+    '<tr><td style="padding:24px 0 6px;">' + logos + '</td></tr>' +
+    '<tr><td style="text-align:center;padding:10px 0 0;' + F + 'font-size:10px;letter-spacing:2px;color:#6f6880;text-transform:uppercase;">Evento tributo +18 · Artistas no presentes</td></tr>' +
+    '</table></div></body></html>';
 
   const texto = 'Hola ' + d.nombre + ', tus boletas para ' + EVENTO + ' (' + d.ticketIds.length + ' x ' + t.tipo + '): ' +
     d.ticketIds.join(', ') + '. ' + FECHA_EVENTO + ', ' + LUGAR_EVENTO + '. Los QR van adjuntos.';
@@ -608,9 +661,14 @@ function enviarQR_(d) {
   });
 }
 
+/** Ejecutar desde el editor para ver el diseño: manda un correo de prueba a tu cuenta (no guarda nada). */
+function enviarPrueba() {
+  enviarQR_({ email: Session.getActiveUser().getEmail(), nombre: 'Prueba Fan Tribute', key: 'VIP', ticketIds: ['MDE-VIP-000-TEST', 'MDE-VIP-000-PRB2'] });
+}
+
 function fila_(k, v) {
-  return '<tr><td style="padding:7px 0;border-top:1px solid #2a2638;font:700 10px/1.4 monospace;letter-spacing:2px;color:#8B3DFF;text-transform:uppercase;width:90px;vertical-align:top;">' + k +
-    '</td><td style="padding:7px 0;border-top:1px solid #2a2638;font-size:14px;color:#F3EBDD;">' + esc_(v) + '</td></tr>';
+  return '<tr><td style="padding:9px 0;border-top:1px solid #241f33;font-family:Roboto,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#8B3DFF;text-transform:uppercase;width:92px;vertical-align:top;">' + k +
+    '</td><td style="padding:9px 0;border-top:1px solid #241f33;font-family:Roboto,Arial,sans-serif;font-size:14px;color:#F3EBDD;">' + esc_(v) + '</td></tr>';
 }
 
 // ---------------------------------------------------------------- escáner
