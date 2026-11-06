@@ -1,123 +1,170 @@
 // ==== PROMO BACK TO CLASSIC 2000 (envio masivo, max 75 al dia) ====
-// Archivo extra del MISMO proyecto de Halloween (Code.gs): en el editor de
-// Apps Script dale a + > Script, nombralo Promo-BTC2000 y pega esto.
-// Usa las mismas piezas que la promo de Halloween (registro de "ya enviados"
-// en Script Properties, enviarCorreo_, las listas de correos), asi que no
-// repite a nadie aunque la corras varios dias.
+// Archivo AUTONOMO: funciona solo, en cualquier proyecto de Apps Script
+// (no necesita el Code.gs de Halloween). Mismo diseño de la promo de Halloween.
 //
-//   - enviarPromoBTCPrueba(): SOLO a PROMO_PRUEBA_EMAILS. No marca nada,
-//     la puedes correr las veces que quieras.
+//   - enviarPromoBTCPrueba(): te manda el correo SOLO a ti. No marca nada.
 //   - enviarPromoBTC(): manda la primera tanda (max 75) y deja programado
 //     que siga sola cada dia a las 10 a.m. hasta terminar; luego se apaga.
 //   - resetPromoBTCEnviados(): borra el registro para empezar de cero.
 //
-// A quien le llega (sin repetir): compradores de Back to Halloween 2016
-// (hoja del link + "Ventas Wompi", sin ANULADAS) y despues las mismas listas
-// de la promo de Halloween (Repositorio QR, negocio_fantribute, segunda fecha).
+// A quien le llega (sin repetir): la hoja de Back to Halloween (todas sus
+// pestañas con columna de correo, sin ANULADAS) y despues negocio_fantribute
+// y la segunda fecha. Lo enviado se anota en la pestaña "Promo BTC enviados"
+// de la hoja de Halloween.
 
-const PROMO_BTC_ENVIADOS_PROP = 'PROMO_BTC2000_ENVIADOS';
-const PROMO_BTC_POR_DIA = 75;          // tope de esta campaña por dia
-const PROMO_BTC_RESERVA = 20;          // cupo de Gmail que siempre queda para QR y avisos
-const PROMO_BTC_FLYER_ID = '1-p1kaDu3vNYqnIePJgGPW2iTC1rFwvaZ';
-const PROMO_BTC_SUBJECT = '🪩 BACK TO CLASSIC 2000 · EDM ✕ Reggaetón · Sáb 28 nov en Algarete Zona T';
-const PROMO_BTC_URL = 'https://fantributecol.netlify.app/eventos-hub/eventos/back-to-classic-2000.html';
-const PROMO_BTC_WA = 'https://wa.me/573161088178?text=' + encodeURIComponent('¡Hola! Quiero mis boletas para BACK TO CLASSIC 2000 🪩');
-const PROMO_BTC_FUNCION = 'enviarPromoBTC';
+var BTC_HOJA_ID = '13tybmgGnPrFhQyBYkdR5EMWU1sfraOAGhMHOoc6WFl0';
+var BTC_OTRAS_LISTAS = [
+  { id: '1f_3j-nwWql0V4xuMMcv1FopiyqgJKG77CCn0CJ1aBic', tab: 'boletas', nombre: 'negocio_fantribute' },
+  { id: '1WS8CROlnlShOtEuRsEOddAsNis704aJCg6rnzCXhUUs', tab: 'Boletas', nombre: 'segunda fecha' }
+];
+var BTC_LOG_TAB = 'Promo BTC enviados';
+var BTC_POR_DIA = 75;          // tope de esta campaña por dia
+var BTC_RESERVA = 20;          // cupo de Gmail que siempre queda para QR y avisos
+var BTC_FLYER_ID = '1-p1kaDu3vNYqnIePJgGPW2iTC1rFwvaZ';
+var BTC_SUBJECT = '🪩 BACK TO CLASSIC 2000 · EDM ✕ Reggaetón · Sáb 28 nov en Algarete Zona T';
+var BTC_URL = 'https://fantributecol.netlify.app/eventos-hub/eventos/back-to-classic-2000.html';
+var BTC_WA = 'https://wa.me/573161088178?text=' + encodeURIComponent('¡Hola! Quiero mis boletas para BACK TO CLASSIC 2000 🪩');
+var BTC_FUNCION = 'enviarPromoBTC';
 
 function enviarPromoBTCPrueba() {
-  enviarPromoBTC_(PROMO_PRUEBA_EMAILS, false);
+  var yo = Session.getEffectiveUser().getEmail();
+  enviarCorreoBTC_(yo, flyerBTC_());
+  Logger.log('Prueba enviada a ' + yo);
 }
 
 function enviarPromoBTC() {
-  const faltan = enviarPromoBTC_(destinatariosPromoBTC_(), true);
-  programarPromoBTC_(faltan > 0);
-}
-
-function resetPromoBTCEnviados() {
-  borrarPromoEnviados_(PROMO_BTC_ENVIADOS_PROP);
-  Logger.log('Registro de enviados de PROMO BACK TO CLASSIC 2000 borrado.');
-}
-
-function destinatariosPromoBTC_() {
-  const vistos = {};
-  const lista = [];
-  const agregar = function (email) {
-    email = String(email || '').trim();
-    const key = email.toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || vistos[key]) return;
-    vistos[key] = true;
-    lista.push(email);
-  };
-
-  // 1) Compradores de Halloween (los mas recientes primero en la cola).
-  [getHalloweenQrSheet_(), getHalloweenWompiSheet_(false)].forEach(function (sh) {
-    if (!sh) return;
-    sh.getDataRange().getValues().slice(1).forEach(function (f) {
-      if (/anulad/i.test(String(f[11] || ''))) return;
-      agregar(f[8]);
-    });
-  });
-  // 2) Las listas de siempre.
-  destinatariosPromoHalloween_().forEach(agregar);
-
-  Logger.log('Destinatarios Back to Classic 2000 (sin repetir): ' + lista.length);
-  return lista;
-}
-
-// Devuelve cuantos quedan pendientes despues de esta tanda.
-function enviarPromoBTC_(destinatarios, registrar) {
-  const lock = LockService.getScriptLock();
-  if (!lock.tryLock(30000)) { Logger.log('Ya hay un envio de la promo corriendo.'); return 1; }
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) { Logger.log('Ya hay un envio de la promo corriendo.'); return; }
   try {
-    const flyer = flyerBTC_();
-    const ya = registrar ? getPromoEnviados_(PROMO_BTC_ENVIADOS_PROP) : [];
-    const pendientes = destinatarios.filter(function (e) { return ya.indexOf(e.toLowerCase()) === -1; });
-    const cupo = Math.max(0, Math.min(PROMO_BTC_POR_DIA, MailApp.getRemainingDailyQuota() - PROMO_BTC_RESERVA));
+    var log = hojaLogBTC_();
+    var ya = {};
+    log.getDataRange().getValues().slice(1).forEach(function (f) {
+      if (f[2] === 'ENVIADO') ya[String(f[1]).toLowerCase()] = true;
+    });
+    var pendientes = destinatariosBTC_().filter(function (e) { return !ya[e.toLowerCase()]; });
+    var cupo = Math.max(0, Math.min(BTC_POR_DIA, MailApp.getRemainingDailyQuota() - BTC_RESERVA));
+    var flyer = pendientes.length && cupo ? flyerBTC_() : null;
 
-    let enviados = 0;
-    for (let i = 0; i < pendientes.length && enviados < cupo; i++) {
+    var enviados = 0;
+    for (var i = 0; i < pendientes.length && enviados < cupo; i++) {
       try {
-        enviarCorreo_(pendientes[i], PROMO_BTC_SUBJECT, textoPromoBTC_(), {
-          htmlBody: buildPromoBTCHtml_(),
-          inlineImages: { flyer: flyer },
-          attachments: [flyer],
-          name: 'Fan Tribute'
-        });
-        if (registrar) marcarPromoEnviado_(pendientes[i], PROMO_BTC_ENVIADOS_PROP);
+        enviarCorreoBTC_(pendientes[i], flyer);
+        log.appendRow([new Date(), pendientes[i], 'ENVIADO']);
         enviados++;
       } catch (err) {
-        Logger.log('Error enviando promo BTC a ' + pendientes[i] + ': ' + err);
+        log.appendRow([new Date(), pendientes[i], 'ERROR: ' + err.message]);
       }
     }
-    const faltan = pendientes.length - enviados;
+    var faltan = pendientes.length - enviados;
     Logger.log('--- Promo Back to Classic 2000: ' + enviados + ' enviados ahora, faltan ' + faltan +
                (cupo === 0 ? ' (sin cupo de Gmail hoy)' : '') + ' ---');
-    return faltan;
+    programarBTC_(faltan > 0);
   } finally {
     lock.releaseLock();
   }
 }
 
-function programarPromoBTC_(hayMas) {
+function resetPromoBTCEnviados() {
+  var sh = SpreadsheetApp.openById(BTC_HOJA_ID).getSheetByName(BTC_LOG_TAB);
+  if (sh) SpreadsheetApp.openById(BTC_HOJA_ID).deleteSheet(sh);
+  Logger.log('Registro de enviados de la promo borrado.');
+}
+
+/* ---------- Listas ---------- */
+
+function destinatariosBTC_() {
+  var vistos = {}, lista = [];
+  var agregar = function (email) {
+    email = String(email || '').trim();
+    var key = email.toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || vistos[key]) return;
+    vistos[key] = true;
+    lista.push(email);
+  };
+
+  // 1) Hoja de Halloween: todas las pestañas que tengan columna de correo.
+  SpreadsheetApp.openById(BTC_HOJA_ID).getSheets().forEach(function (sh) {
+    if (sh.getName() === BTC_LOG_TAB) return;
+    correosDeHoja_(sh).forEach(agregar);
+  });
+  // 2) Las otras listas de siempre (si no se pueden abrir, se saltan).
+  BTC_OTRAS_LISTAS.forEach(function (l) {
+    try {
+      var ss = SpreadsheetApp.openById(l.id);
+      var sh = ss.getSheetByName(l.tab) || ss.getSheets()[0];
+      correosDeHoja_(sh).forEach(agregar);
+    } catch (e) {
+      Logger.log('No se pudo abrir ' + l.nombre + ': ' + e.message);
+    }
+  });
+
+  Logger.log('Destinatarios Back to Classic 2000 (sin repetir): ' + lista.length);
+  return lista;
+}
+
+// Busca la fila de encabezados (primeras 15 filas) con una columna de
+// correo y devuelve los correos, saltando filas con estado ANULADA.
+function correosDeHoja_(sh) {
+  var datos = sh.getDataRange().getValues();
+  var norm = function (v) { return String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim(); };
+  var fila = -1, cEmail = -1, cEstado = -1;
+  for (var r = 0; r < Math.min(15, datos.length) && fila < 0; r++) {
+    for (var c = 0; c < datos[r].length; c++) {
+      if (/correo|e-?mail/.test(norm(datos[r][c]))) { fila = r; cEmail = c; break; }
+    }
+  }
+  if (fila < 0) return [];
+  datos[fila].forEach(function (h, c) { if (norm(h) === 'estado') cEstado = c; });
+  return datos.slice(fila + 1).filter(function (f) {
+    return !(cEstado >= 0 && /anulad/i.test(String(f[cEstado])));
+  }).map(function (f) { return f[cEmail]; });
+}
+
+function hojaLogBTC_() {
+  var ss = SpreadsheetApp.openById(BTC_HOJA_ID);
+  var sh = ss.getSheetByName(BTC_LOG_TAB);
+  if (!sh) {
+    sh = ss.insertSheet(BTC_LOG_TAB);
+    sh.appendRow(['Fecha', 'Email', 'Resultado']);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function programarBTC_(hayMas) {
   ScriptApp.getProjectTriggers().forEach(function (t) {
-    if (t.getHandlerFunction() === PROMO_BTC_FUNCION) ScriptApp.deleteTrigger(t);
+    if (t.getHandlerFunction() === BTC_FUNCION) ScriptApp.deleteTrigger(t);
   });
   if (hayMas) {
-    ScriptApp.newTrigger(PROMO_BTC_FUNCION).timeBased().everyDays(1).atHour(10).inTimezone('America/Bogota').create();
+    ScriptApp.newTrigger(BTC_FUNCION).timeBased().everyDays(1).atHour(10).inTimezone('America/Bogota').create();
     Logger.log('Mañana a las 10 a.m. sale la siguiente tanda.');
   } else {
     Logger.log('Promo terminada: ya le llego a todos.');
   }
 }
 
+/* ---------- Correo ---------- */
+
 function flyerBTC_() {
-  let blob;
+  var blob;
   try {
-    blob = DriveApp.getFileById(PROMO_BTC_FLYER_ID).getBlob();
+    blob = DriveApp.getFileById(BTC_FLYER_ID).getBlob();
   } catch (e) {
-    blob = UrlFetchApp.fetch('https://drive.google.com/uc?export=download&id=' + PROMO_BTC_FLYER_ID).getBlob();
+    blob = UrlFetchApp.fetch('https://drive.google.com/uc?export=download&id=' + BTC_FLYER_ID).getBlob();
   }
   return blob.setName('back-to-classic-2000.' + (/png/.test(blob.getContentType()) ? 'png' : 'jpg'));
+}
+
+function enviarCorreoBTC_(email, flyer) {
+  MailApp.sendEmail({
+    to: email,
+    subject: BTC_SUBJECT,
+    name: 'Fan Tribute',
+    body: textoPromoBTC_(),
+    htmlBody: buildPromoBTCHtml_(),
+    inlineImages: { flyer: flyer },
+    attachments: [flyer]
+  });
 }
 
 function textoPromoBTC_() {
@@ -127,15 +174,15 @@ function textoPromoBTC_() {
     'Y para cerrar, los clásicos de los 2010s: Avicii, Swedish House Mafia, Calvin Harris, DJ Snake, Martin Garrix, Tito "El Bambino", Zion & Lennox, Arcángel, Plan B, Nicky Jam… y muchos más 🎧\n\n' +
     'De 128 BPM a 95 BPM. Del drop al dembow. Toda la noche 🙌\n\n' +
     '📅 Sábado 28 de noviembre\n🕗 8:00 PM — 5:00 AM\n📍 Algarete · Zona T, Bogotá\n🎟️ Boleta general: $35.000 con $15.000 de consumo 🧡\n\n' +
-    '📲 Boletas al 316 108 8178 y por DM: ' + PROMO_BTC_WA + '\n\n' +
+    '📲 Boletas al 316 108 8178 y por DM: ' + BTC_WA + '\n\n' +
     'Evento tributo +18 — Artistas no presentes';
 }
 
 function buildPromoBTCHtml_() {
-  const bg = '#0A0B16', cyan = '#3FD6F5', pink = '#FF4FA3', yellow = '#FFC93C',
-        line = 'rgba(63,214,245,0.35)', cream = '#F3F1FA', dim = '#B3AEC8';
-  const p = 'font-size:14px; line-height:1.7; color:' + cream + '; margin:0 0 14px; text-align:left;';
-  const dato = function (ic, t) {
+  var bg = '#0A0B16', cyan = '#3FD6F5', pink = '#FF4FA3', yellow = '#FFC93C',
+      line = 'rgba(63,214,245,0.35)', cream = '#F3F1FA', dim = '#B3AEC8';
+  var p = 'font-size:14px; line-height:1.7; color:' + cream + '; margin:0 0 14px; text-align:left;';
+  var dato = function (ic, t) {
     return '<tr><td style="padding:5px 10px 5px 0; font-size:16px; vertical-align:top;">' + ic + '</td>' +
            '<td style="padding:5px 0; font-size:14px; color:' + cream + '; text-align:left;">' + t + '</td></tr>';
   };
@@ -163,10 +210,10 @@ function buildPromoBTCHtml_() {
         dato('🎟️', 'Boleta general: <strong>$35.000</strong> con $15.000 de consumo 🧡') +
       '</table>' +
 
-      '<a href="' + PROMO_BTC_WA + '" style="display:block; padding:16px 20px; border-radius:100px; background-color:#25D366; color:#04150C; font-weight:800; font-size:15px; letter-spacing:0.03em; text-transform:uppercase; text-decoration:none; margin:0 0 10px;">📲 Quiero mi boleta por WhatsApp</a>' +
+      '<a href="' + BTC_WA + '" style="display:block; padding:16px 20px; border-radius:100px; background-color:#25D366; color:#04150C; font-weight:800; font-size:15px; letter-spacing:0.03em; text-transform:uppercase; text-decoration:none; margin:0 0 10px;">📲 Quiero mi boleta por WhatsApp</a>' +
       '<p style="font-size:12px; color:' + dim + '; margin:0 0 22px;">O escr&iacute;benos al <strong style="color:' + cream + ';">316 108 8178</strong> y por DM en Instagram</p>' +
 
-      '<p style="margin:0 0 28px;"><a href="' + PROMO_BTC_URL + '" style="color:' + cyan + '; font-size:13px; font-weight:700; text-decoration:underline;">Ver todos los detalles del evento</a></p>' +
+      '<p style="margin:0 0 28px;"><a href="' + BTC_URL + '" style="color:' + cyan + '; font-size:13px; font-weight:700; text-decoration:underline;">Ver todos los detalles del evento</a></p>' +
 
       '<div style="height:1px; background-color:' + line + '; margin:8px 0 20px;"></div>' +
       '<p style="font-size:11px; color:' + dim + '; margin:0 0 4px;">Evento tributo +18 &middot; artistas no presentes.</p>' +
