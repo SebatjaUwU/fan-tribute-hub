@@ -49,7 +49,7 @@ const RESERVA_MIN = 20;   // minutos que un checkout sin pagar aparta cupo
 
 // Tipos de boleta. "online": se puede pagar por Wompi desde la página.
 const TIPOS = {
-  P1:  { tipo: 'Preventa 1', precio: 35000, cupo: 50,   consumo: 15000, shot: false, online: false, detalle: 'General · A pie' },
+  P1:  { tipo: 'Preventa 1', precio: 35000, cupo: 50,   consumo: 15000, shot: false, online: false, detalle: 'General · A pie', agotado: true }, // agotada a mano
   P2:  { tipo: 'Preventa 2', precio: 40000, cupo: 100,  consumo: 15000, shot: false, online: false, detalle: 'General · A pie' },
   GEN: { tipo: 'General',    precio: 45000, cupo: null, consumo: 15000, shot: false, online: false, detalle: 'A pie' },
   VIP: { tipo: 'VIP',        precio: 85000, cupo: 50,   consumo: 20000, shot: true,  online: true,  detalle: 'A pie · Tarima VIP' },
@@ -132,7 +132,7 @@ function resumenCupos_() {
       tipo: t.tipo, precio: t.precio, cupo: t.cupo,
       vendidas: vendidas[k] || 0,
       disponibles: t.cupo == null ? null : Math.max(0, t.cupo - usadas),
-      agotado: t.cupo != null && usadas >= t.cupo,
+      agotado: !!t.agotado || (t.cupo != null && usadas >= t.cupo),
       online: t.online
     };
   });
