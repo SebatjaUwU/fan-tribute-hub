@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>FanGuess · Prueba</title>
+<link rel="icon" href="../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --deep:#0B0618; --deep-2:#140B2A; --card:rgba(253,244,232,.05); --line:rgba(253,244,232,.14);
+    --cream:#FDF4E8; --dim:#C3B8D9; --orange:#FF6A2B; --orange-soft:#FF9A52; --gold:#FFC24B;
+    --pink:#FF4FA3; --violet:#8B3DFF; --ok:#3DDC97; --bad:#FF5A6E;
+    --l1:#3DDC97; --l2:#3FB8FF; --l3:#A45BFF; --l4:#FF6A2B;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:radial-gradient(90% 60% at 50% -10%,#3B1466 0%,var(--deep) 60%) var(--deep); color:var(--cream); font-family:'Space Grotesk',sans-serif; min-height:100vh; overflow-x:hidden; }
+  a{ color:inherit; }
+  button,input{ font:inherit; color:inherit; }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 20px; }
+  .mono{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+  .mockbar{ background:var(--gold); color:#1a0f00; text-align:center; padding:7px 16px; font-weight:700; font-size:12.5px; }
+
+  .nav{ position:sticky; top:0; z-index:50; background:rgba(11,6,24,.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; gap:12px; height:62px; }
+  .logo{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .logo img{ height:24px; width:auto; }
+  .logo b{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:14px; }
+  .logo b span{ color:var(--pink); }
+  .links{ display:none; gap:26px; font-size:14px; font-weight:600; }
+  .links a{ text-decoration:none; opacity:.8; }
+  .links a:hover{ opacity:1; color:var(--orange-soft); }
+  .links a[aria-current]{ opacity:1; color:var(--pink); }
+  @media (min-width:860px){ .links{ display:flex; } }
+  .me{ display:flex; align-items:center; gap:10px; }
+  .streak{ display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 14px; border-radius:100px; background:rgba(255,106,43,.14); border:1px solid rgba(255,106,43,.4); font-weight:700; font-size:14px; }
+  .avatar{ width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,var(--pink),var(--violet)); font-weight:800; font-size:14px; border:0; cursor:pointer; }
+
+  section{ padding:44px 0; }
+  h1,h2{ font-family:'Unbounded',sans-serif; font-weight:800; line-height:1.08; }
+  h1{ font-size:clamp(34px,7vw,64px); }
+  h1 span, h2 span{ color:var(--pink); }
+  h2{ font-size:clamp(22px,3.4vw,32px); margin-bottom:6px; }
+  .lead{ color:var(--dim); font-size:clamp(15px,2vw,17px); line-height:1.6; max-width:560px; margin-top:12px; }
+  .sub{ color:var(--dim); font-size:14px; margin-bottom:20px; }
+
+  /* resumen del jugador */
+  .hero{ padding-top:40px; display:grid; gap:24px; }
+  @media (min-width:900px){ .hero{ grid-template-columns:1.2fr .8fr; align-items:end; } }
+  .kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .kpi{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; }
+  .kpi b{ display:block; font-family:'Unbounded',sans-serif; font-size:clamp(20px,3vw,28px); font-variant-numeric:tabular-nums; }
+  .kpi span{ color:var(--dim); font-size:12.5px; }
+  .week{ display:flex; gap:6px; margin-top:12px; }
+  .week i{ flex:1; height:30px; border-radius:8px; background:rgba(253,244,232,.08); display:grid; place-items:center; font-style:normal; font-size:11px; color:var(--dim); font-family:'JetBrains Mono',monospace; }
+  .week i.on{ background:linear-gradient(180deg,var(--orange-soft),var(--orange)); color:#2a0d00; font-weight:700; }
+  .week i.today{ outline:2px dashed var(--orange-soft); outline-offset:-2px; }
+
+  /* niveles */
+  .levels{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr)); }
+  @media (max-width:560px){ .lvl{ min-height:0; padding:14px; } .lvl p{ font-size:12.5px; } .lvl h3{ font-size:16px; } }
+  .lvl{ position:relative; text-align:left; cursor:pointer; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px; display:flex; flex-direction:column; gap:10px; transition:transform .2s ease, border-color .2s ease; min-height:150px; }
+  .lvl:hover{ transform:translateY(-3px); border-color:var(--c); }
+  .lvl[aria-pressed="true"]{ border-color:var(--c); box-shadow:0 0 0 1px var(--c), 0 18px 40px -22px var(--c); }
+  .lvl .top{ display:flex; justify-content:space-between; align-items:center; }
+  .bars{ display:flex; gap:3px; align-items:flex-end; height:22px; }
+  .bars i{ width:6px; border-radius:2px; background:rgba(253,244,232,.18); }
+  .bars i:nth-child(1){ height:35%; } .bars i:nth-child(2){ height:55%; } .bars i:nth-child(3){ height:78%; } .bars i:nth-child(4){ height:100%; }
+  .lvl .bars i.f{ background:var(--c); }
+  .lvl h3{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:19px; }
+  .lvl p{ color:var(--dim); font-size:13.5px; line-height:1.5; }
+  .lvl .meta{ margin-top:auto; display:flex; justify-content:space-between; font-size:12.5px; color:var(--dim); }
+  .lvl .meta b{ color:var(--c); }
+  .done{ font-size:11px; padding:3px 8px; border-radius:100px; background:rgba(61,220,151,.15); color:var(--ok); font-family:'JetBrains Mono',monospace; letter-spacing:.06em; }
+
+  /* juego */
+  .game{ display:grid; gap:18px; }
+  @media (min-width:900px){ .game{ grid-template-columns:1.25fr .75fr; align-items:start; } }
+  .panel{ background:rgba(20,11,42,.8); border:1px solid var(--line); border-radius:24px; padding:clamp(18px,3vw,28px); }
+  .round{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+  .pill{ font-size:12px; padding:5px 10px; border-radius:100px; border:1px solid var(--line); color:var(--dim); }
+  .pill.lv{ border-color:var(--c, var(--l3)); color:var(--cream); }
+  .lives{ display:flex; gap:6px; align-items:center; }
+  .lives i{ width:14px; height:14px; border-radius:50%; background:var(--pink); box-shadow:0 0 12px rgba(255,79,163,.6); transition:background .3s, box-shadow .3s; }
+  .lives i.lost{ background:rgba(253,244,232,.15); box-shadow:none; }
+
+  .player{ display:flex; align-items:center; gap:16px; }
+  .play{ flex:none; width:64px; height:64px; border-radius:50%; border:0; cursor:pointer; background:var(--cream); color:#1a0b2e; display:grid; place-items:center; box-shadow:0 10px 30px rgba(255,79,163,.35); transition:transform .15s; }
+  .play:active{ transform:scale(.94); }
+  .play svg{ width:26px; height:26px; }
+  .track{ flex:1; min-width:0; }
+  .timeline{ position:relative; height:14px; border-radius:100px; background:rgba(253,244,232,.08); overflow:hidden; }
+  .unlocked{ position:absolute; inset:0 auto 0 0; background:rgba(255,79,163,.25); border-radius:100px; transition:width .4s ease; }
+  .progress{ position:absolute; inset:0 auto 0 0; width:0; background:linear-gradient(90deg,var(--pink),var(--violet)); border-radius:100px; }
+  .ticks{ display:flex; justify-content:space-between; margin-top:8px; font-size:11.5px; color:var(--dim); font-family:'JetBrains Mono',monospace; }
+  .ticks span.on{ color:var(--cream); }
+  /* onda de audio (barras finas simétricas con degradado verde → lila → violeta) */
+  .sw{ display:flex; align-items:center; gap:3px; width:100%; }
+  .sw::before,.sw::after{ content:''; flex:1 0 6%; height:3px; border-radius:2px; }
+  .sw::before{ background:#1F9E68; } .sw::after{ background:#5B34A0; }
+  .sw i{ flex:1 1 0; max-width:5px; min-width:2px; height:calc(var(--h) * 1%); border-radius:2px; background:linear-gradient(180deg, var(--hi), var(--col)); transform-origin:center; animation:swv var(--d) ease-in-out var(--dl) infinite alternate; }
+  @keyframes swv{ from{ transform:scaleY(.3); } to{ transform:scaleY(1); } }
+  .sw.idle i{ animation-play-state:paused; opacity:.35; filter:saturate(.4); transform:scaleY(.6); transition:opacity .3s, filter .3s; }
+  .sw.idle::before,.sw.idle::after{ opacity:.4; }
+  @media (prefers-reduced-motion:reduce){ .sw i{ animation:none; } }
+
+  .guesses{ display:grid; gap:8px; margin:20px 0; }
+  .g{ min-height:48px; border-radius:12px; border:1px dashed var(--line); display:flex; align-items:center; gap:10px; padding:0 14px; font-size:14.5px; color:var(--dim); }
+  .g.bad{ border-style:solid; border-color:rgba(255,90,110,.5); background:rgba(255,90,110,.08); color:var(--cream); }
+  .g.skip{ border-style:solid; color:var(--dim); }
+  .g.ok{ border-style:solid; border-color:rgba(61,220,151,.6); background:rgba(61,220,151,.1); color:var(--cream); }
+  .g svg{ width:18px; height:18px; flex:none; }
+
+  .answer{ position:relative; display:flex; gap:10px; }
+  .answer label{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .answer input{ flex:1; min-width:0; min-height:52px; border-radius:14px; border:1px solid var(--line); background:rgba(11,6,24,.6); padding:0 16px; font-size:16px; }
+  .answer input:focus{ border-color:var(--pink); outline:none; }
+  .sugg{ position:absolute; left:0; right:0; bottom:calc(100% + 6px); background:#1d1236; border:1px solid var(--line); border-radius:14px; overflow:hidden; display:none; z-index:5; }
+  .sugg.open{ display:block; }
+  .sugg button{ display:block; width:100%; text-align:left; background:none; border:0; padding:12px 16px; min-height:44px; cursor:pointer; font-size:14.5px; }
+  .sugg button:hover, .sugg button:focus{ background:rgba(253,244,232,.08); outline:none; }
+  .sugg small{ color:var(--dim); }
+  .row-btns{ display:flex; gap:10px; margin-top:12px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 20px; border-radius:100px; font-weight:700; font-size:15px; border:0; cursor:pointer; text-decoration:none; }
+  .btn-main{ background:var(--pink); color:#fff; }
+  .btn-main:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--cream); }
+  .btn-cream{ background:var(--cream); color:#1a0b2e; }
+
+  /* resultado */
+  .result{ display:none; text-align:center; }
+  .result.show{ display:block; animation:pop .35s cubic-bezier(.2,.9,.3,1.3); }
+  @keyframes pop{ from{ transform:scale(.94); opacity:0; } }
+  .cover{ width:120px; height:120px; margin:0 auto 14px; border-radius:18px; background:linear-gradient(135deg,#2E7BFF,#A45BFF 60%,#FF4FA3); display:grid; place-items:center; font-family:'Unbounded',sans-serif; font-weight:900; font-size:30px; }
+  .result h3{ font-family:'Unbounded',sans-serif; font-size:22px; }
+  .result .artist{ color:var(--dim); margin-top:4px; }
+  .pts{ margin:16px auto; display:inline-flex; gap:8px; align-items:baseline; font-family:'Unbounded',sans-serif; font-size:34px; color:var(--gold); }
+  .pts small{ font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--dim); }
+  .share{ margin:6px auto 18px; max-width:320px; background:rgba(11,6,24,.6); border:1px solid var(--line); border-radius:14px; padding:14px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; white-space:pre-line; text-align:left; }
+
+  /* ranking */
+  .tabs{ display:flex; gap:6px; margin:14px 0; }
+  .tab{ min-height:40px; padding:0 14px; border-radius:100px; border:1px solid var(--line); background:none; cursor:pointer; font-weight:600; font-size:13.5px; }
+  .tab[aria-selected="true"]{ background:var(--cream); color:#1a0b2e; border-color:var(--cream); }
+  .prize{ display:flex; gap:12px; align-items:center; padding:14px; border-radius:16px; background:linear-gradient(90deg,rgba(255,194,75,.18),rgba(255,106,43,.1)); border:1px solid rgba(255,194,75,.4); font-size:13.5px; line-height:1.45; }
+  .prize b{ color:var(--gold); }
+  .prize svg{ width:28px; height:28px; flex:none; color:var(--gold); }
+  ol.rank{ list-style:none; margin-top:12px; }
+  ol.rank li{ display:grid; grid-template-columns:28px 32px 1fr auto; gap:10px; align-items:center; padding:10px 6px; border-bottom:1px solid var(--line); font-size:14px; }
+  ol.rank li .n{ font-family:'JetBrains Mono',monospace; color:var(--dim); }
+  ol.rank li .av{ width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:800; background:rgba(253,244,232,.1); }
+  ol.rank li b{ font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+  ol.rank li.top1 .n{ color:var(--gold); } ol.rank li.top1 .av{ background:var(--gold); color:#2a1700; }
+  ol.rank li.you{ background:rgba(255,79,163,.1); border-radius:12px; border-color:transparent; }
+  .fire{ color:var(--orange-soft); font-size:12px; margin-left:6px; }
+
+  /* login */
+  .auth{ display:grid; gap:20px; }
+  @media (min-width:900px){ .auth{ grid-template-columns:.9fr 1.1fr; align-items:center; } }
+  .auth-card{ max-width:440px; width:100%; }
+  .auth-tabs{ display:grid; grid-template-columns:1fr 1fr; background:rgba(11,6,24,.6); border-radius:100px; padding:4px; margin-bottom:20px; }
+  .auth-tabs button{ min-height:42px; border-radius:100px; border:0; background:none; cursor:pointer; font-weight:700; }
+  .auth-tabs button[aria-selected="true"]{ background:var(--cream); color:#1a0b2e; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:13.5px; font-weight:600; margin-bottom:6px; }
+  .field input{ width:100%; min-height:50px; border-radius:12px; border:1px solid var(--line); background:rgba(11,6,24,.6); padding:0 14px; font-size:16px; }
+  .field input:focus{ border-color:var(--pink); outline:none; }
+  .field small{ display:block; color:var(--dim); font-size:12.5px; margin-top:6px; }
+  .pw{ position:relative; }
+  .pw button{ position:absolute; right:6px; top:50%; transform:translateY(-50%); min-height:40px; padding:0 12px; border:0; background:none; cursor:pointer; color:var(--dim); font-size:13px; font-weight:600; }
+  .check{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--dim); margin:6px 0 18px; line-height:1.45; }
+  .check input{ width:20px; height:20px; margin-top:1px; accent-color:var(--pink); flex:none; }
+  .why li{ list-style:none; display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); color:var(--dim); font-size:14.5px; line-height:1.5; }
+  .why li b{ color:var(--cream); display:block; }
+  .why .ic{ flex:none; width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:rgba(255,79,163,.14); color:var(--pink); }
+  .why svg{ width:20px; height:20px; }
+
+  .rules{ color:var(--dim); font-size:13px; line-height:1.7; }
+  .rules b{ color:var(--cream); }
+  footer{ border-top:1px solid var(--line); padding:30px 0; color:var(--dim); font-size:13px; margin-top:30px; }
+  @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
+
+  .sugg button{ display:flex; align-items:center; gap:12px; }
+  .sugg img{ width:44px; height:44px; border-radius:8px; object-fit:cover; flex:none; background:#2a1d48; }
+  .sugg .t{ min-width:0; }
+  .sugg .t b{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+  .sugg .t small{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .g img{ width:32px; height:32px; border-radius:6px; object-fit:cover; flex:none; }
+  .g .t{ min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cover{ width:180px; height:180px; background:#2a1d48 center/cover no-repeat; box-shadow:0 20px 50px -20px rgba(0,0,0,.8); }
+  .album{ color:var(--dim); font-size:13.5px; margin-top:2px; }
+  .state{ text-align:center; padding:40px 10px; color:var(--dim); }
+  .dots{ display:flex; gap:6px; }
+  .dots i{ width:10px; height:10px; border-radius:50%; background:rgba(253,244,232,.15); }
+  .dots i.ok{ background:var(--ok); } .dots i.bad{ background:var(--bad); } .dots i.now{ outline:2px solid var(--cream); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="mockbar">Prueba de FanGuess · canciones de la playlist “R&amp;B de hoy” de Apple Music</div>
+
+<nav class="nav" aria-label="Principal">
+  <div class="wrap">
+    <a class="logo" href="../index.html"><img src="../ASSETS/fan-tribute-icon.png" alt="" width="72" height="24"><b>Fan<span>Guess</span></b></a>
+    <div class="me"><span class="streak" id="racha" title="Racha actual">🔥 0</span></div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section class="hero" style="padding-bottom:20px">
+    <div>
+      <span class="mono" style="color:var(--orange-soft)" id="hoy">Reto diario</span>
+      <h1>Adivina la <span>canción</span></h1>
+      <p class="lead">Escucha un pedacito y escribe cuál es. Tienes 3 intentos: cada fallo te deja oír un poco más. Menos audio, más puntos.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b id="kPts">0</b><span>puntos de hoy</span></div>
+      <div class="kpi"><b id="kRonda">1/5</b><span>canción</span></div>
+      <div class="kpi"><div class="dots" id="dots" style="margin:8px 0 10px"></div><span>tu reto</span></div>
+    </div>
+  </section>
+
+  <section id="jugar" style="padding-top:0">
+    <div class="panel" aria-live="polite">
+      <div class="state" id="cargando">Cargando las canciones de hoy…</div>
+
+      <div id="playing" hidden>
+        <div class="round">
+          <span class="pill lv" style="--c:var(--l3)">Prueba · R&amp;B 2026</span>
+          <div class="lives" aria-label="Intentos"><span class="mono" style="margin-right:4px">Intentos</span><i></i><i></i><i></i></div>
+        </div>
+        <div class="player">
+          <button class="play" id="play" aria-label="Escuchar el fragmento">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="track">
+            <div class="timeline"><div class="unlocked" id="unlocked"></div><div class="progress" id="progress"></div></div>
+            <div class="ticks"><span class="on" id="t1">1 s</span><span id="t2">4 s</span><span id="t3">10 s</span><span>15 s</span></div>
+          </div>
+        </div>
+        <div class="sw idle" id="wave" aria-hidden="true" style="height:64px;margin-top:18px"></div>
+
+        <div class="guesses" id="guesses"><div class="g">Intento 1</div><div class="g">Intento 2</div><div class="g">Intento 3</div></div>
+
+        <div class="answer">
+          <label for="ans">Tu respuesta</label>
+          <div class="sugg" id="sugg" role="listbox" aria-label="Sugerencias"></div>
+          <input id="ans" autocomplete="off" placeholder="Escribe la canción o el artista…">
+        </div>
+        <div class="row-btns">
+          <button class="btn btn-ghost" id="skip">Más audio (pierdes 1 intento)</button>
+          <button class="btn btn-main" id="send" disabled>Responder</button>
+        </div>
+        <p class="sub" style="margin:12px 0 0">Elige una canción de la lista que aparece al escribir.</p>
+      </div>
+
+      <div class="result" id="result">
+        <div class="cover" id="rCover" role="img" aria-label="Carátula"></div>
+        <span class="mono" id="resTag" style="color:var(--ok)">¡Le pegaste!</span>
+        <h3 style="margin-top:8px" id="rTitle"></h3>
+        <p class="artist" id="rArtist"></p>
+        <p class="album" id="rAlbum"></p>
+        <div class="pts"><span id="resPts">+0</span><small>puntos</small></div>
+        <div class="row-btns" style="justify-content:center;flex-wrap:wrap">
+          <a class="btn btn-ghost" id="rLink" target="_blank" rel="noopener">Escúchala en Apple Music</a>
+          <button class="btn btn-cream" id="next">Siguiente canción</button>
+        </div>
+      </div>
+
+      <div class="result" id="final">
+        <span class="mono" style="color:var(--orange-soft)">Reto de hoy terminado</span>
+        <div class="pts" style="display:flex;justify-content:center"><span id="fPts">0</span><small>puntos</small></div>
+        <div class="share" id="shareTxt"></div>
+        <div class="row-btns" style="justify-content:center"><button class="btn btn-cream" id="copy">Copiar resultado</button></div>
+        <p class="sub" style="margin-top:14px">Vuelve mañana para mantener la racha 🔥</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Prueba de FanGuess · fragmentos, carátulas y datos de Apple (iTunes Search). No se descarga ninguna canción.</div></footer>
+
+<script>
+function pintarOnda(el, n) {
+  var stops = [[0, [40, 190, 130]], [.38, [160, 245, 220]], [.62, [205, 175, 255]], [1, [140, 50, 240]]];
+  function col(t, k) {
+    for (var s = 1; s < stops.length; s++) if (t <= stops[s][0]) {
+      var a = stops[s - 1], b = stops[s], u = (t - a[0]) / (b[0] - a[0]);
+      return 'rgb(' + a[1].map(function (v, j) { return Math.round((v + (b[1][j] - v) * u) * k); }).join(',') + ')';
+    }
+  }
+  var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (var i = 0; i < n; i++) {
+    var t = i / (n - 1), b = document.createElement('i');
+    var env = .55 + .45 * Math.sin(t * Math.PI * 2.2 + .4);
+    b.style.setProperty('--h', Math.round(18 + 80 * env * (.55 + .45 * rnd())));
+    b.style.setProperty('--col', col(t, .85)); b.style.setProperty('--hi', col(t, 1.12 > 1 ? 1 : 1));
+    b.style.setProperty('--d', (.45 + rnd() * .5).toFixed(2) + 's'); b.style.setProperty('--dl', (-rnd()).toFixed(2) + 's');
+    el.appendChild(b);
+  }
+}
+
+(function () {
+  'use strict';
+  // ---- Configuración de la prueba ----
+  // Artistas de la playlist "R&B de hoy: lo mejor de 2026" (Apple Music).
+  var ARTISTAS = ['Kehlani', 'Jhené Aiko', 'Tems', 'Beyoncé', 'Ella Mai', 'Wale', 'Leon Thomas', 'Drake', 'Brent Faiyaz', 'Bryson Tiller'];
+  var PAIS = 'co', POR_DIA = 5, CORTES = [1, 4, 10], TOTAL = 15, PUNTOS = [300, 200, 100];
+
+  // ---- iTunes Search por JSONP (no necesita cuenta ni llave) ----
+  var cb = 0;
+  function itunes(params) {
+    return new Promise(function (ok, fail) {
+      var name = 'fgcb' + (++cb), s = document.createElement('script'), t;
+      window[name] = function (d) { clearTimeout(t); delete window[name]; s.remove(); ok(d.results || []); };
+      var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+      s.src = 'https://itunes.apple.com/search?' + q + '&country=' + PAIS + '&callback=' + name;
+      s.onerror = function () { clearTimeout(t); delete window[name]; fail(new Error('red')); };
+      t = setTimeout(function () { window[name] = function () {}; fail(new Error('tiempo')); }, 9000);
+      document.head.appendChild(s);
+    });
+  }
+
+  // ---- Utilidades ----
+  function $(id) { return document.getElementById(id); }
+  function hoyKey() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function semilla(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return function () { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; }; }
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\(.*?\)|\[.*?\]/g, '').replace(/feat\..*$/, '').replace(/[^a-z0-9 ]/g, '').trim(); }
+  function img(u, n) { return String(u || '').replace(/\d+x\d+bb/, n + 'x' + n + 'bb'); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var store = { get: function (k) { try { return JSON.parse(localStorage.getItem('fg_' + k)); } catch (e) { return null; } },
+                set: function (k, v) { try { localStorage.setItem('fg_' + k, JSON.stringify(v)); } catch (e) {} } };
+
+  // ---- Estado ----
+  var canciones = [], ronda = 0, intento = 0, terminado = false, puntos = 0, marcas = [], audio = new Audio(), corte = null;
+  audio.preload = 'auto';
+  var wave = $('wave'); pintarOnda(wave, 64);
+  $('hoy').textContent = 'Reto diario · ' + new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'short' });
+  var r = store.get('racha') || { n: 0, ultimo: null };
+  $('racha').textContent = '🔥 ' + r.n;
+
+  // ---- Cargar canciones del día: canciones con fragmento de los artistas de la playlist ----
+  Promise.all(ARTISTAS.map(function (a) {
+    return itunes({ term: a, entity: 'song', attribute: 'artistTerm', limit: 25 }).catch(function () { return []; });
+  })).then(function (listas) {
+    var vistos = {}, pool = [];
+    listas.forEach(function (l) { l.forEach(function (t) {
+      var k = norm(t.trackName) + '|' + norm(t.artistName);
+      if (t.previewUrl && t.kind === 'song' && !vistos[k]) { vistos[k] = 1; pool.push(t); }
+    }); });
+    if (pool.length < POR_DIA) throw new Error('pocas');
+    pool.sort(function (a, b) { return a.trackId - b.trackId; });
+    var rnd = semilla('fanguess-' + hoyKey());
+    for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var x = pool[i]; pool[i] = pool[j]; pool[j] = x; }
+    canciones = pool.slice(0, POR_DIA);
+    var guardado = store.get('dia');
+    if (guardado && guardado.fecha === hoyKey() && guardado.ronda >= POR_DIA) { marcas = guardado.marcas; puntos = guardado.puntos; return terminarDia(true); }
+    $('cargando').hidden = true; $('playing').hidden = false;
+    iniciarRonda();
+  }).catch(function () {
+    $('cargando').innerHTML = 'No pudimos cargar las canciones. Revisa tu conexión y vuelve a intentar.<br><br><button class="btn btn-cream" onclick="location.reload()">Reintentar</button>';
+  });
+
+  function pintarDots() {
+    $('dots').innerHTML = canciones.map(function (_, k) {
+      var m = marcas[k]; return '<i class="' + (m == null ? (k === ronda ? 'now' : '') : (m > 0 ? 'ok' : 'bad')) + '"></i>';
+    }).join('');
+    $('kPts').textContent = puntos; $('kRonda').textContent = Math.min(ronda + 1, POR_DIA) + '/' + POR_DIA;
+  }
+
+  function iniciarRonda() {
+    intento = 0; terminado = false;
+    audio.src = canciones[ronda].previewUrl;
+    document.querySelectorAll('.lives i').forEach(function (i) { i.classList.remove('lost'); });
+    $('guesses').innerHTML = '<div class="g">Intento 1</div><div class="g">Intento 2</div><div class="g">Intento 3</div>';
+    $('unlocked').style.width = (CORTES[0] / TOTAL * 100) + '%';
+    ['t2', 't3'].forEach(function (t) { $(t).classList.remove('on'); });
+    $('ans').value = ''; $('send').disabled = true; elegida = null;
+    $('result').classList.remove('show'); $('playing').hidden = false;
+    pintarDots();
+  }
+
+  // ---- Reproducir el fragmento ----
+  $('play').addEventListener('click', function () {
+    var seg = CORTES[Math.min(intento, 2)];
+    clearTimeout(corte); audio.currentTime = 0;
+    var p = audio.play(); if (p && p.catch) p.catch(function () {});
+    wave.classList.remove('idle'); $('play').disabled = true;
+    var t0 = performance.now();
+    (function paso(t) {
+      var k = Math.min(1, (t - t0) / (seg * 1000));
+      $('progress').style.width = (k * seg / TOTAL * 100) + '%';
+      if (k < 1) requestAnimationFrame(paso);
+    })(t0);
+    corte = setTimeout(function () { audio.pause(); wave.classList.add('idle'); $('play').disabled = false; setTimeout(function () { $('progress').style.width = 0; }, 400); }, seg * 1000);
+  });
+
+  // ---- Buscador con carátulas (busca en todo el catálogo para no delatar la respuesta) ----
+  var elegida = null, deb = null, ultimaQ = '';
+  $('ans').addEventListener('input', function () {
+    var q = this.value.trim(); elegida = null; $('send').disabled = true;
+    clearTimeout(deb);
+    if (q.length < 2) { $('sugg').classList.remove('open'); return; }
+    deb = setTimeout(function () {
+      ultimaQ = q;
+      itunes({ term: q, entity: 'song', limit: 6 }).then(function (res) {
+        if (q !== ultimaQ) return;
+        var s = $('sugg'); s.innerHTML = '';
+        res.forEach(function (t) {
+          var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'option');
+          b.innerHTML = '<img src="' + img(t.artworkUrl100, 100) + '" alt="" loading="lazy"><span class="t"><b>' + esc(t.trackName) + '</b><small>' + esc(t.artistName) + ' · ' + String(t.releaseDate || '').slice(0, 4) + '</small></span>';
+          b.addEventListener('click', function () { elegida = t; $('ans').value = t.trackName + ' – ' + t.artistName; s.classList.remove('open'); $('send').disabled = false; $('ans').focus(); });
+          s.appendChild(b);
+        });
+        s.classList.toggle('open', res.length > 0);
+      }).catch(function () {});
+    }, 250);
+  });
+  $('ans').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); if (!$('send').disabled) $('send').click(); } });
+
+  function filaIntento(clase, html) { var g = $('guesses').children[intento]; g.className = 'g ' + clase; g.innerHTML = html; }
+
+  $('send').addEventListener('click', function () {
+    if (terminado || !elegida) return;
+    var c = canciones[ronda];
+    var ok = elegida.trackId === c.trackId || (norm(elegida.trackName) === norm(c.trackName) && norm(elegida.artistName).indexOf(norm(c.artistName).split(' ')[0]) > -1);
+    var html = '<img src="' + img(elegida.artworkUrl100, 60) + '" alt=""><span class="t">' + esc(elegida.trackName) + ' – ' + esc(elegida.artistName) + '</span>';
+    $('ans').value = ''; $('send').disabled = true; $('sugg').classList.remove('open');
+    if (ok) { filaIntento('ok', html); return finRonda(true); }
+    filaIntento('bad', html); fallo();
+  });
+  $('skip').addEventListener('click', function () { if (terminado) return; filaIntento('skip', 'Pediste más audio'); fallo(); });
+
+  function fallo() {
+    document.querySelectorAll('.lives i')[intento].classList.add('lost');
+    intento++;
+    if (intento >= 3) return finRonda(false);
+    $('unlocked').style.width = (CORTES[intento] / TOTAL * 100) + '%';
+    $('t' + (intento + 1)).classList.add('on');
+  }
+
+  function finRonda(ok) {
+    terminado = true; audio.pause(); clearTimeout(corte); wave.classList.add('idle');
+    var c = canciones[ronda], p = ok ? PUNTOS[intento] : 0;
+    puntos += p; marcas[ronda] = p;
+    store.set('dia', { fecha: hoyKey(), ronda: ronda + 1, marcas: marcas, puntos: puntos });
+    setTimeout(function () {
+      $('playing').hidden = true;
+      $('rCover').style.backgroundImage = 'url(' + img(c.artworkUrl100, 600) + ')';
+      $('resTag').textContent = ok ? '¡Le pegaste!' : 'Era esta…';
+      $('resTag').style.color = ok ? 'var(--ok)' : 'var(--bad)';
+      $('rTitle').textContent = c.trackName;
+      $('rArtist').textContent = c.artistName;
+      $('rAlbum').textContent = (c.collectionName || '') + ' · ' + String(c.releaseDate || '').slice(0, 4);
+      $('resPts').textContent = '+' + p;
+      $('rLink').href = c.trackViewUrl;
+      $('next').textContent = ronda + 1 >= POR_DIA ? 'Ver mi resultado' : 'Siguiente canción';
+      $('result').classList.add('show');
+      // al terminar, se puede escuchar el fragmento completo
+      audio.currentTime = 0;
+      pintarDots();
+    }, 500);
+  }
+
+  $('next').addEventListener('click', function () {
+    audio.pause(); ronda++;
+    if (ronda >= POR_DIA) return terminarDia(false);
+    iniciarRonda();
+  });
+
+  function terminarDia(yaJugado) {
+    $('cargando').hidden = true; $('playing').hidden = true; $('result').classList.remove('show');
+    if (!yaJugado) {
+      var hoy = hoyKey(), ayer = new Date(Date.now() - 864e5);
+      var ayerKey = ayer.getFullYear() + '-' + (ayer.getMonth() + 1) + '-' + ayer.getDate();
+      if (r.ultimo !== hoy) { r.n = r.ultimo === ayerKey ? r.n + 1 : 1; r.ultimo = hoy; store.set('racha', r); }
+      $('racha').textContent = '🔥 ' + r.n;
+    }
+    ronda = POR_DIA; pintarDots();
+    $('fPts').textContent = puntos;
+    $('shareTxt').textContent = 'FanGuess 🎧 ' + new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) + '\n' +
+      marcas.map(function (m) { return m >= 300 ? '🟩' : m > 0 ? '🟨' : '🟥'; }).join('') + '  ' + puntos + ' pts  🔥 ' + r.n + '\nfantributecol.netlify.app/fanguess';
+    $('final').classList.add('show');
+  }
+  $('copy').addEventListener('click', function () {
+    var b = this; try { navigator.clipboard.writeText($('shareTxt').textContent).then(function () { b.textContent = '¡Copiado!'; }); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
