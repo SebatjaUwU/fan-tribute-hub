@@ -45,6 +45,8 @@ const AVISO_EMAIL = 'fantributeco@gmail.com';
 const PREFIJO = 'LS';
 // ID de la presentación vertical en blanco que se usa como molde (ver paso a del inicio).
 const PLANTILLA_ID = '1lrT-gPxm5k03V2Xy8tPLurFBvt_z_vLrKXYRFJYO3iQ';
+// true = boleta de 1600 px con el servicio Google Slides API (más lento). false = 540 px (rápido).
+const ALTA_RESOLUCION = false;
 
 // Localidades. Por ahora solo Tributies; las demás se activan cuando estén
 // listos sus precios y diseños (quitar las // del inicio de la línea).
@@ -186,10 +188,10 @@ function reenviarCorreosPendientes() {
   try { SpreadsheetApp.getUi().alert('Boletería Last Summer', n ? '✅ ' + n + ' boletas reenviadas.' : 'No había correos pendientes.', SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) {}
 }
 
-/** Te manda un correo de prueba a ti con dos boletas de ejemplo (no guarda nada en la hoja). */
+/** Te manda un correo de prueba a ti con una boleta de ejemplo (no guarda nada en la hoja). */
 function enviarPrueba() {
   const yo = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
-  enviarQR_({ email: yo, nombre: 'Prueba Fan Tribute', key: 'TRB', ticketIds: ['LS-PFT-TRB-0000', 'LS-PFT-TRB-0001'], numeros: [0, 1] });
+  enviarQR_({ email: yo, nombre: 'Prueba Fan Tribute', key: 'TRB', ticketIds: ['LS-PFT-TRB-0001'], numeros: [1] });
   try { SpreadsheetApp.getUi().alert('Prueba enviada', 'Revisa el correo de ' + yo + '.', SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { Logger.log('Prueba enviada a ' + yo); }
 }
 
@@ -270,7 +272,10 @@ function revisarPlantilla() {
  * a la papelera al terminar.
  */
 function boletaPng_(b) {
+  const t0 = Date.now(), paso = function (m) { Logger.log(b.id + ' · ' + m + ' (' + Math.round((Date.now() - t0) / 1000) + ' s)'); };
+  paso('copiando plantilla');
   const pres = presentacionVertical_('tmp-boleta-' + b.id);
+  paso('plantilla lista');
   const presId = pres.getId();
   try {
     const PX = pres.getPageWidth() / 1080;          // puntos por cada px del diseño
@@ -279,6 +284,7 @@ function boletaPng_(b) {
     slides.slice(1).forEach(function (s) { s.remove(); });
     slide.getPageElements().forEach(function (e) { try { e.remove(); } catch (x) {} });
     slide.getBackground().setPictureFill(fondoBoleta_(b.key));
+    paso('fondo puesto');
 
     function texto(txt, x, y, w, h, sizePx, color, align, espacio) {
       const tb = slide.insertTextBox(txt, x, y, w, h);
@@ -303,9 +309,10 @@ function boletaPng_(b) {
       POS.nombre.size, '#C3B8D9', SlidesApp.ParagraphAlignment.CENTER);
 
     pres.saveAndClose();
+    paso('guardada, exportando imagen');
     // Imagen grande (1600 px de ancho) si está el servicio "Google Slides API";
     // si no, la exportación normal (540 px).
-    if (typeof Slides !== 'undefined') {
+    if (ALTA_RESOLUCION && typeof Slides !== 'undefined') {
       try {
         const th = Slides.Presentations.Pages.getThumbnail(presId, slide.getObjectId(),
           { 'thumbnailProperties.thumbnailSize': 'LARGE', 'thumbnailProperties.mimeType': 'PNG' });
@@ -318,6 +325,7 @@ function boletaPng_(b) {
     const url = 'https://docs.google.com/presentation/d/' + presId + '/export/png?id=' + presId + '&pageid=' + slide.getObjectId();
     const res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
     if (res.getResponseCode() !== 200) throw new Error('Slides devolvió ' + res.getResponseCode());
+    paso('imagen lista');
     return res.getBlob().setName('Boleta-' + b.id + '.png');
   } finally {
     try { DriveApp.getFileById(presId).setTrashed(true); } catch (x) {}
@@ -325,6 +333,7 @@ function boletaPng_(b) {
 }
 
 function qrPng_(id) {
+  Logger.log(id + ' · generando QR');
   return UrlFetchApp.fetch('https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&data=' + encodeURIComponent(id))
     .getBlob().setName('QR-' + id + '.png');
 }
@@ -393,6 +402,7 @@ function enviarQR_(d) {
 
   const texto = 'Hola ' + d.nombre + ', tus boletas para ' + EVENTO + ' (' + d.ticketIds.length + ' x ' + t.tipo + '): ' +
     d.ticketIds.join(', ') + '. ' + FECHA_EVENTO + ', ' + LUGAR_EVENTO + '. Las boletas van adjuntas.';
+  Logger.log('Enviando correo a ' + d.email);
   GmailApp.sendEmail(d.email, 'Tus boletas · ' + EVENTO + ' · ' + t.tipo, texto, {
     htmlBody: html, inlineImages: inline, attachments: adjuntos, name: 'Fan Tribute', replyTo: AVISO_EMAIL
   });
