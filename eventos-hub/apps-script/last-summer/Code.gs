@@ -226,8 +226,8 @@ function keyDeTipo_(nombre) {
 // convierten a puntos según el ancho real de la plantilla (ancho / 1080).
 const POS = {
   numero: { right: 1010, top: 150, size: 60 },       // "N° 0001" arriba a la derecha
-  qr:     { x: 330, y: 1240, lado: 420 },             // dentro del recuadro blanco
-  nombre: { y: 1708, size: 38 }                       // nombre · código, debajo del QR
+  qr:     { x: 330, y: 1110, lado: 420 },             // dentro del recuadro blanco
+  nombre: { y: 1742, size: 38 }                       // nombre · código, debajo del QR
 };
 
 /** Fondo de la boleta según la localidad. Por ahora solo hay diseño de Tributies. */
@@ -300,7 +300,7 @@ function boletaPng_(b) {
 
     // Nombre y código debajo del QR
     texto((b.nombre + ' · ' + b.id).toUpperCase(), 40 * PX, POS.nombre.y * PX - 7 * PX / 0.375, 1000 * PX, 64 * PX,
-      POS.nombre.size, '#FDF4E8', SlidesApp.ParagraphAlignment.CENTER);
+      POS.nombre.size, '#C3B8D9', SlidesApp.ParagraphAlignment.CENTER);
 
     pres.saveAndClose();
     const url = 'https://docs.google.com/presentation/d/' + presId + '/export/png?id=' + presId + '&pageid=' + slide.getObjectId();
