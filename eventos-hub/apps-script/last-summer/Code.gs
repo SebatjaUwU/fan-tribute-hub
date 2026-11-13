@@ -303,6 +303,18 @@ function boletaPng_(b) {
       POS.nombre.size, '#C3B8D9', SlidesApp.ParagraphAlignment.CENTER);
 
     pres.saveAndClose();
+    // Imagen grande (1600 px de ancho) si está el servicio "Google Slides API";
+    // si no, la exportación normal (540 px).
+    if (typeof Slides !== 'undefined') {
+      try {
+        const th = Slides.Presentations.Pages.getThumbnail(presId, slide.getObjectId(),
+          { 'thumbnailProperties.thumbnailSize': 'LARGE', 'thumbnailProperties.mimeType': 'PNG' });
+        const big = UrlFetchApp.fetch(th.contentUrl, { muteHttpExceptions: true });
+        if (big.getResponseCode() === 200) return big.getBlob().setName('Boleta-' + b.id + '.png');
+      } catch (err) {
+        Logger.log('Imagen grande no disponible (' + err + '); se usa la normal.');
+      }
+    }
     const url = 'https://docs.google.com/presentation/d/' + presId + '/export/png?id=' + presId + '&pageid=' + slide.getObjectId();
     const res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
     if (res.getResponseCode() !== 200) throw new Error('Slides devolvió ' + res.getResponseCode());
