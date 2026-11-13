@@ -44,7 +44,7 @@ const LUGAR_EVENTO = 'Bogotá · lugar por anunciar';   // cámbialo cuando se c
 const AVISO_EMAIL = 'fantributeco@gmail.com';
 const PREFIJO = 'LS';
 // ID de la presentación vertical en blanco que se usa como molde (ver paso a del inicio).
-const PLANTILLA_ID = 'PEGA_AQUI_EL_ID_DE_LA_PLANTILLA';
+const PLANTILLA_ID = '1lrT-gPxm5k03V2Xy8tPLurFBvt_z_vLrKXYRFJYO3iQ';
 
 // Localidades. Por ahora solo Tributies; las demás se activan cuando estén
 // listos sus precios y diseños (quitar las // del inicio de la línea).
