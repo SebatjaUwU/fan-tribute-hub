@@ -22,7 +22,7 @@
  * UNA SOLA VEZ, AL INSTALAR:
  *   a) En el editor: Servicios (+) > "Google Slides API" > Agregar.
  *      Se usa para armar la imagen vertical de cada boleta.
- *   b) Ejecuta prepararHojaVentas_ (crea la hoja con la lista de tipos).
+ *   b) Ejecuta prepararHojaVentas (crea la hoja con la lista de tipos).
  *   c) Ejecuta enviarPrueba: te llega un correo de prueba a tu cuenta.
  *      Acepta los permisos que pide Google (Sheets, Gmail, Slides, Drive).
  *
@@ -67,12 +67,12 @@ function onOpen() {
     .addItem('Reenviar correos que fallaron', 'reenviarCorreosPendientes')
     .addSeparator()
     .addItem('Enviarme un correo de prueba', 'enviarPrueba')
-    .addItem('Preparar la hoja (listas y casillas)', 'prepararHojaVentas_')
+    .addItem('Preparar la hoja (listas y casillas)', 'prepararHojaVentas')
     .addToUi();
 }
 
 /** Lista desplegable de tipos, casillas y notas de ayuda en "Repositorio QR". */
-function prepararHojaVentas_() {
+function prepararHojaVentas() {
   const sh = hoja_();
   const filas = Math.max(sh.getMaxRows() - 1, 999);
   const tipos = Object.keys(TIPOS).map(function (k) { return TIPOS[k].tipo; });
