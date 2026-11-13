@@ -20,8 +20,13 @@
  *   Fondo-Tributies.gs la imagen de fondo de la boleta (no se edita)
  *
  * UNA SOLA VEZ, AL INSTALAR:
- *   a) En el editor: Servicios (+) > "Google Slides API" > Agregar.
- *      Se usa para armar la imagen vertical de cada boleta.
+ *   a) Plantilla vertical para la boleta (Google no deja crear diapositivas
+ *      verticales desde código, por eso se hace una vez a mano):
+ *      - Abre slides.new (presentación nueva en blanco).
+ *      - Archivo > Configuración de página > Personalizado:
+ *        5,625 x 10 pulgadas (o 14,29 x 25,4 cm) > Aplicar.
+ *      - Copia el ID del enlace (lo que va entre /d/ y /edit) y pégalo
+ *        abajo en PLANTILLA_ID. No borres esa presentación.
  *   b) Ejecuta prepararHojaVentas (crea la hoja con la lista de tipos).
  *   c) Ejecuta enviarPrueba: te llega un correo de prueba a tu cuenta.
  *      Acepta los permisos que pide Google (Sheets, Gmail, Slides, Drive).
@@ -38,6 +43,8 @@ const FECHA_CORTA = 'SÁB 19 DIC';
 const LUGAR_EVENTO = 'Bogotá · lugar por anunciar';   // cámbialo cuando se confirme el sitio
 const AVISO_EMAIL = 'fantributeco@gmail.com';
 const PREFIJO = 'LS';
+// ID de la presentación vertical en blanco que se usa como molde (ver paso a del inicio).
+const PLANTILLA_ID = 'PEGA_AQUI_EL_ID_DE_LA_PLANTILLA';
 
 // Localidades. Por ahora solo Tributies; las demás se activan cuando estén
 // listos sus precios y diseños (quitar las // del inicio de la línea).
@@ -68,6 +75,7 @@ function onOpen() {
     .addSeparator()
     .addItem('Enviarme un correo de prueba', 'enviarPrueba')
     .addItem('Preparar la hoja (listas y casillas)', 'prepararHojaVentas')
+    .addItem('Revisar la plantilla de la boleta', 'revisarPlantilla')
     .addToUi();
 }
 
@@ -214,9 +222,8 @@ function keyDeTipo_(nombre) {
 
 // ---------------------------------------------------------------- imagen de la boleta
 
-// Posiciones sobre el fondo de 1080 x 1920 px (Fondo-Tributies.gs).
-// La diapositiva mide 405 x 720 pt, así que 1 px = 0,375 pt.
-const PX = 405 / 1080;
+// Posiciones sobre el fondo de 1080 x 1920 px (Fondo-Tributies.gs). Se
+// convierten a puntos según el ancho real de la plantilla (ancho / 1080).
 const POS = {
   numero: { right: 1010, top: 150, size: 60 },       // "N° 0001" arriba a la derecha
   qr:     { x: 330, y: 1240, lado: 420 },             // dentro del recuadro blanco
@@ -229,16 +236,32 @@ function fondoBoleta_(key) {
   throw new Error('Todavía no hay diseño de boleta para ' + key);
 }
 
-/** Crea una presentación vertical (405 x 720 pt). Necesita el servicio avanzado "Google Slides API". */
+/**
+ * Copia la plantilla vertical en blanco (PLANTILLA_ID). Google no permite
+ * crear diapositivas verticales desde código, por eso se usa un molde.
+ */
 function presentacionVertical_(titulo) {
-  if (typeof Slides === 'undefined') {
-    throw new Error('Falta activar el servicio "Google Slides API" (Editor > Servicios + > Google Slides API).');
+  const id = String(PropertiesService.getScriptProperties().getProperty('PLANTILLA_ID') || PLANTILLA_ID || '').trim();
+  if (!id || id.indexOf('PEGA_AQUI') === 0) {
+    throw new Error('Falta la plantilla vertical: crea la presentación (paso a del inicio del código) y pega su ID en PLANTILLA_ID.');
   }
-  const p = Slides.Presentations.create({
-    title: titulo,
-    pageSize: { width: { magnitude: 405, unit: 'PT' }, height: { magnitude: 720, unit: 'PT' } }
-  });
-  return SlidesApp.openById(p.presentationId);
+  const copia = DriveApp.getFileById(id).makeCopy(titulo);
+  const pres = SlidesApp.openById(copia.getId());
+  const w = pres.getPageWidth(), h = pres.getPageHeight();
+  if (Math.abs(w / h - 1080 / 1920) > 0.02) {
+    copia.setTrashed(true);
+    throw new Error('La plantilla no está vertical 9:16 (mide ' + Math.round(w) + ' x ' + Math.round(h) + ' pt). ' +
+      'En la presentación: Archivo > Configuración de página > Personalizado 5,625 x 10 pulgadas.');
+  }
+  return pres;
+}
+
+/** Ejecútala después de pegar el ID: dice si la plantilla quedó bien. */
+function revisarPlantilla() {
+  const pres = presentacionVertical_('tmp-revision-plantilla');
+  const msg = '✅ Plantilla correcta: ' + Math.round(pres.getPageWidth()) + ' x ' + Math.round(pres.getPageHeight()) + ' pt (vertical).';
+  DriveApp.getFileById(pres.getId()).setTrashed(true);
+  try { SpreadsheetApp.getUi().alert('Plantilla', msg, SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { Logger.log(msg); }
 }
 
 /**
@@ -250,7 +273,10 @@ function boletaPng_(b) {
   const pres = presentacionVertical_('tmp-boleta-' + b.id);
   const presId = pres.getId();
   try {
-    const slide = pres.getSlides()[0];
+    const PX = pres.getPageWidth() / 1080;          // puntos por cada px del diseño
+    const slides = pres.getSlides();
+    const slide = slides[0];
+    slides.slice(1).forEach(function (s) { s.remove(); });
     slide.getPageElements().forEach(function (e) { try { e.remove(); } catch (x) {} });
     slide.getBackground().setPictureFill(fondoBoleta_(b.key));
 
@@ -266,14 +292,14 @@ function boletaPng_(b) {
 
     // N° de la boleta, arriba a la derecha
     const nw = 420;
-    texto('N° ' + ('000' + b.numero).slice(-4), (POS.numero.right - nw) * PX, POS.numero.top * PX - 7, nw * PX, 34,
+    texto('N° ' + ('000' + b.numero).slice(-4), (POS.numero.right - nw) * PX, POS.numero.top * PX - 7 * PX / 0.375, nw * PX, 90 * PX,
       POS.numero.size, '#FFC24B', SlidesApp.ParagraphAlignment.END);
 
     // QR dentro del recuadro blanco
     slide.insertImage(b.qr, POS.qr.x * PX, POS.qr.y * PX, POS.qr.lado * PX, POS.qr.lado * PX);
 
     // Nombre y código debajo del QR
-    texto((b.nombre + ' · ' + b.id).toUpperCase(), 40 * PX, POS.nombre.y * PX - 7, 1000 * PX, 24,
+    texto((b.nombre + ' · ' + b.id).toUpperCase(), 40 * PX, POS.nombre.y * PX - 7 * PX / 0.375, 1000 * PX, 64 * PX,
       POS.nombre.size, '#FDF4E8', SlidesApp.ParagraphAlignment.CENTER);
 
     pres.saveAndClose();
