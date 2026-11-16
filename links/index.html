@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fan Tribute · Eventos, redes y WhatsApp</title>
+<meta name="description" content="Todos los links de Fan Tribute: próximos eventos (End of Summer 2016 Medellín y Last Summer 2016), Instagram, TikTok y el grupo de WhatsApp.">
+<meta property="og:title" content="Fan Tribute · Links">
+<meta property="og:description" content="Próximos eventos, redes y grupo de WhatsApp de Fan Tribute.">
+<meta property="og:image" content="https://fantributecol.netlify.app/edc-preparty/ASSETS/ls-bogota-lineup.webp">
+<link rel="icon" href="../ASSETS/fan-tribute-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0B0618; --ink:#140B2A; --cream:#FDF4E8; --cream-dim:#C3B8D9;
+    --rule:rgba(253,244,232,.16); --orange:#FF9A1F; --violet:#8E3BFF;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; font-weight:400; font-synthesis:none; }
+  html{ background:var(--black); }
+  body{ min-height:100vh; font-family:'Bebas Neue', sans-serif; letter-spacing:.035em; color:var(--cream); background:var(--black); -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ width:min(560px, 100%); margin:0 auto; padding:44px 18px 56px; }
+
+  header{ text-align:center; }
+  .logo{ width:84px; height:84px; border-radius:50%; object-fit:cover; border:1px solid var(--rule); }
+  h1{ margin-top:14px; font-size:44px; line-height:1; letter-spacing:.06em; }
+  .tag{ margin-top:6px; color:var(--cream-dim); font-size:18px; }
+
+  .label{ display:flex; align-items:center; gap:12px; margin:40px 0 14px; color:var(--cream-dim); font-size:16px; letter-spacing:.2em; }
+  .label::after{ content:''; flex:1; height:1px; background:var(--rule); }
+
+  .evento{ display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; padding:10px; border:1px solid var(--rule); background:var(--ink); transition:border-color .15s, transform .15s; }
+  .evento + .evento{ margin-top:12px; }
+  .evento:hover{ border-color:var(--cream-dim); transform:translateY(-1px); }
+  .evento:focus-visible, .link:focus-visible{ outline:2px solid var(--orange); outline-offset:3px; }
+  .evento img{ width:96px; height:120px; object-fit:cover; display:block; }
+  .evento .fecha{ color:var(--orange); font-size:17px; letter-spacing:.12em; }
+  .evento .nombre{ font-size:30px; line-height:.95; margin-top:4px; }
+  .evento .lugar{ color:var(--cream-dim); font-size:17px; margin-top:6px; }
+  .evento .cta{ display:inline-block; margin-top:10px; font-size:18px; border-bottom:2px solid var(--orange); padding-bottom:1px; }
+
+  .link{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px 13px; border:1px solid var(--rule); font-size:24px; transition:background .15s, color .15s, border-color .15s; }
+  .link + .link{ margin-top:10px; }
+  .link small{ white-space:nowrap; color:var(--cream-dim); font-size:17px; letter-spacing:.06em; transition:color .15s; }
+  .link:hover{ background:var(--cream); color:var(--black); border-color:var(--cream); }
+  .link:hover small{ color:#3B3346; }
+  .link.destacado{ background:var(--cream); color:var(--black); border-color:var(--cream); box-shadow:5px 5px 0 var(--violet); }
+  .link.destacado small{ color:#3B3346; }
+  .link.destacado:hover{ background:#fff; }
+
+  .top{ margin-top:32px; }
+  .redes{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:40px; }
+  .redes a{ text-align:center; padding:14px 10px 11px; border:1px solid var(--rule); font-size:22px; transition:background .15s, color .15s; }
+  .redes a:hover{ background:var(--cream); color:var(--black); }
+  .redes a:focus-visible{ outline:2px solid var(--orange); outline-offset:3px; }
+  .usuario{ margin-top:10px; text-align:center; color:var(--cream-dim); font-size:17px; letter-spacing:.1em; }
+  footer{ margin-top:36px; text-align:center; color:var(--cream-dim); font-size:15px; letter-spacing:.14em; line-height:1.6; }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <img class="logo" src="../ASSETS/fan-tribute-icon.png" alt="Fan Tribute" width="84" height="84">
+    <h1>Fan Tribute</h1>
+    <p class="tag">Fiestas tributo EDM · Bogotá y Medellín</p>
+  </header>
+
+  <div class="top">
+  <a class="link destacado" id="waGrupo" href="#" target="_blank" rel="noopener" data-track="links_wa_grupo">Grupo de WhatsApp <small>Noticias y preventas</small></a>
+  <a class="link" href="https://wa.me/573161088178" target="_blank" rel="noopener" data-track="links_wa_directo">Escríbenos por WhatsApp <small>316 108 8178</small></a>
+  <a class="link" href="../index.html" data-track="links_web">Página web <small>Todos los eventos</small></a>
+  </div>
+
+  <div class="label">Próximos eventos</div>
+  <div id="eventos">
+    <a class="evento" data-fin="2026-12-13" href="../eventos-hub/eventos/medellin-2016.html" data-track="links_medellin">
+      <img src="../edc-preparty/ASSETS/eos-medellin-flyer.webp" alt="" width="96" height="120" loading="lazy">
+      <div>
+        <div class="fecha">Sáb 12 dic · Medellín</div>
+        <div class="nombre">End of Summer 2016</div>
+        <div class="lugar">Xero Club</div>
+        <span class="cta">Comprar boletas</span>
+      </div>
+    </a>
+    <a class="evento" data-fin="2026-12-20" href="../eventos-hub/eventos/last-summer-2016.html" data-track="links_last_summer">
+      <img src="../edc-preparty/ASSETS/ls-bogota-lineup.webp" alt="" width="96" height="120" loading="lazy">
+      <div>
+        <div class="fecha">Sáb 19 dic · Bogotá</div>
+        <div class="nombre">Last Summer 2016</div>
+        <div class="lugar">Teatro Republik · Mesas VIP y Backstage</div>
+        <span class="cta">Comprar boletas</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="redes">
+    <a href="https://www.instagram.com/fantribute_col/" target="_blank" rel="noopener" data-track="links_instagram">Instagram</a>
+    <a href="https://www.tiktok.com/@fantribute_col" target="_blank" rel="noopener" data-track="links_tiktok">TikTok</a>
+  </div>
+  <p class="usuario">@fantribute_col</p>
+
+  <footer>Eventos tributo +18 · artistas no presentes<br>© 2026 Fan Tribute</footer>
+</main>
+
+<script>
+  // Link de invitación del grupo de WhatsApp (https://chat.whatsapp.com/...)
+  var WA_GRUPO = 'https://chat.whatsapp.com/K25DyRDijSwArlXLKo2sjp';
+
+  (function () {
+    var g = document.getElementById('waGrupo');
+    if (WA_GRUPO) g.href = WA_GRUPO; else g.remove();
+    // Los eventos se ocultan solos el día después de la fiesta
+    var hoy = new Date().toISOString().slice(0, 10);
+    document.querySelectorAll('.evento[data-fin]').forEach(function (e) { if (e.dataset.fin <= hoy) e.remove(); });
+    document.querySelectorAll('[data-track]').forEach(function (a) {
+      a.addEventListener('click', function () { if (window.gtag) gtag('event', 'click', { event_label: a.dataset.track }); });
+    });
+  })();
+</script>
+</body>
+</html>
