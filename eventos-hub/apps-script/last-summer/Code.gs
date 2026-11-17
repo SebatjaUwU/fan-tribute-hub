@@ -4,20 +4,33 @@
  * Proyecto de Apps Script aparte, pegado en una Google Sheet nueva solo para
  * Last Summer (Extensiones > Apps Script desde esa hoja).
  *
- * Por ahora solo TRIBUTIES, vendidas por WhatsApp:
- *   1. Anotas cada venta en la hoja "Repositorio QR" (una fila = una boleta):
- *      Tipo de entrada, Nombre, Email y, si quieres, Teléfono y Monto.
+ * Localidades: Tributies (ya vendidas), Preventa 1, Preventa 2 y General
+ * (pista, $20.000 de consumo) y mesas VIP y Backstage (5 o 6 personas).
+ *
+ * VENTAS POR WHATSAPP (pista y mesas):
+ *   1. Anotas cada venta en la hoja "Repositorio QR": Tipo de entrada,
+ *      Nombre, Email y, si quieres, Teléfono y Monto.
+ *      · Pista: una fila = una boleta.
+ *      · Mesa VIP o Backstage: una fila = una mesa. El script crea solo las
+ *        boletas de la mesa (QR_POR_MESA, una por persona).
  *   2. Menú 🎟️ Boletería > "Enviar QR de las ventas nuevas".
  *   3. A cada comprador le llega un correo con sus boletas: cada una es la
- *      imagen con el diseño de Last Summer, su número, su nombre y su QR,
+ *      imagen con el diseño de su localidad, su número, su nombre y su QR,
  *      dentro del correo y adjunta para guardarla en el celular.
  *
- * Código de cada boleta: LS-<iniciales>-TRB-<número>, ej. LS-JSP-TRB-0001
- * (Juan Sebastián Parra, Tributies, boleta 1).
+ * MESAS PAGADAS CON WOMPI (página web): automático.
+ *   Menú > "Activar lector de pagos de Wompi" (una vez). Cada 5 minutos lee
+ *   en Gmail los correos "Transacción APROBADA" de los links de mesas
+ *   (LINKS_WOMPI), registra la mesa en la hoja, manda las boletas y te avisa.
  *
- * ARCHIVOS DEL PROYECTO (los dos son necesarios):
+ * Código de cada boleta: LS-<iniciales>-<tipo>-<número>, ej. LS-JSP-VIP-0001
+ * (Juan Sebastián Parra, VIP, boleta 1).
+ *
+ * ARCHIVOS DEL PROYECTO:
  *   Code.gs            este archivo
- *   Fondo-Tributies.gs la imagen de fondo de la boleta (no se edita)
+ *   Fondo-Tributies.gs la imagen de fondo de Tributies (no se edita)
+ *   Los fondos de las demás localidades se descargan solos de la página
+ *   (FONDOS_URL), no hay que pegarlos.
  *
  * UNA SOLA VEZ, AL INSTALAR:
  *   a) Plantilla vertical para la boleta (Google no deja crear diapositivas
@@ -30,6 +43,8 @@
  *   b) Ejecuta prepararHojaVentas (crea la hoja con la lista de tipos).
  *   c) Ejecuta enviarPrueba: te llega un correo de prueba a tu cuenta.
  *      Acepta los permisos que pide Google (Sheets, Gmail, Slides, Drive).
+ *   d) Para las mesas pagadas en la página: menú > "Activar lector de pagos
+ *      de Wompi (mesas)". Acepta el permiso nuevo (disparadores).
  *
  * Opcional, para el escáner de la puerta más adelante:
  *   Propiedad de secuencia de comandos STAFF_PIN e implementar como
@@ -40,7 +55,7 @@ const EVENTO = 'Last Summer 2016';
 const EVENTO_CORTO = 'LAST SUMMER 2016 · BOGOTÁ';
 const FECHA_EVENTO = 'Sábado 19 de diciembre';
 const FECHA_CORTA = 'SÁB 19 DIC';
-const LUGAR_EVENTO = 'Bogotá · lugar por anunciar';   // cámbialo cuando se confirme el sitio
+const LUGAR_EVENTO = 'Teatro Republik · Cra. 14A #83-49, Bogotá';
 const AVISO_EMAIL = 'fantributeco@gmail.com';
 const PREFIJO = 'LS';
 // ID de la presentación vertical en blanco que se usa como molde (ver paso a del inicio).
@@ -48,18 +63,34 @@ const PLANTILLA_ID = '1lrT-gPxm5k03V2Xy8tPLurFBvt_z_vLrKXYRFJYO3iQ';
 // true = boleta de 1600 px con el servicio Google Slides API (más lento). false = 540 px (rápido).
 const ALTA_RESOLUCION = false;
 
-// Localidades. Por ahora solo Tributies; las demás se activan cuando estén
-// listos sus precios y diseños (quitar las // del inicio de la línea).
+// Boletas (QR) que se crean por cada mesa: una por persona.
+const QR_POR_MESA = 6;
+const INCLUYE_MESA = '1 botella + 1 agua, sofá y sillas premium, mesero exclusivo y pantalla propia';
+
+// Localidades. precio = valor de una boleta (pista) o de la mesa completa.
 const TIPOS = {
-  TRB: { tipo: 'Tributies', precio: 30000, consumo: 15000, extra: 'regalo especial para Tributies', frase: 'Gracias por creer hasta el final' }
-  // P1:  { tipo: 'Preventa 1', precio: 0, consumo: 0, extra: '', frase: 'Acceso general · Etapa 1' },
-  // P2:  { tipo: 'Preventa 2', precio: 0, consumo: 0, extra: '', frase: 'Acceso general · Etapa 2' },
-  // GEN: { tipo: 'General',    precio: 0, consumo: 0, extra: '', frase: 'Acceso general' },
-  // VIP: { tipo: 'VIP',        precio: 0, consumo: 0, extra: '', frase: 'Zona VIP · Acceso preferencial' },
-  // BKS: { tipo: 'Backstage',  precio: 0, consumo: 0, extra: '', frase: 'All access · Staff y artistas' }
+  TRB: { tipo: 'Tributies',  precio: 30000,  consumo: 15000, extra: 'regalo especial para Tributies' },
+  P1:  { tipo: 'Preventa 1', precio: 35000,  consumo: 20000, extra: '' },
+  P2:  { tipo: 'Preventa 2', precio: 40000,  consumo: 20000, extra: '' },
+  GEN: { tipo: 'General',    precio: 45000,  consumo: 20000, extra: '' },
+  VIP: { tipo: 'Mesa VIP',       precio: 350000, consumo: 0, extra: INCLUYE_MESA, mesa: true },
+  BKS: { tipo: 'Mesa Backstage', precio: 400000, consumo: 0, extra: INCLUYE_MESA, mesa: true }
 };
-// Color de cada localidad en el correo (como en los diseños).
-const COLOR_TIPO = { TRB: '#FF9A3C', P1: '#FF4FA3', P2: '#A45BFF', GEN: '#3F8CFF', VIP: '#FFC24B', BKS: '#3DDC97' };
+// Color de cada localidad en el correo (como en el flyer de precios).
+const COLOR_TIPO = { TRB: '#FF9A3C', P1: '#FF5FBE', P2: '#A06BFF', GEN: '#3C8CFF', VIP: '#FFC84B', BKS: '#5AF05A' };
+
+// Links de pago de Wompi de la página (una mesa por pago).
+const LINKS_WOMPI = {
+  '6vp9tQ': { key: 'VIP', mesas: 1 },
+  bXM1pp:   { key: 'BKS', mesas: 1 }
+};
+
+// Fondos de las boletas (1080 x 1920). Se prueba la página y, si aún no está
+// publicada, GitHub.
+const FONDOS_URL = [
+  'https://fantributecol.netlify.app/edc-preparty/ASSETS/qr-lastsummer/',
+  'https://raw.githubusercontent.com/SebatjaUwU/fan-tribute-hub/master/edc-preparty/ASSETS/qr-lastsummer/'
+];
 
 const SHEET_NAME = 'Repositorio QR';
 const HEADERS = [
@@ -75,7 +106,11 @@ function onOpen() {
     .addItem('Enviar QR de las ventas nuevas', 'enviarQRPendientes')
     .addItem('Reenviar correos que fallaron', 'reenviarCorreosPendientes')
     .addSeparator()
+    .addItem('Activar lector de pagos de Wompi (mesas)', 'activarLectorWompi')
+    .addItem('Revisar pagos de Wompi ahora', 'revisarCorreosWompi')
+    .addSeparator()
     .addItem('Enviarme un correo de prueba', 'enviarPrueba')
+    .addItem('Enviarme una prueba de cada localidad', 'enviarPruebaTodas')
     .addItem('Preparar la hoja (listas y casillas)', 'prepararHojaVentas')
     .addItem('Revisar la plantilla de la boleta', 'revisarPlantilla')
     .addToUi();
@@ -88,7 +123,7 @@ function prepararHojaVentas() {
   const tipos = Object.keys(TIPOS).map(function (k) { return TIPOS[k].tipo; });
   sh.getRange(2, 3, filas, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(tipos, true).setAllowInvalid(false).build());
   sh.getRange(2, 13, filas, 2).insertCheckboxes();
-  sh.getRange(1, 3).setNote('Elige el tipo de la lista. Una fila = una boleta.');
+  sh.getRange(1, 3).setNote('Elige el tipo de la lista. Pista: una fila = una boleta. Mesa VIP o Backstage: una fila = una mesa (se crean ' + QR_POR_MESA + ' boletas).');
   sh.getRange(1, 8).setNote('Nombre completo: de aquí salen las iniciales del código (Juan Sebastián Parra → JSP).');
   sh.getRange(1, 9).setNote('Correo del comprador: ahí le llegan las boletas.');
   sh.getRange(1, 11).setNote('Si lo dejas vacío se pone el precio del tipo.');
@@ -128,14 +163,20 @@ function enviarQRPendientes() {
       }
       const g = key + '|' + email + '|' + nombre.toLowerCase();
       if (!grupos[g]) { grupos[g] = { key: key, nombre: nombre, email: email, filas: [], ids: [], nums: [], tx: 'WA-' + Date.now().toString(36).toUpperCase() + orden.length }; orden.push(g); }
-      const numero = (maxNum[key] = (maxNum[key] || 0) + 1);
-      const id = codigoBoleta_(key, numero, nombre, email);
       const t = TIPOS[key];
-      sh.getRange(i + 1, 1, 1, 12).setValues([[
-        f[0] || new Date(), EVENTO, t.tipo, numero, id, grupos[g].tx, f[6] || 'WhatsApp',
-        nombre, email, f[9], f[10] === '' || f[10] == null ? t.precio : f[10], 'MANUAL'
-      ]]);
-      grupos[g].filas.push(i + 1); grupos[g].ids.push(id); grupos[g].nums.push(numero);
+      const cuantas = t.mesa ? QR_POR_MESA : 1;
+      for (let q = 0; q < cuantas; q++) {
+        const numero = (maxNum[key] = (maxNum[key] || 0) + 1);
+        const id = codigoBoleta_(key, numero, nombre, email);
+        const fila = [
+          f[0] || new Date(), EVENTO, t.tipo, numero, id, grupos[g].tx, f[6] || 'WhatsApp',
+          nombre, email, f[9], q > 0 ? 0 : (f[10] === '' || f[10] == null ? t.precio : f[10]), 'MANUAL'
+        ];
+        let r;
+        if (q === 0) { r = i + 1; sh.getRange(r, 1, 1, 12).setValues([fila]); }
+        else { sh.appendRow(fila.concat([false, false])); r = sh.getLastRow(); }   // boletas extra de la mesa, al final
+        grupos[g].filas.push(r); grupos[g].ids.push(id); grupos[g].nums.push(numero);
+      }
     }
     SpreadsheetApp.flush();
   } finally {
@@ -195,6 +236,145 @@ function enviarPrueba() {
   try { SpreadsheetApp.getUi().alert('Prueba enviada', 'Revisa el correo de ' + yo + '.', SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { Logger.log('Prueba enviada a ' + yo); }
 }
 
+/** Una boleta de prueba de cada localidad (un correo por localidad). Tarda unos minutos. */
+function enviarPruebaTodas() {
+  const yo = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
+  Object.keys(TIPOS).forEach(function (k) {
+    enviarQR_({ email: yo, nombre: 'Prueba Fan Tribute', key: k, ticketIds: ['LS-PFT-' + k + '-0001'], numeros: [1] });
+  });
+  try { SpreadsheetApp.getUi().alert('Pruebas enviadas', 'Revisa el correo de ' + yo + ': llega una por localidad.', SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) { Logger.log('Pruebas enviadas a ' + yo); }
+}
+
+// ---------------------------------------------------------------- pagos de Wompi (mesas)
+
+const LABEL_OK = 'LS-QR-Procesado';
+const LABEL_REVISAR = 'LS-QR-Revisar';
+const LABEL_OTRO = 'LS-No-es-LastSummer';
+const CORREOS_DESDE = '2026/11/16';
+const BUSQUEDA_WOMPI = '"APROBADA" "ref." after:' + CORREOS_DESDE + ' -subject:"Revisar pago de Last Summer"' +
+  ' -label:' + LABEL_OK + ' -label:' + LABEL_REVISAR + ' -label:' + LABEL_OTRO;
+
+/** Crea el disparador que lee los pagos de Wompi cada 5 minutos (ejecútala una vez). */
+function activarLectorWompi() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'revisarCorreosWompi') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('revisarCorreosWompi').timeBased().everyMinutes(5).create();
+  [LABEL_OK, LABEL_REVISAR, LABEL_OTRO].forEach(etiqueta_);
+  revisarCorreosWompi();
+  try { SpreadsheetApp.getUi().alert('Lector de Wompi activo', 'Cada 5 minutos se revisan los pagos de mesas VIP y Backstage.', SpreadsheetApp.getUi().ButtonSet.OK); } catch (e) {}
+}
+
+/**
+ * Lee los correos "Transacción APROBADA" de Wompi. Si el pago es de un link
+ * de mesas (LINKS_WOMPI) registra las boletas, las envía y te avisa. Los
+ * demás correos (Medellín, etc.) quedan con la etiqueta LS-No-es-LastSummer.
+ */
+function revisarCorreosWompi() {
+  const ok = etiqueta_(LABEL_OK), revisar = etiqueta_(LABEL_REVISAR), otro = etiqueta_(LABEL_OTRO);
+  GmailApp.search(BUSQUEDA_WOMPI, 0, 30).forEach(function (hilo) {
+    let esNuestro = false, problema = false;
+    hilo.getMessages().forEach(function (msg) {
+      const p = leerCorreoWompi_(msg);
+      if (!p || !LINKS_WOMPI[p.linkId]) return;
+      esNuestro = true;
+      const info = LINKS_WOMPI[p.linkId], t = TIPOS[info.key];
+      try {
+        if (!p.email) {
+          problema = true;
+          avisar_('Revisar pago de Last Summer: sin correo del comprador',
+            'Wompi no trae el correo del comprador.\nAsunto: ' + msg.getSubject() + '\nFecha: ' + msg.getDate() +
+            '\nAnótalo a mano en la hoja (una fila por mesa) y dale "Enviar QR de las ventas nuevas".');
+          return;
+        }
+        const r = registrarPagoWompi_(info, p);
+        if (r) {
+          avisar_('Venta Wompi Last Summer: ' + t.tipo,
+            r.nombre + ' (' + p.email + ', tel. ' + (p.telefono || 'sin teléfono') + ') pagó ' + info.mesas + ' x ' + t.tipo +
+            ' por $' + formato_(p.monto || t.precio * info.mesas) + '.\nBoletas: ' + r.ids.join(', ') +
+            '\nCorreo con QR enviado: ' + (r.enviado ? 'sí' : 'NO, usa "Reenviar correos que fallaron"'));
+        }
+      } catch (err) {
+        problema = true;
+        Logger.log('Error con el correo "' + msg.getSubject() + '": ' + err);
+      }
+    });
+    hilo.addLabel(!esNuestro ? otro : (problema ? revisar : ok));
+  });
+}
+
+/** Guarda en la hoja las boletas de una mesa pagada con Wompi y manda el correo. No duplica pagos. */
+function registrarPagoWompi_(info, p) {
+  const sh = hoja_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  const t = TIPOS[info.key], tx = p.txId || p.referencia;
+  const nombre = limpiar_(p.nombre, 80) || 'Sin nombre', email = limpiar_(p.email, 120).toLowerCase();
+  const ids = [], nums = [], filas = [];
+  try {
+    const data = sh.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) if (String(data[i][5]) === String(tx)) return null;   // ya registrado
+    let max = 0;
+    for (let i = 1; i < data.length; i++) {
+      const n = parseInt(data[i][3], 10);
+      if (keyDeTipo_(data[i][2]) === info.key && data[i][4] && !isNaN(n)) max = Math.max(max, n);
+    }
+    const total = info.mesas * (t.mesa ? QR_POR_MESA : 1);
+    for (let q = 0; q < total; q++) {
+      const numero = ++max, id = codigoBoleta_(info.key, numero, nombre, email);
+      sh.appendRow([new Date(), EVENTO, t.tipo, numero, id, tx, p.referencia, nombre, email, p.telefono,
+        q === 0 ? (p.monto || t.precio * info.mesas) : 0, 'APPROVED', false, false]);
+      filas.push(sh.getLastRow()); ids.push(id); nums.push(numero);
+    }
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+  let enviado = false;
+  try {
+    enviarQR_({ email: email, nombre: nombre, key: info.key, ticketIds: ids, numeros: nums });
+    filas.forEach(function (r) { sh.getRange(r, 13).setValue(true); });
+    enviado = true;
+  } catch (err) {
+    Logger.log('No salió el correo de ' + email + ': ' + err);
+  }
+  return { nombre: nombre, ids: ids, enviado: enviado };
+}
+
+/** Lee del correo de Wompi: link, referencia, monto, comprador, transacción, correo y teléfono. */
+function leerCorreoWompi_(msg) {
+  const m = (msg.getSubject() || '').match(/ref\.\s*(\S+)/i);
+  if (!m) return null;
+  const cuerpo = msg.getPlainBody() || '';
+  const correo = cuerpo.match(/escribiendo a\s*([^\s@]+@[^\s]+?)\s+o llamando al/i);
+  const tel = cuerpo.match(/o llamando al\s*(\+?\d[\d ]*)/i);
+  const monto = cuerpo.match(/COP\s*\$\s*([\d.,]+)/);
+  return {
+    referencia: m[1], linkId: m[1].split('_')[0],
+    monto: monto ? Math.round(parseFloat(monto[1].replace(/\./g, '').replace(/,/g, ''))) : 0,
+    nombre: valorTabla_(cuerpo, 'Comprador'),
+    txId: valorTabla_(cuerpo, 'Transacción #') || valorTabla_(cuerpo, 'Transaccion #'),
+    email: correo ? correo[1].trim() : '',
+    telefono: tel ? tel[1].trim() : ''
+  };
+}
+
+function valorTabla_(cuerpo, etiqueta) {
+  const esc = etiqueta.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const misma = cuerpo.match(new RegExp(esc + '[ \\t]+([^\\r\\n]+)'));
+  if (misma && misma[1].trim()) return misma[1].trim();
+  const lineas = cuerpo.split('\n');
+  for (let i = 0; i < lineas.length; i++) {
+    if (lineas[i].trim() === etiqueta) {
+      for (let j = i + 1; j < Math.min(i + 4, lineas.length); j++) if (lineas[j].trim()) return lineas[j].trim();
+    }
+  }
+  return '';
+}
+
+function etiqueta_(nombre) { return GmailApp.getUserLabelByName(nombre) || GmailApp.createLabel(nombre); }
+function avisar_(asunto, cuerpo) { GmailApp.sendEmail(AVISO_EMAIL, asunto, cuerpo, { name: 'Boletería Last Summer' }); }
+
 // ---------------------------------------------------------------- códigos
 
 /** Iniciales del comprador: "Juan Sebastián Parra" -> "JSP". */
@@ -232,10 +412,23 @@ const POS = {
   nombre: { y: 1742, size: 38 }                       // nombre · código, debajo del QR
 };
 
-/** Fondo de la boleta según la localidad. Por ahora solo hay diseño de Tributies. */
+/** Fondo de la boleta según la localidad (Tributies va dentro del proyecto; las demás se descargan). */
+const FONDOS_CACHE_ = {};
 function fondoBoleta_(key) {
-  if (key === 'TRB') return Utilities.newBlob(Utilities.base64Decode(FONDO_TRIBUTIES_B64), 'image/jpeg', 'fondo-tributies.jpg');
-  throw new Error('Todavía no hay diseño de boleta para ' + key);
+  if (key === 'TRB' && typeof FONDO_TRIBUTIES_B64 !== 'undefined') {
+    return Utilities.newBlob(Utilities.base64Decode(FONDO_TRIBUTIES_B64), 'image/jpeg', 'fondo-tributies.jpg');
+  }
+  if (FONDOS_CACHE_[key]) return FONDOS_CACHE_[key].copyBlob();
+  for (let i = 0; i < FONDOS_URL.length; i++) {
+    try {
+      const res = UrlFetchApp.fetch(FONDOS_URL[i] + 'fondo-' + key + '.jpg', { muteHttpExceptions: true });
+      if (res.getResponseCode() === 200 && /image/.test(res.getHeaders()['Content-Type'] || res.getHeaders()['content-type'] || 'image')) {
+        FONDOS_CACHE_[key] = res.getBlob().setName('fondo-' + key + '.jpg');
+        return FONDOS_CACHE_[key].copyBlob();
+      }
+    } catch (err) { Logger.log('Fondo ' + key + ' no disponible en ' + FONDOS_URL[i] + ': ' + err); }
+  }
+  throw new Error('No se pudo descargar el fondo de la boleta ' + key);
 }
 
 /**
@@ -366,8 +559,13 @@ function enviarQR_(d) {
       '</td></tr>';
   }).join('');
 
-  const incluye = ['$' + formato_(t.consumo) + ' en consumo'];
+  const incluye = [];
+  if (t.consumo) incluye.push('$' + formato_(t.consumo) + ' en consumo');
   if (t.extra) incluye.push(t.extra);
+  const mesas = t.mesa ? Math.max(1, Math.round(d.ticketIds.length / QR_POR_MESA)) : 0;
+  const resumen = t.mesa
+    ? (mesas === 1 ? '1 ' + t.tipo : mesas + ' x ' + t.tipo) + ' · ' + d.ticketIds.length + ' boletas, una por persona'
+    : d.ticketIds.length + ' x ' + t.tipo;
 
   const html =
     '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">' +
@@ -377,16 +575,16 @@ function enviarQR_(d) {
     '<table role="presentation" width="100%" style="max-width:520px;margin:0 auto;border-collapse:collapse;">' +
     '<tr><td style="height:6px;background:#FF8C28;background:linear-gradient(90deg,#FF8C28,#FF4FA3,#3F8CFF);"></td></tr>' +
     '<tr><td style="text-align:center;padding:26px 0 6px;' + TIT + 'font-size:44px;letter-spacing:3px;color:#FDF4E8;">LAST SUMMER <span style="color:' + color + ';">2016</span></td></tr>' +
-    '<tr><td style="text-align:center;padding:0 0 22px;' + TXT + 'font-size:15px;letter-spacing:3px;color:#C3B8D9;">' + esc_(FECHA_CORTA) + ' · BOGOTÁ · GRAN FINAL DEL AÑO</td></tr>' +
+    '<tr><td style="text-align:center;padding:0 0 22px;' + TXT + 'font-size:15px;letter-spacing:3px;color:#C3B8D9;">' + esc_(FECHA_CORTA) + ' · TEATRO REPUBLIK · BOGOTÁ</td></tr>' +
     '<tr><td style="background:#140B2A;border:1px solid #2B2148;border-radius:16px;padding:24px 22px 8px;">' +
     '<p style="margin:0 0 4px;' + TIT + 'font-size:16px;letter-spacing:3px;color:' + color + ';">TUS BOLETAS ESTÁN LISTAS</p>' +
     '<p style="margin:0 0 10px;' + TIT + 'font-size:32px;letter-spacing:1px;color:#FDF4E8;">¡HOLA, ' + esc_(d.nombre).toUpperCase() + '!</p>' +
     '<p style="margin:0 0 18px;' + TXT + 'font-size:17px;line-height:1.5;letter-spacing:.5px;color:#C3B8D9;">Gracias por creer en el cierre de Fan Tribute. Aquí tienes ' +
     (d.ticketIds.length === 1 ? 'tu boleta' : 'tus ' + d.ticketIds.length + ' boletas') + ' de <strong style="color:#FDF4E8;">' + esc_(t.tipo) + '</strong>. ' +
-    'Muestra el QR en la entrada desde el celular o impreso.</p>' +
+    (t.mesa ? 'Reparte una boleta a cada persona de tu mesa: cada quien muestra su QR en la entrada.</p>' : 'Muestra el QR en la entrada desde el celular o impreso.</p>') +
     '<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 22px;">' +
-    fila_('Boleta', d.ticketIds.length + ' x ' + t.tipo) +
-    fila_('Incluye', incluye.join(' + ')) +
+    fila_(t.mesa ? 'Mesa' : 'Boleta', resumen) +
+    (incluye.length ? fila_('Incluye', incluye.join(' + ')) : '') +
     fila_('Cuándo', FECHA_EVENTO) +
     fila_('Dónde', LUGAR_EVENTO) +
     fila_('Edad', '+18 · trae tu documento de identidad') +
@@ -400,7 +598,7 @@ function enviarQR_(d) {
     '<tr><td style="text-align:center;padding:22px 0 0;' + TXT + 'font-size:13px;letter-spacing:3px;color:#7C7590;">FAN TRIBUTE · EVENTO TRIBUTO +18 · ARTISTAS NO PRESENTES</td></tr>' +
     '</table></div></body></html>';
 
-  const texto = 'Hola ' + d.nombre + ', tus boletas para ' + EVENTO + ' (' + d.ticketIds.length + ' x ' + t.tipo + '): ' +
+  const texto = 'Hola ' + d.nombre + ', tus boletas para ' + EVENTO + ' (' + resumen + '): ' +
     d.ticketIds.join(', ') + '. ' + FECHA_EVENTO + ', ' + LUGAR_EVENTO + '. Las boletas van adjuntas.';
   Logger.log('Enviando correo a ' + d.email);
   GmailApp.sendEmail(d.email, 'Tus boletas · ' + EVENTO + ' · ' + t.tipo, texto, {
