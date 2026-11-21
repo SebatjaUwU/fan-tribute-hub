@@ -75,7 +75,13 @@ const LINKS_FIJOS = {
   uo5HvV:   { key: 'P2',  cantidad: 3 },
   uXST6w:   { key: 'P2',  cantidad: 4 },
   aRnpk2:   { key: 'P2',  cantidad: 5 },
-  wME6sq:   { key: 'P2',  cantidad: 1 }   // link x1 anterior, por si alguien paga con él
+  wME6sq:   { key: 'P2',  cantidad: 1 },  // link x1 anterior, por si alguien paga con él
+  // General ($45.000 c/u)
+  G5fRiL:   { key: 'GEN', cantidad: 1 },
+  '9fwm3O': { key: 'GEN', cantidad: 2 },
+  Yw2VdD:   { key: 'GEN', cantidad: 3 },
+  xqEbx9:   { key: 'GEN', cantidad: 4 },
+  '8nBinI': { key: 'GEN', cantidad: 5 }
 };
 
 const SHEET_NAME = 'Repositorio QR';
