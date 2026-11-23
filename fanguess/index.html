@@ -365,9 +365,9 @@
   .pr-kick{ display:inline-block; padding:5px 12px 4px; border-radius:99px; background:#17121F; color:var(--paper); font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
   .pr-card h2{ margin-top:12px; font-family:Impact,'Anton',fantasy; font-weight:400; font-size:clamp(46px,13vw,64px); line-height:.95; text-transform:uppercase; }
   .pr-gana{ margin-top:8px; font-size:18px; line-height:1.4; } .pr-gana b{ color:var(--tono-osc); font-weight:800; }
-  .pr-escalera{ list-style:none; display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:4px; margin:18px 0 6px; }
-  .pr-escalera li{ padding:7px 2px 6px; border-radius:8px; background:rgba(23,18,31,.08); font-size:10.5px; font-weight:800; line-height:1.15; color:#5c546b; }
-  .pr-escalera li small{ display:block; font-size:9.5px; font-weight:600; opacity:.8; }
+  .pr-escalera{ list-style:none; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:18px 0 6px; }
+  .pr-escalera li{ padding:9px 4px 8px; border-radius:10px; background:rgba(23,18,31,.08); font-size:15px; font-weight:800; line-height:1.15; color:#5c546b; }
+  .pr-escalera li small{ display:block; font-size:11px; font-weight:600; opacity:.8; }
   .pr-escalera li.hecho{ background:rgba(23,18,31,.18); color:#17121F; }
   .pr-escalera li.ahora{ background:#17121F; color:var(--paper); transform:scale(1.08); box-shadow:0 6px 14px rgba(0,0,0,.25); }
   .pr-escalera li.pase{ color:#B8860B; } .pr-escalera li.pase.ahora{ background:linear-gradient(135deg,#FFD45C,#E8A317); color:#17121F; }
@@ -854,14 +854,14 @@
     })();
   });
 
-  // ---- Premios por racha: cada 10 seguidas sube el descuento; 80 = pase gratis ----
+  // ---- Premios por racha: cada 10 seguidas sube el descuento; 40 = boleta gratis (todo es por boleta individual) ----
   var WA_FT = '573161088178';
-  var ESCALERA = [[10, '5%'], [20, '10%'], [30, '11%'], [40, '12%'], [50, '13%'], [60, '14%'], [70, '15%'], [80, 'Pase']];
+  var ESCALERA = [[10, '5%'], [20, '7%'], [30, '10%'], [40, 'Gratis']], MAXP = 40;
   var premioEnJuego = 0, premioCobrado = null;
-  function textoPremio(n) { return n >= 80 ? 'un pase gratis a uno de nuestros eventos' : (ESCALERA.filter(function (e) { return e[0] === n; })[0] || [0, ''])[1] + ' de descuento en tu próxima boleta'; }
+  function textoPremio(n) { return n >= MAXP ? 'una boleta individual gratis para uno de nuestros eventos' : (ESCALERA.filter(function (e) { return e[0] === n; })[0] || [0, ''])[1] + ' de descuento en una boleta individual'; }
   function pintarEscalera(n) {
     $('prEscalera').innerHTML = ESCALERA.map(function (e) {
-      return '<li class="' + (e[0] < n ? 'hecho' : e[0] === n ? 'ahora' : '') + (e[0] === 80 ? ' pase' : '') + '">' + e[1] + '<small>' + e[0] + '</small></li>';
+      return '<li class="' + (e[0] < n ? 'hecho' : e[0] === n ? 'ahora' : '') + (e[0] === MAXP ? ' pase' : '') + '">' + e[1] + '<small>' + e[0] + ' seguidas</small></li>';
     }).join('');
   }
   function mostrarPremio(n, final) {
@@ -871,14 +871,14 @@
     $('prGana').innerHTML = 'Ganaste <b>' + esc(textoPremio(n)) + '</b>';
     pintarEscalera(n);
     $('prDecide').hidden = false; $('prOk').hidden = true;
-    if (n >= 80) {
-      $('prRiesgo').innerHTML = final ? 'Se acabó tu racha, pero el pase ya es tuyo. Reclámalo escribiéndonos.' : 'Es el premio máximo. Puedes seguir jugando por el ranking: <b>el pase no se pierde</b>.';
-      $('prReclamar').textContent = 'Reclamar mi pase gratis';
+    if (n >= MAXP) {
+      $('prRiesgo').innerHTML = final ? 'Se acabó tu racha, pero la boleta gratis ya es tuya. Reclámala escribiéndonos.' : 'Es el premio máximo. Puedes seguir jugando por el ranking: <b>la boleta gratis no se pierde</b>.';
+      $('prReclamar').textContent = 'Reclamar mi boleta gratis';
       $('prSeguir').textContent = 'Seguir jugando por el ranking'; $('prSeguir').hidden = !!final;
     } else {
-      $('prRiesgo').innerHTML = 'Si sigues y llegas a <b>' + sig[0] + ' seguidas</b> sube a ' + (sig[0] === 80 ? 'un pase gratis' : sig[1]) + '. Pero <b>si fallas antes, pierdes este premio</b>.';
+      $('prRiesgo').innerHTML = 'Si sigues y llegas a <b>' + sig[0] + ' seguidas</b> sube a ' + (sig[0] === MAXP ? 'una boleta gratis' : sig[1]) + '. Pero <b>si fallas antes, pierdes este premio</b>.';
       $('prReclamar').textContent = 'Reclamar ' + ESCALERA.filter(function (e) { return e[0] === n; })[0][1] + ' y terminar';
-      $('prSeguir').textContent = 'Seguir jugando por ' + (sig[0] === 80 ? 'el pase' : sig[1]); $('prSeguir').hidden = false;
+      $('prSeguir').textContent = 'Seguir jugando por ' + (sig[0] === MAXP ? 'la boleta gratis' : sig[1]); $('prSeguir').hidden = false;
     }
     $('premio').hidden = false; parar(); $('prReclamar').focus();
   }
@@ -886,9 +886,9 @@
   function mensajeWa() {
     var c = premioCobrado; if (!c) return '#';
     var ig = (miIg || $('prIg').value.trim().replace(/^@+/, '')).toLowerCase();
-    var t = c.nivel >= 80
-      ? '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané un PASE GRATIS para uno de sus eventos 🎟️. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo reclamo mi boleta?'
-      : '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané ' + c.premio + ' para mi próxima boleta. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo lo uso?';
+    var t = c.nivel >= MAXP
+      ? '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané una BOLETA INDIVIDUAL GRATIS para uno de sus eventos 🎟️. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo reclamo mi boleta?'
+      : '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané ' + textoPremio(c.nivel) + '. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo lo uso?';
     return 'https://wa.me/' + WA_FT + '?text=' + encodeURIComponent(t);
   }
   function pedirPremio(n, intentos) {
@@ -911,7 +911,7 @@
       $('prKick').textContent = '¡Premio asegurado!';
       $('prCodigo').textContent = d.codigo;
       $('prIgBox').hidden = !!miIg;
-      $('prNota').innerHTML = d.nivel >= 80 ? 'Escríbenos a Fan Tribute con tu código para <b>reclamar tu boleta</b>. Solo lo puede usar una persona.' : 'Escríbenos con tu código y te damos el descuento en tu próxima boleta. Tómale pantallazo por si acaso.';
+      $('prNota').innerHTML = d.nivel >= MAXP ? 'Escríbenos a Fan Tribute con tu código para <b>reclamar tu boleta individual</b>. Tómale pantallazo por si acaso.' : 'Escríbenos con tu código y te damos el descuento en <b>una boleta individual</b>. Tómale pantallazo por si acaso.';
       $('prWa').href = mensajeWa();
       $('prDecide').hidden = true; $('prOk').hidden = false;
       // reclamar cierra la partida
@@ -1048,9 +1048,9 @@
       ultimaRonda = { c: c, ok: ok, p: p, intento: enIntento, nivel: nivel, racha: ok ? seguidas : rachaAntes };
       if (ok) { anotarRacha(seguidas); $('bIg').hidden = true; } else pedirIg(rachaAntes);
       // premios: cada 10 seguidas aparece la opción de reclamar o seguir
-      if (ok && seguidas % 10 === 0 && seguidas <= 80) { premioEnJuego = seguidas; setTimeout(function () { mostrarPremio(seguidas); }, 1600); }
+      if (ok && seguidas % 10 === 0 && seguidas <= MAXP) { premioEnJuego = seguidas; setTimeout(function () { mostrarPremio(seguidas); }, 1600); }
       else if (!ok && premioEnJuego) {
-        if (rachaAntes >= 80) setTimeout(function () { mostrarPremio(80, true); }, 1600);
+        if (rachaAntes >= MAXP) setTimeout(function () { mostrarPremio(MAXP, true); }, 1600);
         else { $('resExtra').textContent = '− Perdiste tu ' + textoPremio(premioEnJuego).split(' de ')[0] + ' de descuento'; $('resExtra').hidden = false; premioEnJuego = 0; }
       }
       $('compartir').hidden = ok; $('bMencion').hidden = ok;
