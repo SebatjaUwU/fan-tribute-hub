@@ -353,6 +353,7 @@
   @media (max-width:420px){ .rk-lista .a{ display:none; } .rk-lista li{ grid-template-columns:34px minmax(0,1fr) auto; } }
   .rk-lista li.yo{ background:color-mix(in srgb, var(--tono-b) 14%, transparent); }
   .rk-lista .vacio{ display:block; padding:16px 0; color:var(--cream-dim); }
+  .rk-lista li.v{ display:block; }
   .rk-nota{ margin-top:12px; font-size:12.5px; color:var(--cream-dim); line-height:1.5; }
   .toast{ position:fixed; left:50%; bottom:22px; z-index:50; max-width:min(92vw,420px); padding:12px 18px; border-radius:12px; background:var(--cream); color:#17121F; font-size:14.5px; font-weight:600; box-shadow:0 12px 30px rgba(0,0,0,.5); transform:translate(-50%,140%); opacity:0; transition:transform .35s cubic-bezier(.3,1.4,.5,1), opacity .3s; pointer-events:none; }
   .toast.ver{ transform:translate(-50%,0); opacity:1; }
@@ -969,15 +970,15 @@
   }
   function cargarRanking() {
     $('rkMes').textContent = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
-    if (!RANKING_URL) { $('rkLista').innerHTML = '<li><span class="vacio">El ranking arranca muy pronto.</span></li>'; pintarYo(null); return; }
+    if (!RANKING_URL) { $('rkLista').innerHTML = '<li class="v"><span class="vacio">El ranking arranca muy pronto.</span></li>'; pintarYo(null); return; }
     fetch(RANKING_URL + '?accion=ranking&id=' + encodeURIComponent(dispositivo)).then(function (r) { return r.json(); }).then(function (d) {
       if (!d || !d.ok) throw new Error('rk');
       if (d.miIg && d.miIg !== miIg) { miIg = d.miIg; store.set('ig', miIg); }
       $('rkLista').innerHTML = d.top.length ? d.top.map(function (f) {
         return '<li class="' + (f.yo ? 'yo' : '') + '"><span class="n">' + f.pos + '</span><span class="q">@' + esc(f.ig) + '</span><span class="a">' + f.aciertos + ' aciertos</span><span class="p">' + f.racha + '<small>seguidas</small></span></li>';
-      }).join('') : '<li><span class="vacio">Nadie ha entrado este mes. ¡Haz una racha y sé el primero!</span></li>';
+      }).join('') : '<li class="v"><span class="vacio">Nadie ha entrado este mes. ¡Haz una racha y sé el primero!</span></li>';
       pintarYo(d);
-    }).catch(function () { $('rkLista').innerHTML = '<li><span class="vacio">No pudimos cargar el ranking. Intenta más tarde.</span></li>'; pintarYo(null); });
+    }).catch(function () { $('rkLista').innerHTML = '<li class="v"><span class="vacio">No pudimos cargar el ranking. Intenta más tarde.</span></li>'; pintarYo(null); });
   }
   function iniciarRanking() {
     $('bIg').addEventListener('submit', function (e) {
