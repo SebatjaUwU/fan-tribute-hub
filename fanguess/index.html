@@ -480,11 +480,13 @@
 (function () {
   'use strict';
   // ---- Configuración de la prueba ----
-  // Canciones de la playlist "playlist crack" de Fan Tribute en Apple Music (56 canciones: Avicii,
+  // Canciones de la playlist "playlist crack" de Fan Tribute en Apple Music (77 canciones: Avicii,
   // Martin Garrix, Calvin Harris, David Guetta, Skrillex, Kygo, Alesso, Swedish House Mafia, LMFAO,
   // Alan Walker, Don Diablo y Galantis). Son los códigos de cada canción en Apple Music: para agregar
   // una, copia el número del final del link de la canción (music.apple.com/co/song/.../NÚMERO).
-  var CANCIONES = [1440872929, 1440834312, 1445311545, 1440787352, 1440829549, 1670593167, 1196786344, 1137641426, 1416740913, 1350850469, 1346088035, 1460655320, 1613929502, 1350836690, 563923509, 922876189, 1364709436, 922876184, 1001677305, 563923516, 922876187, 1811333176, 1153704956, 922876183, 1715687117, 726149086, 726390516, 1640751223, 1715686788, 1688187513, 726390581, 1432646030, 971262282, 491596647, 491596732, 442170037, 833843699, 491596731, 434543346, 609821696, 1091453645, 1091453642, 1440859014, 1440859246, 1445184674, 6798736832, 6799141274, 6798741949, 1440756789, 1440757093, 1196294581, 1277697262, 1336550428, 1337751485, 984746629, 984746634];
+  var CANCIONES = [1440872929, 1440834312, 1445311545, 1440787352, 1440829549, 1670593167, 1196786344, 1137641426, 1416740913, 1350850469, 1346088035, 1460655320, 1613929502, 1350836690, 563923509, 922876189, 1364709436, 922876184, 1001677305, 563923516, 922876187, 1811333176, 1153704956, 922876183, 1715687117, 726149086, 726390516, 1640751223, 1715686788, 1688187513, 726390581, 1432646030, 971262282, 491596647, 491596732, 442170037, 833843699, 491596731, 434543346, 609821696, 1091453645, 1091453642, 1440859014, 1440859246, 1445184674, 6798736832, 6799141274, 6798741949, 1440756789, 1440757093, 1196294581, 1277697262, 1336550428, 1337751485, 984746629, 984746634,
+    // agregadas el 23 nov: Years & Years, Pyramid, Chainsmokers, Coldplay, Zedd, Daft Punk, Pitbull, Capital Cities, DJ Snake, Black Eyed Peas, Axwell Λ Ingrosso, Showtek y más
+    1445042169, 1440852996, 1207120538, 829910927, 1053934844, 1470706638, 697195462, 1207120448, 721686248, 1766005715, 1440867457, 1440733545, 1444865027, 1445140803, 1458339447, 924035435, 6798409159, 1440833726, 1445876398, 1337209540, 736064507];
   // ---- Ranking: pega aquí la URL /exec del Apps Script (apps-script/FanGuess-Ranking.gs) ----
   var RANKING_URL = 'https://script.google.com/macros/s/AKfycbzTJsUMPZK3v0GNv6LJCqmaGV1O3XtQc-SiGbmTM4fl5mF43D7LPa2c4RTKKLN0_WhbQw/exec';
   var IG_FT = 'fantribute_col', LINK_JUEGO = (/^https?:/.test(location.protocol) && location.host ? location.host : 'fantributecolombia.netlify.app') + '/fanguess';
@@ -812,8 +814,23 @@
     }
   });
 
-  // ---- Buscador con carátulas (busca en todo el catálogo para no delatar la respuesta) ----
-  var elegida = null, deb = null, ultimaQ = '';
+  // ---- Buscador con carátulas ----
+  // Primero busca entre las canciones del juego (así siempre salen, aunque Apple las ponga lejos)
+  // y luego completa con el catálogo de Apple, sin repetir versiones de la misma canción.
+  var elegida = null, deb = null, ultimaQ = '', catalogo = [];
+  (function cargarCatalogo() {
+    var ids = CANCIONES.slice(), lotes = [];
+    while (ids.length) lotes.push(ids.splice(0, 60));
+    lotes.forEach(function (lote, i) {
+      setTimeout(function () { itunes({ id: lote.join(',') }, 'lookup').then(function (res) { catalogo = catalogo.concat(res.filter(function (t) { return t.trackName; })); }).catch(function () {}); }, 600 + i * 700);
+    });
+  })();
+  function clave(t) { return norm(t.trackName) + '|' + norm(t.artistName).split(' ')[0]; }
+  function buscarLocal(q) {
+    var p = norm(q).split(' ').filter(Boolean);
+    if (!p.length) return [];
+    return catalogo.filter(function (t) { var txt = norm(t.trackName) + ' ' + norm(t.artistName); return p.every(function (w) { return txt.indexOf(w) > -1; }); }).slice(0, 5);
+  }
   $('ans').addEventListener('input', function () {
     var q = this.value.trim(); elegida = null; $('send').disabled = true;
     clearTimeout(deb);
@@ -821,9 +838,14 @@
     $('sugg').innerHTML = '<div class="info">' + PUNTOS_HTML + 'Buscando…</div>'; $('sugg').classList.add('open');
     deb = setTimeout(function () {
       ultimaQ = q;
-      itunes({ term: q, entity: 'song', limit: 6 }).then(function (res) {
+      var locales = buscarLocal(q);
+      itunes({ term: q, entity: 'song', limit: 20 }).catch(function () { return []; }).then(function (res) {
         if (q !== ultimaQ) return;
         var s = $('sugg'); s.innerHTML = '';
+        var vistos = {}, lista = [];
+        locales.concat(res).forEach(function (t) { var k = clave(t); if (!vistos[k] && lista.length < 8) { vistos[k] = 1; lista.push(t); } });
+        res = lista;
+        if (!res.length && !locales.length && !catalogo.length) throw new Error('red');
         res.forEach(function (t) {
           var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'option');
           b.innerHTML = '<img src="' + img(t.artworkUrl100, 100) + '" alt="" loading="lazy"><span class="t"><b>' + esc(t.trackName) + '</b><small>' + esc(t.artistName) + ' · ' + String(t.releaseDate || '').slice(0, 4) + '</small></span>';
