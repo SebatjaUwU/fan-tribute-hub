@@ -355,6 +355,41 @@
   .rk-lista .vacio{ display:block; padding:16px 0; color:var(--cream-dim); }
   .rk-lista li.v{ display:block; }
   .rk-nota{ margin-top:12px; font-size:12.5px; color:var(--cream-dim); line-height:1.5; }
+  /* premio por racha */
+  .premio{ position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:18px; background:rgba(7,6,11,.78); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); animation:in .3s ease both; overflow-y:auto; }
+  .premio[hidden]{ display:none; }
+  .pr-card{ position:relative; width:min(460px,100%); padding:26px 22px 22px; border-radius:22px; text-align:center; color:#17121F;
+    background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .24 0 0 0 0 .16 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+    box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 3px var(--tono-b); animation:premio-in .6s cubic-bezier(.2,1.5,.4,1) both; }
+  @keyframes premio-in{ from{ opacity:0; transform:translateY(40px) scale(.85) rotate(-3deg); } to{ opacity:1; transform:none; } }
+  .pr-kick{ display:inline-block; padding:5px 12px 4px; border-radius:99px; background:#17121F; color:var(--paper); font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+  .pr-card h2{ margin-top:12px; font-family:Impact,'Anton',fantasy; font-weight:400; font-size:clamp(46px,13vw,64px); line-height:.95; text-transform:uppercase; }
+  .pr-gana{ margin-top:8px; font-size:18px; line-height:1.4; } .pr-gana b{ color:var(--tono-osc); font-weight:800; }
+  .pr-escalera{ list-style:none; display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:4px; margin:18px 0 6px; }
+  .pr-escalera li{ padding:7px 2px 6px; border-radius:8px; background:rgba(23,18,31,.08); font-size:10.5px; font-weight:800; line-height:1.15; color:#5c546b; }
+  .pr-escalera li small{ display:block; font-size:9.5px; font-weight:600; opacity:.8; }
+  .pr-escalera li.hecho{ background:rgba(23,18,31,.18); color:#17121F; }
+  .pr-escalera li.ahora{ background:#17121F; color:var(--paper); transform:scale(1.08); box-shadow:0 6px 14px rgba(0,0,0,.25); }
+  .pr-escalera li.pase{ color:#B8860B; } .pr-escalera li.pase.ahora{ background:linear-gradient(135deg,#FFD45C,#E8A317); color:#17121F; }
+  .pr-riesgo{ margin-top:10px; font-size:14.5px; line-height:1.45; color:#3B3346; } .pr-riesgo b{ color:#B3202B; }
+  .pr-btns{ display:grid; gap:10px; margin-top:16px; }
+  .pr-reclamar, .pr-wa{ display:flex; align-items:center; justify-content:center; gap:10px; min-height:58px; padding:0 18px; border:0; border-radius:16px; cursor:pointer; font:inherit; font-size:17px; font-weight:800; text-decoration:none; color:#06260F; background:linear-gradient(135deg,#5BE58F,#25D366); box-shadow:0 10px 22px rgba(37,211,102,.35); transition:transform .15s; }
+  .pr-reclamar:hover, .pr-wa:hover{ transform:translateY(-2px); }
+  .pr-reclamar[disabled]{ opacity:.6; cursor:wait; }
+  .pr-wa svg{ width:22px; height:22px; }
+  .pr-seguir{ min-height:52px; padding:0 18px; border:2px solid #17121F; border-radius:16px; background:transparent; color:#17121F; font:inherit; font-size:15.5px; font-weight:800; cursor:pointer; }
+  .pr-seguir:hover{ background:#17121F; color:var(--paper); }
+  .pr-ok[hidden]{ display:none; }
+  .pr-codigo-lbl{ margin-top:16px; font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#5c546b; }
+  .pr-codigo{ margin-top:4px; font:800 30px/1.1 ui-monospace, Menlo, Consolas, monospace; letter-spacing:.06em; color:var(--tono-osc); user-select:all; }
+  .pr-ig{ display:block; margin:14px 0 4px; font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#5c546b; text-align:left; }
+  .pr-ig[hidden]{ display:none; }
+  .pr-ig span{ display:flex; align-items:center; gap:4px; margin-top:6px; border-bottom:2px solid #17121F; }
+  .pr-ig b{ font-size:18px; color:#17121F; }
+  .pr-ig input{ flex:1; min-width:0; min-height:44px; border:0; background:transparent; font:inherit; font-size:17px; color:#17121F; outline:none; text-transform:none; letter-spacing:0; }
+  .pr-ok .pr-wa{ margin-top:14px; }
+  .pr-nota{ margin:12px 0; font-size:13.5px; line-height:1.45; color:#3B3346; }
+  .pr-ok .pr-seguir{ width:100%; }
   .toast{ position:fixed; left:50%; bottom:22px; z-index:50; max-width:min(92vw,420px); padding:12px 18px; border-radius:12px; background:var(--cream); color:#17121F; font-size:14.5px; font-weight:600; box-shadow:0 12px 30px rgba(0,0,0,.5); transform:translate(-50%,140%); opacity:0; transition:transform .35s cubic-bezier(.3,1.4,.5,1), opacity .3s; pointer-events:none; }
   .toast.ver{ transform:translate(-50%,0); opacity:1; }
   .teclas{ display:none; }
@@ -470,6 +505,29 @@
     <ol class="rk-lista" id="rkLista"></ol>
     <p class="rk-nota">No hay que registrarse: cuando se te acabe una racha te preguntamos tu @. Si tu @ ya está, se queda tu mejor racha. Se reinicia el día 1 y revisamos las partidas para evitar trampas.</p>
   </section>
+</div>
+<div class="premio" id="premio" hidden role="dialog" aria-modal="true" aria-labelledby="prTitulo">
+  <div class="pr-card">
+    <span class="pr-kick" id="prKick">Premio por racha</span>
+    <h2 id="prTitulo">¡10 seguidas!</h2>
+    <p class="pr-gana" id="prGana"></p>
+    <ol class="pr-escalera" id="prEscalera" aria-label="Premios por racha"></ol>
+    <div id="prDecide">
+      <p class="pr-riesgo" id="prRiesgo"></p>
+      <div class="pr-btns">
+        <button class="pr-reclamar" type="button" id="prReclamar"></button>
+        <button class="pr-seguir" type="button" id="prSeguir"></button>
+      </div>
+    </div>
+    <div class="pr-ok" id="prOk" hidden>
+      <p class="pr-codigo-lbl">Tu código</p>
+      <p class="pr-codigo" id="prCodigo"></p>
+      <label class="pr-ig" id="prIgBox">Tu Instagram (para el mensaje)<span><b>@</b><input id="prIg" maxlength="31" placeholder="tu_usuario" autocomplete="off" autocapitalize="off" spellcheck="false"></span></label>
+      <a class="pr-wa" id="prWa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>Enviárselo a Fan Tribute</a>
+      <p class="pr-nota" id="prNota"></p>
+      <button class="pr-seguir" type="button" id="prCerrar">Jugar otra partida</button>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -796,9 +854,82 @@
     })();
   });
 
+  // ---- Premios por racha: cada 10 seguidas sube el descuento; 80 = pase gratis ----
+  var WA_FT = '573161088178';
+  var ESCALERA = [[10, '5%'], [20, '10%'], [30, '11%'], [40, '12%'], [50, '13%'], [60, '14%'], [70, '15%'], [80, 'Pase']];
+  var premioEnJuego = 0, premioCobrado = null;
+  function textoPremio(n) { return n >= 80 ? 'un pase gratis a uno de nuestros eventos' : (ESCALERA.filter(function (e) { return e[0] === n; })[0] || [0, ''])[1] + ' de descuento en tu próxima boleta'; }
+  function pintarEscalera(n) {
+    $('prEscalera').innerHTML = ESCALERA.map(function (e) {
+      return '<li class="' + (e[0] < n ? 'hecho' : e[0] === n ? 'ahora' : '') + (e[0] === 80 ? ' pase' : '') + '">' + e[1] + '<small>' + e[0] + '</small></li>';
+    }).join('');
+  }
+  function mostrarPremio(n, final) {
+    var sig = ESCALERA.filter(function (e) { return e[0] > n; })[0];
+    $('prKick').textContent = 'Premio por racha';
+    $('prTitulo').textContent = '¡' + n + ' seguidas!';
+    $('prGana').innerHTML = 'Ganaste <b>' + esc(textoPremio(n)) + '</b>';
+    pintarEscalera(n);
+    $('prDecide').hidden = false; $('prOk').hidden = true;
+    if (n >= 80) {
+      $('prRiesgo').innerHTML = final ? 'Se acabó tu racha, pero el pase ya es tuyo. Reclámalo escribiéndonos.' : 'Es el premio máximo. Puedes seguir jugando por el ranking: <b>el pase no se pierde</b>.';
+      $('prReclamar').textContent = 'Reclamar mi pase gratis';
+      $('prSeguir').textContent = 'Seguir jugando por el ranking'; $('prSeguir').hidden = !!final;
+    } else {
+      $('prRiesgo').innerHTML = 'Si sigues y llegas a <b>' + sig[0] + ' seguidas</b> sube a ' + (sig[0] === 80 ? 'un pase gratis' : sig[1]) + '. Pero <b>si fallas antes, pierdes este premio</b>.';
+      $('prReclamar').textContent = 'Reclamar ' + ESCALERA.filter(function (e) { return e[0] === n; })[0][1] + ' y terminar';
+      $('prSeguir').textContent = 'Seguir jugando por ' + (sig[0] === 80 ? 'el pase' : sig[1]); $('prSeguir').hidden = false;
+    }
+    $('premio').hidden = false; parar(); $('prReclamar').focus();
+  }
+  function cerrarPremio() { $('premio').hidden = true; }
+  function mensajeWa() {
+    var c = premioCobrado; if (!c) return '#';
+    var ig = (miIg || $('prIg').value.trim().replace(/^@+/, '')).toLowerCase();
+    var t = c.nivel >= 80
+      ? '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané un PASE GRATIS para uno de sus eventos 🎟️. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo reclamo mi boleta?'
+      : '¡Hola Fan Tribute! 🎧 Jugué FanGuess y adiviné ' + c.nivel + ' canciones seguidas 🔥 Me gané ' + c.premio + ' para mi próxima boleta. Mi código es ' + c.codigo + (ig ? '. Mi Instagram: @' + ig : '') + '. ¿Cómo lo uso?';
+    return 'https://wa.me/' + WA_FT + '?text=' + encodeURIComponent(t);
+  }
+  function pedirPremio(n, intentos) {
+    if (!RANKING_URL) return Promise.reject(new Error('sin servidor'));
+    return fetch(RANKING_URL + '?accion=premio&n=' + n + '&id=' + encodeURIComponent(dispositivo) + '&ig=' + encodeURIComponent(miIg || ''))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok && d.codigo) return d;
+        if (d && d.ok) throw new Error('servidor');   // el Apps Script todavía no tiene premios
+        // la última canción puede tardar un poco en llegar: se reintenta
+        if (d && d.error === 'racha' && intentos > 0) return new Promise(function (ok) { setTimeout(ok, 2500); }).then(function () { return pedirPremio(n, intentos - 1); });
+        throw new Error(d && d.error || 'error');
+      });
+  }
+  $('prReclamar').addEventListener('click', function () {
+    var b = this, n = premioEnJuego; if (!n) return;
+    b.disabled = true; b.textContent = 'Validando tu racha…';
+    pedirPremio(n, 3).then(function (d) {
+      premioCobrado = d; premioEnJuego = 0;
+      $('prKick').textContent = '¡Premio asegurado!';
+      $('prCodigo').textContent = d.codigo;
+      $('prIgBox').hidden = !!miIg;
+      $('prNota').innerHTML = d.nivel >= 80 ? 'Escríbenos a Fan Tribute con tu código para <b>reclamar tu boleta</b>. Solo lo puede usar una persona.' : 'Escríbenos con tu código y te damos el descuento en tu próxima boleta. Tómale pantallazo por si acaso.';
+      $('prWa').href = mensajeWa();
+      $('prDecide').hidden = true; $('prOk').hidden = false;
+      // reclamar cierra la partida
+      puntos = 0; jugadas = 0; aciertos = 0; seguidas = 0; pintarStats();
+    }).catch(function (e) {
+      b.disabled = false; b.textContent = 'Intentar de nuevo';
+      avisar(e.message === 'racha' ? 'No pudimos validar tu racha. Revisa tu conexión e intenta de nuevo.' : 'No pudimos conectar. Intenta de nuevo en un momento.');
+    }).then(function () { b.disabled = false; });
+  });
+  $('prIg').addEventListener('input', function () { $('prWa').href = mensajeWa(); });
+  $('prWa').addEventListener('click', function () { this.href = mensajeWa(); });
+  $('prSeguir').addEventListener('click', function () { cerrarPremio(); avisar('¡Vamos por más! Si fallas antes del próximo nivel, pierdes el premio.'); });
+  $('prCerrar').addEventListener('click', function () { cerrarPremio(); premioCobrado = null; parar(); if (actual) delete audios[actual.trackId]; siguiente(); });
+
   // ---- Teclado: Espacio reproduce o pausa, Enter pasa a la siguiente, ← → mueve la canción, / escribe ----
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!$('premio').hidden) { if (e.key === 'Escape' && !$('prSeguir').hidden && $('prOk').hidden) $('prSeguir').click(); return; }
     var t = e.target, escribiendo = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
     var enBoleta = $('result').classList.contains('show'), jugando = !$('playing').hidden;
     if (escribiendo) { if (e.key === 'Escape') { t.blur(); $('sugg').classList.remove('open'); } return; }
@@ -916,6 +1047,12 @@
       animarBoleta(ok, p);
       ultimaRonda = { c: c, ok: ok, p: p, intento: enIntento, nivel: nivel, racha: ok ? seguidas : rachaAntes };
       if (ok) { anotarRacha(seguidas); $('bIg').hidden = true; } else pedirIg(rachaAntes);
+      // premios: cada 10 seguidas aparece la opción de reclamar o seguir
+      if (ok && seguidas % 10 === 0 && seguidas <= 80) { premioEnJuego = seguidas; setTimeout(function () { mostrarPremio(seguidas); }, 1600); }
+      else if (!ok && premioEnJuego) {
+        if (rachaAntes >= 80) setTimeout(function () { mostrarPremio(80, true); }, 1600);
+        else { $('resExtra').textContent = '− Perdiste tu ' + textoPremio(premioEnJuego).split(' de ')[0] + ' de descuento'; $('resExtra').hidden = false; premioEnJuego = 0; }
+      }
       $('compartir').hidden = ok; $('bMencion').hidden = ok;
       ultimaRonda.total = puntos;
       enviarRonda(c, ok, enIntento, p);
@@ -1130,7 +1267,7 @@
 
   $('skip').addEventListener('click', function () { if (terminado) return; filaIntento('skip', ''); fallo(); });
   $('next').addEventListener('click', function () { parar(); if (actual) delete audios[actual.trackId]; siguiente(); });
-  $('reset').addEventListener('click', function () { puntos = 0; jugadas = 0; aciertos = 0; seguidas = 0; pintarStats(); parar(); if (actual) delete audios[actual.trackId]; siguiente(); avisar('Partida nueva: empiezas de cero'); });
+  $('reset').addEventListener('click', function () { premioEnJuego = 0; puntos = 0; jugadas = 0; aciertos = 0; seguidas = 0; pintarStats(); parar(); if (actual) delete audios[actual.trackId]; siguiente(); avisar('Partida nueva: empiezas de cero'); });
   iniciarRanking();
 })();
 </script>
